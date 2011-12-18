@@ -16,7 +16,7 @@ var notesoup = {
 	runScripts: true,				// true to run ontick, onload, run, and eval() handlers
 
 	// Sync controls
-	syncInterval: 600,				// seconds between syncs; 0 to disable auto sync
+	syncInterval: 15,				// seconds between syncs; 0 to disable auto sync
 	syncUIOnUpdates: true,			// update immediately and reset update timer
 
 	// Miscellaneous configurable options
@@ -249,7 +249,7 @@ var notesoup = {
 		// It's an error to send an update without an id
 		var noteid = thenote.id;
 		if (!noteid) {
-			this.say('Error: update without note id: ' + thenote.toString(), 'error');
+			this.say('Error: update without note id: ' + thenote.toString() + ' ' + typeof(thenote), 'error');
 			return;
 		}
 		

@@ -49,29 +49,38 @@ app.post('/notesoup.php', function(req, res) {
 });
 
 
-var updatelist;
 var clock = new Date();
 
 var redis = require("redis");
 var client = redis.createClient();		// port, host, options
-	
 client.on("error", function (err) {
 	console.log("Error " + err);
 });
+//client.auth(password);				// server auth
 
 var nextnote = 1;
 
+function apisendreply(req, res, updatelist) {
+
+	var reply = {
+		result: '',
+		error: null,
+		id: req.body.id,
+		command: updatelist
+	}
+	res.send(reply);
+}
 
 function apisavenote(req, res) {
 
 	var folder = req.body.params['tofolder'];
 	var note = req.body.params['note'];
 
-	updatelist = [['beginupdate','']];
+	var updatelist = [['beginupdate','']];
 	updatelist.push(apisavenoteworker(folder, note));
 	updatelist.push(['endupdate','']);
 
-	res.send(updatelist);
+	apisendreply(req, res, updatelist);
 }
 
 
@@ -83,10 +92,10 @@ function apisavenoteworker(folder, note) {
 		nextnote++;
 	}
 
-	var jnote = JSON.stringify(note);
+	var jsonnote = JSON.stringify(note);
 
 	client.multi() 
-		.hset('notes/' + folder, note['id'], jnote)
+		.hset('notes/' + folder, note['id'], jsonnote)
 		.zadd('mtime/' + folder, clock.getTime(), note['id'])
 	 	.exec(function (err, replies) {
 			console.log("MULTI got " + replies.length + " replies");
@@ -95,17 +104,57 @@ function apisavenoteworker(folder, note) {
 	        });
         });
 
-	return ['updatenote', jnote];
+	return ['updatenote', note];
 }
 
 
 
 function apisync(req, res) {
-	res.send(['say','sync...']);
+	var folder = req.body.params['fromfolder'];
+	var lastupdate = req.body.params['lastupdate'];
+	res.newlastupdate = clock.getTime();
+
+	if (lastupdate == 0) {
+		client.hkeys('notes/' + folder, function(err, notes) {
+			res.updatelist = [['beginupdate','']];
+			client.hmget('notes/' + folder, notes, function(err, notes) {
+				console.log("GOT NOTES:");
+				console.dir(notes);
+				if (typeof(notes) != 'undefined') {
+					for (var i=0; i<notes.length; i++) {
+						var note = JSON.parse(notes[i]);
+						res.updatelist.push(['updatenote', note]);
+					}
+				}
+				res.updatelist.push(['setupdatetime', res.newlastupdate.toString()]);
+				res.updatelist.push(['endupdate','']);
+				apisendreply(req, res, res.updatelist);
+			});
+		});
+	}
+	else {
+		client.zrangebyscore('mtime/' + folder, 
+			req.body.params['lastupdate'], clock.getTime(), function(err, notes) {
+			res.updatelist = [['beginupdate','']];
+			client.hmget('notes/' + folder, notes, function(err, notes) {
+				console.log("GOT NOTES2:");
+				console.dir(notes);
+				if (typeof(notes) != 'undefined') {
+					for (var i=0; i<notes.length; i++) {
+						res.updatelist.push(['updatenote', notes[i]]);
+					}
+				}
+				res.updatelist.push(['setupdatetime', res.newlastupdate.toString()]);
+				res.updatelist.push(['endupdate','']);
+				apisendreply(req, res, res.updatelist);
+			});
+		});
+	}
 }
 
+
 function apisendnote(req, res) {
-	res.send(['say','send...']);
+	apisendreply(req, res, [['say','send...']]);
 }
 
 
