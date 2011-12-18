@@ -147,30 +147,32 @@ function apisync(req, res) {
 function apisendnote(req, res) {
 
 	res.updatelist = [];
-	client.hget('notes/' + req.body.params['fromfolder'], req.body.params['noteid'], function(err, note) {
-	
-		// new note id assignment here
-		var newid = 44;
-		var now = new Date().getTime();
-		client.multi()
-			.hset('notes/' + req.body.params['tofolder'], newid, note)
-			.zadd('mtime/' + req.body.params['tofolder'], now, newid)
-			.exec(function(err, note) {
+	client.hget('notes/' + req.body.params.fromfolder, req.body.params.noteid, function(err, note) {
+		client.incr('next/' + req.body.params.tofolder, function(err, newid) {
+			note.id = newid.toString();
+			var jsonnote = JSON.stringify(note);
+			var now = new Date().getTime();
 
-				if (req.body.params['tofolder'] == req.body.params['notifyfolder'])
-					res.updatelist.push(['updatenote', note]);
+			client.multi()
+				.hset('notes/' + req.body.params.tofolder, note.id, note)
+				.zadd('mtime/' + req.body.params.tofolder, now, note.id)
+				.exec(function(err, reply) {
 
-				if (!('deleteoriginal' in req.body.params) || req.body.params.deleteoriginal) {
-					client.multi()
-						.hdel('notes/' + req.body.params['fromfolder'], req.body.params['noteid'])
-						.zrem('mtime/' + req.body.params['fromfolder'], req.body.params['noteid'])
-						.exec(function(err, reply) {
-							res.updatelist.push(['deletenote', req.body.params['noteid']]);
-							apisendreply(req, res, res.updatelist);
-						});
-				}
-				else apisendreply(req, res, res.updatelist);
-			});
+					//if (req.body.params.tofolder == req.body.params.notifyfolder)
+					//	res.updatelist.push(['updatenote', note]);
+
+					if (!('deleteoriginal' in req.body.params) || req.body.params.deleteoriginal) {
+						client.multi()
+							.hdel('notes/' + req.body.params.fromfolder, req.body.params.noteid)
+							.zrem('mtime/' + req.body.params.fromfolder, req.body.params.noteid)
+							.exec(function(err, reply) {
+								res.updatelist.push(['deletenote', req.body.params.noteid]);
+								apisendreply(req, res, res.updatelist);
+							});
+					}
+					else apisendreply(req, res, res.updatelist);
+				});
+		});
 	});
 }
 
