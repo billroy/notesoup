@@ -86,6 +86,7 @@ function apisavenote(req, res) {
 
 function apisavenoteworker(folder, note) {
 
+	var now = new Date().getTime();
 	if (!('id' in note)) {
 		//note['id'] = redis.incr('nextnote');
 		note['id'] = nextnote.toString();
@@ -96,7 +97,7 @@ function apisavenoteworker(folder, note) {
 
 	client.multi() 
 		.hset('notes/' + folder, note['id'], jsonnote)
-		.zadd('mtime/' + folder, now(), note['id'])
+		.zadd('mtime/' + folder, now, note['id'])
 	 	.exec(function (err, replies) {
 			console.log("MULTI got " + replies.length + " replies");
 			replies.forEach(function (reply, index) {
@@ -112,7 +113,7 @@ function apisavenoteworker(folder, note) {
 function apisync(req, res) {
 	var folder = req.body.params['fromfolder'];
 	var lastupdate = req.body.params['lastupdate'];
-	res.newlastupdate = now();
+	res.newlastupdate = new Date().getTime();
 
 	if (lastupdate == 0) {
 		client.hkeys('notes/' + folder, function(err, notes) {
@@ -156,27 +157,34 @@ function apisync(req, res) {
 
 function apisendnote(req, res) {
 
+	console.log("req.body.params");
+	console.dir(req.body.params);
+
 	res.updatelist = [];
 	client.hget('notes/' + req.body.params['fromfolder'], req.body.params['noteid'], function(err, note) {
 	
 		// new note id assignment here
 		var newid = 44;
-		client.hset('notes/' + req.body.params['tofolder'], newid, function(err, note) {
+		var now = new Date().getTime();
+		client.multi()
+			.hset('notes/' + req.body.params['tofolder'], newid, note)
+			.zadd('mtime/' + req.body.params['tofolder'], now, newid)
+			.exec(function(err, note) {
 
-			if (req.body.params['tofolder'] == req.body.params['notifyfolder'])
-				res.updatelist.push(['updatenote', note]);
+				if (req.body.params['tofolder'] == req.body.params['notifyfolder'])
+					res.updatelist.push(['updatenote', note]);
 
-			if (!('deleteoriginal' in req.body.params) || !req.body.params.deleteoriginal) {
-				client.multi()
-					.hdel('notes/' + req.body.params['fromfolder'], req.body.params['noteid'])
-					.zrem('mtime/' + req.body.params['fromfolder'], req.body.params['noteid'])
-					.exec(function(err, reply) {
-						res.updatelist.push(['deletenote', req.body.params['noteid']]);
-						apisendreply(req, res, res.updatelist);
-					});
-			}
-			else apisendreply(req, res, res.updatelist);
-		});
+				if (!('deleteoriginal' in req.body.params) || req.body.params.deleteoriginal) {
+					client.multi()
+						.hdel('notes/' + req.body.params['fromfolder'], req.body.params['noteid'])
+						.zrem('mtime/' + req.body.params['fromfolder'], req.body.params['noteid'])
+						.exec(function(err, reply) {
+							res.updatelist.push(['deletenote', req.body.params['noteid']]);
+							apisendreply(req, res, res.updatelist);
+						});
+				}
+				else apisendreply(req, res, res.updatelist);
+			});
 	});
 }
 
