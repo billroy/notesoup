@@ -49,8 +49,6 @@ app.post('/notesoup.php', function(req, res) {
 });
 
 
-function now() { return new Date().getTime(); }
-
 var redis = require("redis");
 var client = redis.createClient();		// port, host, options
 client.on("error", function (err) {
@@ -73,39 +71,30 @@ function apisendreply(req, res, updatelist) {
 
 function apisavenote(req, res) {
 
-	var folder = req.body.params['tofolder'];
-	var note = req.body.params['note'];
-
-	var updatelist = [['beginupdate','']];
-	updatelist.push(apisavenoteworker(folder, note));
-	updatelist.push(['endupdate','']);
-
-	apisendreply(req, res, updatelist);
+	if (!('id' in req.body.params.note)) {
+		client.incr('next/' + req.body.params.tofolder, function(err, id) {
+			req.body.params.note['id'] = id.toString();
+			apisavenote_with_id(req, res);
+		});
+	}
+	else apisavenote_with_id(req, res);
 }
 
-
-function apisavenoteworker(folder, note) {
+function apisavenote_with_id(req, res) {
 
 	var now = new Date().getTime();
-	if (!('id' in note)) {
-		//note['id'] = redis.incr('nextnote');
-		note['id'] = nextnote.toString();
-		nextnote++;
-	}
-
-	var jsonnote = JSON.stringify(note);
+	var jsonnote = JSON.stringify(req.body.params.note);
 
 	client.multi() 
-		.hset('notes/' + folder, note['id'], jsonnote)
-		.zadd('mtime/' + folder, now, note['id'])
+		.hset('notes/' + req.body.params.tofolder, req.body.params.note.id, jsonnote)
+		.zadd('mtime/' + req.body.params.tofolder, now, req.body.params.note.id)
 	 	.exec(function (err, replies) {
 			console.log("MULTI got " + replies.length + " replies");
 			replies.forEach(function (reply, index) {
 				console.log("Reply " + index + ": " + reply.toString());
 	        });
+			apisendreply(req, res, [['updatenote', req.body.params.note]]);
         });
-
-	return ['updatenote', note];
 }
 
 
@@ -135,7 +124,7 @@ function apisync(req, res) {
 	}
 	else {
 		client.zrangebyscore('mtime/' + folder, 
-			req.body.params['lastupdate'], now(), function(err, notes) {
+			req.body.params['lastupdate'], new Date().getTime(), function(err, notes) {
 			res.updatelist = [['beginupdate','']];
 			client.hmget('notes/' + folder, notes, function(err, notes) {
 				console.log("GOT NOTES2:");
@@ -156,9 +145,6 @@ function apisync(req, res) {
 
 
 function apisendnote(req, res) {
-
-	console.log("req.body.params");
-	console.dir(req.body.params);
 
 	res.updatelist = [];
 	client.hget('notes/' + req.body.params['fromfolder'], req.body.params['noteid'], function(err, note) {
