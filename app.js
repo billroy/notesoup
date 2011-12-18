@@ -1,3 +1,24 @@
+/*****
+	Note Soup server for node.js
+	
+	Copyright 2011 by Bill Roy.
+	Licensed for use.  See LICENSE.
+
+Database use:
+
+	hash: notes/<user>/<folder>
+		field: note.id
+		value: json representation of note data
+	
+	sorted set: mtime/<user>/<folder>
+		score: note update time from new Date().getTime()
+		id: note.id
+	
+	integer: next/<user>/<folder>
+		next note number in sequence
+		actually pre-increments...
+
+*****/
 
 /**
  * Module dependencies.
@@ -32,8 +53,8 @@ app.configure('production', function(){
 //app.get('/', routes.index);
 
 app.post('/notesoup.php', function(req, res) {
-	console.log("Request body: " + typeof(req.body));
-	console.dir(req.body);
+	//console.log("Request body: " + typeof(req.body));
+	//console.dir(req.body);
 
 	if (req.body.method == 'savenote') apisavenote(req, res);
 	else if (req.body.method == 'sync') apisync(req, res);
@@ -56,8 +77,6 @@ client.on("error", function (err) {
 });
 //client.auth(password);				// server auth
 
-var nextnote = 1;
-
 function apisendreply(req, res, updatelist) {
 
 	var reply = {
@@ -73,7 +92,7 @@ function apisavenote(req, res) {
 
 	if (!('id' in req.body.params.note)) {
 		client.incr('next/' + req.body.params.tofolder, function(err, id) {
-			req.body.params.note['id'] = id.toString();
+			req.body.params.note.id = id.toString();
 			apisavenote_with_id(req, res);
 		});
 	}
@@ -100,11 +119,10 @@ function apisavenote_with_id(req, res) {
 
 
 function apisync(req, res) {
-	var folder = req.body.params['fromfolder'];
-	var lastupdate = req.body.params['lastupdate'];
-	res.newlastupdate = new Date().getTime();
+	var folder = req.body.params.fromfolder;
+	var newlastupdate = new Date().getTime();
 
-	if (lastupdate == 0) {
+	if (req.body.params.lastupdate == 0) {
 		client.hkeys('notes/' + folder, function(err, notes) {
 			res.updatelist = [['beginupdate','']];
 			client.hmget('notes/' + folder, notes, function(err, notes) {
@@ -116,7 +134,7 @@ function apisync(req, res) {
 						res.updatelist.push(['updatenote', note]);
 					}
 				}
-				res.updatelist.push(['setupdatetime', res.newlastupdate.toString()]);
+				res.updatelist.push(['setupdatetime', newlastupdate.toString()]);
 				res.updatelist.push(['endupdate','']);
 				apisendreply(req, res, res.updatelist);
 			});
@@ -124,7 +142,7 @@ function apisync(req, res) {
 	}
 	else {
 		client.zrangebyscore('mtime/' + folder, 
-			req.body.params['lastupdate'], new Date().getTime(), function(err, notes) {
+			req.body.params.lastupdate, newlastupdate, function(err, notes) {
 			res.updatelist = [['beginupdate','']];
 			client.hmget('notes/' + folder, notes, function(err, notes) {
 				console.log("GOT NOTES2:");
@@ -135,7 +153,7 @@ function apisync(req, res) {
 						res.updatelist.push(['updatenote', note]);
 					}
 				}
-				res.updatelist.push(['setupdatetime', res.newlastupdate.toString()]);
+				res.updatelist.push(['setupdatetime', newlastupdate.toString()]);
 				res.updatelist.push(['endupdate','']);
 				apisendreply(req, res, res.updatelist);
 			});
@@ -149,6 +167,9 @@ function apisendnote(req, res) {
 	res.updatelist = [];
 	client.hget('notes/' + req.body.params.fromfolder, req.body.params.noteid, function(err, note) {
 		client.incr('next/' + req.body.params.tofolder, function(err, newid) {
+
+// crash here: note is null?!
+
 			note.id = newid.toString();
 			var jsonnote = JSON.stringify(note);
 			var now = new Date().getTime();
@@ -158,8 +179,8 @@ function apisendnote(req, res) {
 				.zadd('mtime/' + req.body.params.tofolder, now, note.id)
 				.exec(function(err, reply) {
 
-					//if (req.body.params.tofolder == req.body.params.notifyfolder)
-					//	res.updatelist.push(['updatenote', note]);
+					if (req.body.params.tofolder == req.body.params.notifyfolder)
+						res.updatelist.push(['updatenote', note]);
 
 					if (!('deleteoriginal' in req.body.params) || req.body.params.deleteoriginal) {
 						client.multi()
