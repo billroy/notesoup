@@ -1,0 +1,20 @@
+#!/bin/bash
+cat prototype-1.5.0.js effects.js dragdrop.js window.js debug.js \
+	extended_debug.js sha1.js checktab.js json.js \
+	notesoup.js notesoup-ui-protojs.js notesoup-commandbar.js \
+	picker.js dump.js > miso-in.js
+ls -als miso*.js
+java -jar ~/Downloads/custom_rhino.jar -c miso-in.js > miso-out.js
+cat ../LICENSE miso-out.js > miso.js
+rm miso-in.js
+rm miso-out.js
+rm ../js/miso.js
+cp miso.js ../js/
+gzip miso.js
+touch miso.js.gz
+rm ../js/miso.js.gz
+mv miso.js.gz ../js/
+ls -als ../js/
+
+#rm `find . -name .DS_Store`
+

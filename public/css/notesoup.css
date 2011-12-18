@@ -1,0 +1,65 @@
+body {
+	background: url("../images/graph12.gif");
+}
+.commandbar {
+	font: normal 14px lucida grande, verdana, tahoma, arial, helvetica, sans-serif !important;
+	color: black;
+}
+.note {
+	font: normal 0.8em lucida grande, verdana, tahoma, arial, helvetica, sans-serif !important;
+	text-align: left;
+	position: absolute;
+	cursor: move;
+}
+.notebody {
+	font: normal 1em lucida grande, verdana, tahoma, arial, helvetica, sans-serif !important;
+}
+.notetitle {
+	font-weight: bold;
+	text-align: center;
+}
+.note-rzwrap .x-resizable-handle{
+    width:11px;
+    height:11px;
+    background:transparent url(resources/images/default/sizer/square.gif) no-repeat;
+    margin:0px;
+}
+.note-rzwrap .x-resizable-handle-east, #custom-rzwrap .x-resizable-handle-west{
+    top:45%;
+}
+.note-rzwrap .x-resizable-handle-north, #custom-rzwrap .x-resizable-handle-south{
+    left:45%;
+}
+.note:hover {
+}
+div.notedroptarget {
+	background-color: #80ff80;
+	border: 10px #80ff80 solid;
+}
+.notificationwindow {
+	font: bold .8em lucida grande, verdana, tahoma, arial, helvetica, sans-serif !important;
+	position: absolute;
+	top: 2.1em;
+	right: 1em;
+	width: 18em;
+	opacity: 0.7;
+	z-index:10000;
+}
+.notificationitem {
+	width: 100%;
+	text-align: left;
+	padding: 5px 5px 5px 5px;
+	margin: 2px 2px 2px 2px;
+	word-wrap: break-word;
+	border: 2px gray solid;
+	color: black;
+	background-color: #aaffaa;
+}
+.frozen {
+	border: 2px black solid;
+}
+.foldertree, .x-tree-node-leaf, .x-menu-item {
+	font: normal 14px lucida grande, verdana, tahoma, arial, helvetica, sans-serif !important;
+}
+.notegrid {
+}
