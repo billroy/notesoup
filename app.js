@@ -29,7 +29,7 @@ var express = require('express')
 
 var app = module.exports = express.createServer();
 
-/*
+/*****
 var io = require('socket.io').listen(app);
 
 io.sockets.on('connection', function (socket) {
@@ -40,7 +40,7 @@ io.sockets.on('connection', function (socket) {
 		io.sockets.emit('tell', data);
 	});
 });
-*/
+*****/
 
 // Configuration
 
@@ -68,6 +68,8 @@ app.configure('production', function(){
 app.post('/notesoup.php', function(req, res) {
 	//console.log("Request body: " + typeof(req.body));
 	//console.dir(req.body);
+	//console.log("Memory usage:");
+	//console.dir(process.memoryUsage());
 
 	if (req.body.method == 'savenote') apisavenote(req, res);
 	else if (req.body.method == 'sync') apisync(req, res);
@@ -142,24 +144,23 @@ function apisync(req, res) {
 	res.newlastupdate = new Date().getTime();
 
 	if (req.body.params.lastupdate == 0) {
-		client.hkeys(key_note(req.body.params.fromfolder), function(err, notes) {
-			apisync_sendupdates(req, res, notes);
+		client.hkeys(key_note(req.body.params.fromfolder), function(err, noteids) {
+			apisync_sendupdates(req, res, noteids);
 		});
 	}
 	else {
 		client.zrangebyscore(key_mtime(req.body.params.fromfolder), 
-			req.body.params.lastupdate, res.newlastupdate, function(err, notes) {
-			apisync_sendupdates(req, res, notes);
+			req.body.params.lastupdate, res.newlastupdate, function(err, noteids) {
+			apisync_sendupdates(req, res, noteids);
 		});
 	}
 }
 
 
-
-function apisync_sendupdates(req, res, notes) {
+function apisync_sendupdates(req, res, noteids) {
 
 	res.updatelist = [['beginupdate','']];
-	client.hmget(key_note(req.body.params.fromfolder), notes, function(err, notes) {
+	client.hmget(key_note(req.body.params.fromfolder), noteids, function(err, notes) {
 		console.log("Syncing notes:");
 		console.dir(notes);
 		if (typeof(notes) != 'undefined') {
