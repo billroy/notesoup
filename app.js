@@ -139,60 +139,28 @@ function apisavenote_with_id(req, res) {
 
 
 function apisync(req, res) {
-	var folder = req.body.params.fromfolder;
-	var newlastupdate = new Date().getTime();
+	res.newlastupdate = new Date().getTime();
 
 	if (req.body.params.lastupdate == 0) {
-
-		// BETTER: Use HGETALL here, save a trip
-		// ALSO: cut the common code?
-		
-
-		client.hkeys(key_note(folder), function(err, notes) {
-			res.updatelist = [['beginupdate','']];
-			client.hmget(key_note(folder), notes, function(err, notes) {
-				console.log("GOT NOTES:");
-				console.dir(notes);
-				if (typeof(notes) != 'undefined') {
-					for (var i=0; i<notes.length; i++) {
-						var note = JSON.parse(notes[i]);
-						res.updatelist.push(['updatenote', note]);
-					}
-				}
-				res.updatelist.push(['setupdatetime', newlastupdate.toString()]);
-				res.updatelist.push(['endupdate','']);
-				apisendreply(req, res, res.updatelist);
-			});
+		client.hkeys(key_note(req.body.params.fromfolder), function(err, notes) {
+			apisync_sendupdates(req, res, notes);
 		});
 	}
 	else {
-		client.zrangebyscore(key_mtime(folder), 
-			req.body.params.lastupdate, newlastupdate, function(err, notes) {
-			res.updatelist = [['beginupdate','']];
-			client.hmget(key_note(folder), notes, function(err, notes) {
-				console.log("GOT NOTES2:");
-				console.dir(notes);
-				if (typeof(notes) != 'undefined') {
-					for (var i=0; i<notes.length; i++) {
-						var note = JSON.parse(notes[i]);
-						res.updatelist.push(['updatenote', note]);
-					}
-				}
-				res.updatelist.push(['setupdatetime', newlastupdate.toString()]);
-				res.updatelist.push(['endupdate','']);
-				apisendreply(req, res, res.updatelist);
-			});
+		client.zrangebyscore(key_mtime(req.body.params.fromfolder), 
+			req.body.params.lastupdate, res.newlastupdate, function(err, notes) {
+			apisync_sendupdates(req, res, notes);
 		});
 	}
 }
 
 
 
-
 function apisync_sendupdates(req, res, notes) {
-	var updatelist = [['beginupdate','']];
-	client.hmget(key_note(folder), notes, function(err, notes) {
-		console.log("GOT NOTES2:");
+
+	res.updatelist = [['beginupdate','']];
+	client.hmget(key_note(req.body.params.fromfolder), notes, function(err, notes) {
+		console.log("Syncing notes:");
 		console.dir(notes);
 		if (typeof(notes) != 'undefined') {
 			for (var i=0; i<notes.length; i++) {
@@ -200,7 +168,7 @@ function apisync_sendupdates(req, res, notes) {
 				res.updatelist.push(['updatenote', note]);
 			}
 		}
-		res.updatelist.push(['setupdatetime', newlastupdate.toString()]);
+		res.updatelist.push(['setupdatetime', res.newlastupdate.toString()]);
 		res.updatelist.push(['endupdate','']);
 		apisendreply(req, res, res.updatelist);
 	});
