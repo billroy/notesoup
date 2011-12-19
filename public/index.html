@@ -26,6 +26,7 @@
 <script type="text/javascript" src="js-src/notesoup-ui-ext.js"> </script>
 <script type="text/javascript" src="js-src/notesoup-ui-commandbar.js"> </script>
 <script type="text/javascript" src="js-src/notesoup-ui-marquee.js"> </script>
+<script type="text/javascript" src="/socket.io/socket.io.js"></script>
 <script type="text/javascript">
 function startsoup() {
 //try {
@@ -52,6 +53,16 @@ function startsoup() {
 	}
 	notesoup.initialize(opts);		
 	//} catch(e) { alert('Sorry, there seems to be a problem.  Fatal startup error: ' + e); };
+
+	// Socket IO prototype
+	notesoup.socket = io.connect();
+	notesoup.socket.on("tell", function(data) {
+		notesoup.say(data, "tell");
+	});
+	notesoup.socket.say = function(data) {
+		notesoup.socket.emit("tell", data);
+	};
+
 }
 </script>
 </head>

@@ -25,9 +25,20 @@ Database use:
  */
 
 var express = require('express')
-  , routes = require('./routes')
+  , routes = require('./routes');
 
 var app = module.exports = express.createServer();
+var io = require('socket.io').listen(app);
+
+io.sockets.on('connection', function (socket) {
+	socket.emit('tell', 'Welcome to the Soup.');
+	io.sockets.emit('tell', "One has Joined the Soup.");
+	socket.on('tell', function (data) {
+	console.log(data);
+	io.sockets.emit('tell', data);
+  });
+});
+
 
 // Configuration
 
