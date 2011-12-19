@@ -1,5 +1,5 @@
 /*****
-	Note Soup server for node.js
+	Note Soup server for node.js / redis
 	
 	Copyright 2011 by Bill Roy.
 	Licensed for use.  See LICENSE.
@@ -123,6 +123,11 @@ function apisync(req, res) {
 	var newlastupdate = new Date().getTime();
 
 	if (req.body.params.lastupdate == 0) {
+
+		// BETTER: Use HGETALL here, save a trip
+		// ALSO: cut the common code?
+		
+
 		client.hkeys('notes/' + folder, function(err, notes) {
 			res.updatelist = [['beginupdate','']];
 			client.hmget('notes/' + folder, notes, function(err, notes) {
@@ -165,10 +170,12 @@ function apisync(req, res) {
 function apisendnote(req, res) {
 
 	res.updatelist = [];
+	
+	// todo: make this a client.multi()
 	client.hget('notes/' + req.body.params.fromfolder, req.body.params.noteid, function(err, note) {
 		client.incr('next/' + req.body.params.tofolder, function(err, newid) {
 
-// crash here: note is null?!
+// crash here on Duplicate Note: note is null?!
 
 			note.id = newid.toString();
 			var jsonnote = JSON.stringify(note);
