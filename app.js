@@ -28,17 +28,19 @@ var express = require('express')
   , routes = require('./routes');
 
 var app = module.exports = express.createServer();
+
+/*
 var io = require('socket.io').listen(app);
 
 io.sockets.on('connection', function (socket) {
 	socket.emit('tell', 'Welcome to the Soup.');
 	io.sockets.emit('tell', "One has Joined the Soup.");
 	socket.on('tell', function (data) {
-	console.log(data);
-	io.sockets.emit('tell', data);
-  });
+		console.log(data);
+		io.sockets.emit('tell', data);
+	});
 });
-
+*/
 
 // Configuration
 
@@ -88,6 +90,13 @@ client.on("error", function (err) {
 });
 //client.auth(password);				// server auth
 
+// Redis key mapping
+//
+function key_note(folder) 	{ return 'notes/' + folder; }
+function key_mtime(folder) 	{ return 'mtime/' + folder; }
+function key_nextid(folder)	{ return 'next/'  + folder; }
+
+
 function apisendreply(req, res, updatelist) {
 
 	var reply = {
@@ -102,7 +111,7 @@ function apisendreply(req, res, updatelist) {
 function apisavenote(req, res) {
 
 	if (!('id' in req.body.params.note)) {
-		client.incr('next/' + req.body.params.tofolder, function(err, id) {
+		client.incr(key_nextid(req.body.params.tofolder), function(err, id) {
 			req.body.params.note.id = id.toString();
 			apisavenote_with_id(req, res);
 		});
@@ -116,8 +125,8 @@ function apisavenote_with_id(req, res) {
 	var jsonnote = JSON.stringify(req.body.params.note);
 
 	client.multi() 
-		.hset('notes/' + req.body.params.tofolder, req.body.params.note.id, jsonnote)
-		.zadd('mtime/' + req.body.params.tofolder, now, req.body.params.note.id)
+		.hset(key_note(req.body.params.tofolder), req.body.params.note.id, jsonnote)
+		.zadd(key_mtime(req.body.params.tofolder), now, req.body.params.note.id)
 	 	.exec(function (err, replies) {
 			console.log("MULTI got " + replies.length + " replies");
 			replies.forEach(function (reply, index) {
@@ -139,9 +148,9 @@ function apisync(req, res) {
 		// ALSO: cut the common code?
 		
 
-		client.hkeys('notes/' + folder, function(err, notes) {
+		client.hkeys(key_note(folder), function(err, notes) {
 			res.updatelist = [['beginupdate','']];
-			client.hmget('notes/' + folder, notes, function(err, notes) {
+			client.hmget(key_note(folder), notes, function(err, notes) {
 				console.log("GOT NOTES:");
 				console.dir(notes);
 				if (typeof(notes) != 'undefined') {
@@ -157,10 +166,10 @@ function apisync(req, res) {
 		});
 	}
 	else {
-		client.zrangebyscore('mtime/' + folder, 
+		client.zrangebyscore(key_mtime(folder), 
 			req.body.params.lastupdate, newlastupdate, function(err, notes) {
 			res.updatelist = [['beginupdate','']];
-			client.hmget('notes/' + folder, notes, function(err, notes) {
+			client.hmget(key_note(folder), notes, function(err, notes) {
 				console.log("GOT NOTES2:");
 				console.dir(notes);
 				if (typeof(notes) != 'undefined') {
@@ -178,13 +187,33 @@ function apisync(req, res) {
 }
 
 
+
+
+function apisync_sendupdates(req, res, notes) {
+	var updatelist = [['beginupdate','']];
+	client.hmget(key_note(folder), notes, function(err, notes) {
+		console.log("GOT NOTES2:");
+		console.dir(notes);
+		if (typeof(notes) != 'undefined') {
+			for (var i=0; i<notes.length; i++) {
+				var note = JSON.parse(notes[i]);
+				res.updatelist.push(['updatenote', note]);
+			}
+		}
+		res.updatelist.push(['setupdatetime', newlastupdate.toString()]);
+		res.updatelist.push(['endupdate','']);
+		apisendreply(req, res, res.updatelist);
+	});
+}
+
+
 function apisendnote(req, res) {
 
 	res.updatelist = [];
 	
 	// todo: make this a client.multi()
-	client.hget('notes/' + req.body.params.fromfolder, req.body.params.noteid, function(err, note) {
-		client.incr('next/' + req.body.params.tofolder, function(err, newid) {
+	client.hget(key_note(req.body.params.fromfolder), req.body.params.noteid, function(err, note) {
+		client.incr(key_nextid(req.body.params.tofolder), function(err, newid) {
 
 // crash here on Duplicate Note: note is null?!
 
@@ -193,8 +222,8 @@ function apisendnote(req, res) {
 			var now = new Date().getTime();
 
 			client.multi()
-				.hset('notes/' + req.body.params.tofolder, note.id, note)
-				.zadd('mtime/' + req.body.params.tofolder, now, note.id)
+				.hset(key_note(req.body.params.tofolder), note.id, note)
+				.zadd(key_mtime(req.body.params.tofolder), now, note.id)
 				.exec(function(err, reply) {
 
 					if (req.body.params.tofolder == req.body.params.notifyfolder)
@@ -202,8 +231,8 @@ function apisendnote(req, res) {
 
 					if (!('deleteoriginal' in req.body.params) || req.body.params.deleteoriginal) {
 						client.multi()
-							.hdel('notes/' + req.body.params.fromfolder, req.body.params.noteid)
-							.zrem('mtime/' + req.body.params.fromfolder, req.body.params.noteid)
+							.hdel(key_note(req.body.params.fromfolder), req.body.params.noteid)
+							.zrem(key_mtime(req.body.params.fromfolder), req.body.params.noteid)
 							.exec(function(err, reply) {
 								res.updatelist.push(['deletenote', req.body.params.noteid]);
 								apisendreply(req, res, res.updatelist);
