@@ -62,8 +62,12 @@ app.configure('production', function(){
 });
 
 // Routes
-
 //app.get('/', routes.index);
+
+
+var soup = require('./notesoup.js');
+soup.connect(process.env.REDIS_URL);
+
 
 app.post('/notesoup.php', function(req, res) {
 	//console.log("Request body: " + typeof(req.body));
@@ -71,9 +75,13 @@ app.post('/notesoup.php', function(req, res) {
 	//console.log("Memory usage:");
 	//console.dir(process.memoryUsage());
 
-	if (req.body.method == 'savenote') apisavenote(req, res);
-	else if (req.body.method == 'sync') apisync(req, res);
-	else if (req.body.method == 'sendnote') apisendnote(req, res);
+	if (typeof(soup['api_'+req.body.method]) == "function") {
+		soup['api_'+req.body.method](req, res);
+	}
+
+	//if (req.body.method == 'savenote') apisavenote(req, res);
+	//else if (req.body.method == 'sync') apisync(req, res);
+	//else if (req.body.method == 'sendnote') apisendnote(req, res);
 	else {
 		console.log("Error in request body: " + typeof(req.body));
 		console.dir(req.body);
@@ -83,151 +91,6 @@ app.post('/notesoup.php', function(req, res) {
 	}
 	
 });
-
-
-var redis, client;
-
-if (process.env.REDISTOGO_URL) {
-	console.log("Connecting to Redis at " + process.env.REDISTOGO_URL);
-	client = require('redis-url').connect(process.env.REDISTOGO_URL);
-}
-else {
-	console.log("Using local Redis");
-	redis = require("redis");
-	client = redis.createClient();		// port, host, options
-}
-
-client.on("error", function (err) {
-	console.log("Error " + err);
-});
-//client.auth(password);				// server auth
-
-// Redis key mapping
-//
-function key_note(folder) 	{ return 'notes/' + folder; }
-function key_mtime(folder) 	{ return 'mtime/' + folder; }
-function key_nextid(folder)	{ return 'next/'  + folder; }
-
-
-function apisendreply(req, res, updatelist) {
-
-	var reply = {
-		result: '',
-		error: null,
-		id: req.body.id,
-		command: updatelist
-	}
-	res.send(reply);
-}
-
-function apisavenote(req, res) {
-
-	if (!('id' in req.body.params.note)) {
-		client.incr(key_nextid(req.body.params.tofolder), function(err, id) {
-			req.body.params.note.id = id.toString();
-			apisavenote_with_id(req, res);
-		});
-	}
-	else apisavenote_with_id(req, res);
-}
-
-function apisavenote_with_id(req, res) {
-
-	var now = new Date().getTime();
-	var jsonnote = JSON.stringify(req.body.params.note);
-
-	client.multi() 
-		.hset(key_note(req.body.params.tofolder), req.body.params.note.id, jsonnote)
-		.zadd(key_mtime(req.body.params.tofolder), now, req.body.params.note.id)
-	 	.exec(function (err, replies) {
-			console.log("MULTI got " + replies.length + " replies");
-			replies.forEach(function (reply, index) {
-				console.log("Reply " + index + ": " + reply.toString());
-	        });
-			apisendreply(req, res, [['updatenote', req.body.params.note]]);
-        });
-}
-
-
-
-function apisync(req, res) {
-	res.newlastupdate = new Date().getTime();
-
-	// TODO: HGETALL would still be better here
-	if (req.body.params.lastupdate == 0) {
-		client.hkeys(key_note(req.body.params.fromfolder), function(err, noteids) {
-			apisync_sendupdates(req, res, noteids);
-		});
-	}
-	else {
-		client.zrangebyscore(key_mtime(req.body.params.fromfolder), 
-			req.body.params.lastupdate, res.newlastupdate, function(err, noteids) {
-			apisync_sendupdates(req, res, noteids);
-		});
-	}
-}
-
-
-function apisync_sendupdates(req, res, noteids) {
-
-	res.updatelist = [];
-	client.hmget(key_note(req.body.params.fromfolder), noteids, function(err, notes) {
-		if (notes) {
-			console.log("Syncing notes:");
-			console.dir(notes);
-			res.updatelist.push(['beginupdate','']);
-			for (var i=0; i<notes.length; i++) {
-				var note = JSON.parse(notes[i]);
-				res.updatelist.push(['updatenote', note]);
-			}
-			res.updatelist.push(['endupdate','']);
-		}
-		res.updatelist.push(['setupdatetime', res.newlastupdate.toString()]);
-		apisendreply(req, res, res.updatelist);
-	});
-}
-
-
-function apisendnote(req, res) {
-
-	res.updatelist = [];
-	
-	client.multi()
-		.hget(key_note(req.body.params.fromfolder), req.body.params.noteid)
-		.incr(key_nextid(req.body.params.tofolder))
-		.exec(function(err, reply) {
-
-			// Bug: crash here on Duplicate Note: note is null?!
-			//console.log("Send note bulk reply:");
-			//console.dir(reply);
-
-			var note = reply[0];
-			note.id = reply[1].toString();
-			var jsonnote = JSON.stringify(note);
-			var now = new Date().getTime();
-
-			client.multi()
-				.hset(key_note(req.body.params.tofolder), note.id, note)
-				.zadd(key_mtime(req.body.params.tofolder), now, note.id)
-				.exec(function(err, reply) {
-
-					if (req.body.params.tofolder == req.body.params.notifyfolder)
-						res.updatelist.push(['updatenote', note]);
-
-					if (!('deleteoriginal' in req.body.params) || req.body.params.deleteoriginal) {
-						client.multi()
-							.hdel(key_note(req.body.params.fromfolder), req.body.params.noteid)
-							.zrem(key_mtime(req.body.params.fromfolder), req.body.params.noteid)
-							.exec(function(err, reply) {
-								res.updatelist.push(['deletenote', req.body.params.noteid]);
-								apisendreply(req, res, res.updatelist);
-							});
-					}
-					else apisendreply(req, res, res.updatelist);
-				});
-		});
-}
-
 
 app.listen(3000);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
