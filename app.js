@@ -34,7 +34,7 @@ var io = require('socket.io').listen(app);
 
 io.sockets.on('connection', function (socket) {
 	socket.emit('tell', 'Welcome to the Soup.');
-	io.sockets.emit('tell', "One has Joined the Soup.");
+	//io.sockets.emit('tell', "One has Joined the Soup.");
 	socket.on('tell', function (data) {
 		console.log(data);
 		io.sockets.emit('tell', data);
@@ -159,18 +159,19 @@ function apisync(req, res) {
 
 function apisync_sendupdates(req, res, noteids) {
 
-	res.updatelist = [['beginupdate','']];
+	res.updatelist = [];
 	client.hmget(key_note(req.body.params.fromfolder), noteids, function(err, notes) {
-		console.log("Syncing notes:");
-		console.dir(notes);
-		if (typeof(notes) != 'undefined') {
+		if (notes) {
+			console.log("Syncing notes:");
+			console.dir(notes);
+			res.updatelist.push(['beginupdate','']);
 			for (var i=0; i<notes.length; i++) {
 				var note = JSON.parse(notes[i]);
 				res.updatelist.push(['updatenote', note]);
 			}
+			res.updatelist.push(['endupdate','']);
 		}
 		res.updatelist.push(['setupdatetime', res.newlastupdate.toString()]);
-		res.updatelist.push(['endupdate','']);
 		apisendreply(req, res, res.updatelist);
 	});
 }
@@ -180,13 +181,17 @@ function apisendnote(req, res) {
 
 	res.updatelist = [];
 	
-	// todo: make this a client.multi()
-	client.hget(key_note(req.body.params.fromfolder), req.body.params.noteid, function(err, note) {
-		client.incr(key_nextid(req.body.params.tofolder), function(err, newid) {
+	client.multi()
+		.hget(key_note(req.body.params.fromfolder), req.body.params.noteid)
+		.incr(key_nextid(req.body.params.tofolder))
+		.exec(function(err, reply) {
 
-// crash here on Duplicate Note: note is null?!
+			// Bug: crash here on Duplicate Note: note is null?!
+			//console.log("Send note bulk reply:");
+			//console.dir(reply);
 
-			note.id = newid.toString();
+			var note = reply[0];
+			note.id = reply[1].toString();
 			var jsonnote = JSON.stringify(note);
 			var now = new Date().getTime();
 
@@ -210,7 +215,6 @@ function apisendnote(req, res) {
 					else apisendreply(req, res, res.updatelist);
 				});
 		});
-	});
 }
 
 
