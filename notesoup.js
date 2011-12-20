@@ -62,7 +62,7 @@ apisendreply: function(req, res, updatelist) {
 api_savenote: function(req, res) {
 	var self = this;
 	if (!('id' in req.body.params.note)) {
-		this.redis.incr(key_nextid(req.body.params.tofolder), function(err, id) {
+		self.redis.incr(self.key_nextid(req.body.params.tofolder), function(err, id) {
 			req.body.params.note.id = id.toString();
 			self.apisavenote_with_id(req, res);
 		});
@@ -76,9 +76,9 @@ apisavenote_with_id: function(req, res) {
 	var jsonnote = JSON.stringify(req.body.params.note);
 	var self = this;
 
-	this.redis.multi() 
-		.hset(key_note(req.body.params.tofolder), req.body.params.note.id, jsonnote)
-		.zadd(key_mtime(req.body.params.tofolder), now, req.body.params.note.id)
+	self.redis.multi() 
+		.hset(self.key_note(req.body.params.tofolder), req.body.params.note.id, jsonnote)
+		.zadd(self.key_mtime(req.body.params.tofolder), now, req.body.params.note.id)
 	 	.exec(function (err, replies) {
 			console.log("MULTI got " + replies.length + " replies");
 			replies.forEach(function (reply, index) {
@@ -97,12 +97,12 @@ api_sync: function(req, res) {
 
 	// TODO: HGETALL would still be better here
 	if (req.body.params.lastupdate == 0) {
-		this.redis.hkeys(this.key_note(req.body.params.fromfolder), function(err, noteids) {
+		self.redis.hkeys(self.key_note(req.body.params.fromfolder), function(err, noteids) {
 			self.apisync_sendupdates(req, res, noteids);
 		});
 	}
 	else {
-		this.redis.zrangebyscore(this.key_mtime(req.body.params.fromfolder), 
+		self.redis.zrangebyscore(self.key_mtime(req.body.params.fromfolder), 
 			req.body.params.lastupdate, res.newlastupdate, function(err, noteids) {
 			self.apisync_sendupdates(req, res, noteids);
 		});
@@ -114,7 +114,7 @@ apisync_sendupdates: function(req, res, noteids) {
 
 	res.updatelist = [];
 	var self = this;
-	this.redis.hmget(this.key_note(req.body.params.fromfolder), noteids, function(err, notes) {
+	self.redis.hmget(self.key_note(req.body.params.fromfolder), noteids, function(err, notes) {
 		if (notes) {
 			console.log("Syncing notes:");
 			console.dir(notes);
@@ -178,6 +178,7 @@ loadfiles: function(directory, tofolder) {
 	var directory = '/Users/bill/Sites/soup/data/soupbase/user/inbox';
 	var files = fs.readdirSync(directory);
 	var responses_pending = 0;
+	var self = this;
 
 	files.forEach(function(filename) {
 	
@@ -185,16 +186,16 @@ loadfiles: function(directory, tofolder) {
 		var filetext = fs.readFileSync(filepath, 'utf8');		// specifying 'utf8' to get a string result
 		var note = JSON.parse(filetext);
 	
-		client.incr(this.key_nextid(tofolder), function(err, id) {
+		self.redis.incr(self.key_nextid(tofolder), function(err, id) {
 	
 			note.id = id.toString();
 			var now = new Date().getTime();
 			var jsonnote = JSON.stringify(note);
 			++responses_pending;
 	
-			client.multi() 
-				.hset(this.key_note(tofolder), note.id, jsonnote)
-				.zadd(this.key_mtime(tofolder), now, note.id)
+			self.redis.multi() 
+				.hset(self.key_note(tofolder), note.id, jsonnote)
+				.zadd(self.key_mtime(tofolder), now, note.id)
 				.exec(function (err, replies) {
 					--responses_pending;
 					console.log("MULTI got " + replies.length + " replies");
