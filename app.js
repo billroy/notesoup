@@ -85,8 +85,18 @@ app.post('/notesoup.php', function(req, res) {
 });
 
 
-var redis = require("redis");
-var client = redis.createClient();		// port, host, options
+var redis, client;
+
+if (process.env.REDISTOGO_URL) {
+	console.log("Connecting to Redis at " + process.env.REDISTOGO_URL);
+	client = require('redis-url').connect(process.env.REDISTOGO_URL);
+}
+else {
+	console.log("Using local Redis");
+	redis = require("redis");
+	client = redis.createClient();		// port, host, options
+}
+
 client.on("error", function (err) {
 	console.log("Error " + err);
 });
@@ -143,6 +153,7 @@ function apisavenote_with_id(req, res) {
 function apisync(req, res) {
 	res.newlastupdate = new Date().getTime();
 
+	// TODO: HGETALL would still be better here
 	if (req.body.params.lastupdate == 0) {
 		client.hkeys(key_note(req.body.params.fromfolder), function(err, noteids) {
 			apisync_sendupdates(req, res, noteids);
