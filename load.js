@@ -20,6 +20,7 @@ var tofolder = 'user/inbox';
 var directory = '/Users/bill/Sites/soup/data/soupbase/user/inbox';
 var files = fs.readdirSync(directory);
 
+var responses_pending = 0;
 
 files.forEach(function(filename) {
 
@@ -32,11 +33,13 @@ files.forEach(function(filename) {
 		note.id = id.toString();
 		var now = new Date().getTime();
 		var jsonnote = JSON.stringify(note);
+		++responses_pending;
 
 		client.multi() 
 			.hset(key_note(tofolder), note.id, jsonnote)
 			.zadd(key_mtime(tofolder), now, note.id)
 	 		.exec(function (err, replies) {
+				--responses_pending;
 				console.log("MULTI got " + replies.length + " replies");
 				replies.forEach(function (reply, index) {
 					console.log("Reply " + index + ": " + reply.toString());
@@ -44,3 +47,12 @@ files.forEach(function(filename) {
         	});
 	});
 });
+
+// Wait for the last command to complete
+setInterval(function() {
+	if (responses_pending > 0) console.log("Waiting for responses: " + responses_pending);
+	else {
+		client.quit();
+		process.exit(0);
+	}
+}, 1000);
