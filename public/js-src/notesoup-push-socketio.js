@@ -65,7 +65,8 @@ notesoup.push = {
 
 	handleNotification: function(request) {
 
-		notesoup.say('Notification:' + notesoup.dump(request));
+		if (notesoup.debugmode > 2)
+			notesoup.say('Notification:' + notesoup.dump(request));
 
 		if (!((request.channel == '/folder/' + notesoup.foldername) || 
 				(notesoup.loggedin && notesoup.username && (request.channel == '/talk/' + notesoup.username)))) {
@@ -112,7 +113,8 @@ notesoup.push = {
 			handled = handled || notesoup.notes[n].calleventhandler('onjoin', request);
 		}
 		if (!handled && notesoup.username && (request.data.username != notesoup.username)) {
-			notesoup.sound.play('/sound/27354_junggle_accordeon_20.mp3');
+			if (notesoup.sound)
+				notesoup.sound.play('/sound/27354_junggle_accordeon_20.mp3');
 			notesoup.say(request.data.username + ' has joined.');
 		}
 		notesoup.refreshAvatar();
@@ -124,7 +126,8 @@ notesoup.push = {
 			handled = handled || notesoup.notes[n].calleventhandler('onleave', request);
 		}
 		if (!handled && notesoup.username) {
-			notesoup.sound.play('/sound/42700_K1m218_Crickets.mp3');
+			if (notesoup.sound)
+				notesoup.sound.play('/sound/42700_K1m218_Crickets.mp3');
 			notesoup.say(request.data.username + ' has left.');
 		}
 	},
@@ -162,7 +165,8 @@ notesoup.push = {
 		notesoup.say('Ping!');
 		//notesoup.push.pingcount++;
 		//notesoup.say(notesoup.dump(request), 'warning');
-		notesoup.sound.play('/sound/6164__NoiseCollector.mp3');
+		if (notesoup.sound)
+			notesoup.sound.play('/sound/6164__NoiseCollector.mp3');
 		notesoup.postEvent(request.channel, 'pong', request);
 		notesoup.refreshAvatar();
 	},
@@ -192,7 +196,8 @@ notesoup.push = {
 
 	onplay: function(request) {
 		notesoup.say('Playing...');
-		notesoup.sound.play(request.data);
+		if (notesoup.sound)
+			notesoup.sound.play(request.data);
 	},
 	
 	/**
