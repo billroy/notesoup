@@ -1,23 +1,10 @@
 
+finish event plumbing
 
-- BLOCKING BUG: can't load socket.io.js???
-
-
-Pull the big client over
-	- /api
-	- json content type
-	- disable AFLAX and other stuff as needed
-
-- restore full image icon set
-	- (ugh)
+- mtimes in the note, or not?
 
 Routing for /folder/:user/:folder
 	templates next
-
-finish event plumbing
-
-- stub out api_ handling
-- error message return!
 
 ---
 

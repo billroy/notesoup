@@ -365,11 +365,14 @@ var notesoup = {
 			this.debug('updatenote in: theupdate=' + notesoup.dump(theupdate));
 
 		//this.say('updatenote in: thenote=' + notesoup.dump(theupdate), 'tell');
-			
+
+		// TEMPORARY hack to fix [{}] notes
+		if (typeof(theupdate[0]) != 'undefined') theupdate = theupdate[0];
+
 		// It's an error to send an update without an id
 		var noteid = theupdate.id;
 		if (!noteid) {
-			this.say('Error: update without note id: ' + notesoup.dump(theupdate), 'error');
+			this.say('Error: ' + typeof(theupdate) + ' update without note id: ' + notesoup.dump(theupdate), 'error');
 			return;
 		}
 

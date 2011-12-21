@@ -31,10 +31,12 @@ var app = module.exports = express.createServer();
 
 var io = require('socket.io').listen(app);
 
-io.sockets.on('connection', function (socket) {
+io.sockets.on('connection', function(socket) {
 	console.log('Socket connection accepted.');
-	socket.on('message', function(data) {
-		io.sockets.emit('message', data);
+	socket.on('soupnet', function(data) {
+		console.log('Broadcasting push message:');
+		console.dir(data);
+		io.sockets.emit('soupnet', data);
 	});
 
 	//socket.emit('message', 'Welcome to the Soup.');

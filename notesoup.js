@@ -196,7 +196,7 @@ api_sendnote: function(req, res) {
 },
 
 api_postevent: function(req, res) {
-//	console.dir(req.body.params);
+	console.dir(req.body.params);
 	return this.sendreply(req, res, []);
 },
 

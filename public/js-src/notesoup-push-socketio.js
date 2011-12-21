@@ -15,9 +15,10 @@ notesoup.push = {
 
 		// Socket IO is our push matrix
 		
-		this.socket = io.connect('http://localhost');	// todo: server?
-		this.socket.on("connect", this.onconnect);
-		this.socket.on("message", this.ondata);
+		this.socket = io.connect();
+		this.socket.on('connect', this.onconnect);
+		this.socket.on('soupnet', this.ondata);
+		//this.socket.on('disconnect', ...);
 
 //		notesoup.socket.say = function(data) {
 //			notesoup.socket.emit("tell", data);
@@ -47,9 +48,9 @@ notesoup.push = {
 	send: function(msg) {
 
 		// Silently ignore blanks
-		if (msg.length <= 0) return;
+		//if (msg.length <= 0) return;
 
-		if (this.connected) this.socket.emit(msg);
+		if (this.connected) this.socket.emit('soupnet', msg);
 		else notesoup.say('Cannot send notification: server disconnected');
 	},
 
@@ -328,10 +329,13 @@ notesoup.set({
 				data: arg
 			};
 			if (notesoup.loggedin) request.authtoken = document.cookie.split('=')[1];
+/***
 			var jsonrequest = Ext.util.JSON.encode(request);
 			//notesoup.say('Sending notification...' + jsonrequest);
 			notesoup.push.send(jsonrequest);
 			//notesoup.say('Notification sent.');
+***/
+			notesoup.push.send(request);
 			return;
 		}
 
