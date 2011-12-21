@@ -55,17 +55,17 @@ notesoup.push = {
 	},
 
 	// message callback
-	ondata: function(msg) {
+	ondata: function(request) {
 
-		notesoup.say('ONDATA: ' + msg);
-		if (notesoup.debugmode > 2) notesoup.debug('Notification: ' + msg);
+		notesoup.say('ONDATA:' + notesoup.dump(request));
 
-		if (msg.charAt(0) != '{') {
-			notesoup.say('Server says: ' + msg, 'error');
-			notesoup.say(notesoup.hexdump(msg));
-		}
+		if (notesoup.debugmode > 2) notesoup.debug('Notification: ' + request);
 
-		var request = Ext.util.JSON.decode(jsonmsg);
+//		if (msg.charAt(0) != '{') {
+//			notesoup.say('Server says: ' + msg, 'error');
+//			notesoup.say(notesoup.hexdump(msg));
+//		}
+
 		if (request) return notesoup.push.deliverNotification(request);
 		else {
 			notesoup.say('Sorry, cannot decipher notification: ' + jsonmsg, 'error');
