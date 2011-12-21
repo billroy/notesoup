@@ -68,20 +68,22 @@ app.configure('production', function(){
 var soup = require('./notesoup.js');
 soup.connect(process.env.REDIS_URL);
 
+app.get('/folder/:user/:folder', function(req, res) {
+	res.send(req.params.user + '/' + req.params.folder);
+	console.dir(req.params);
+});
 
-app.post('/notesoup.php', function(req, res) {
+app.post('/api', function(req, res) {
 	//console.log("Request body: " + typeof(req.body));
 	//console.dir(req.body);
 	//console.log("Memory usage:");
 	//console.dir(process.memoryUsage());
 
 	if (typeof(soup['api_'+req.body.method]) == "function") {
+		console.log("api req: " + req.body.method);
+		console.dir(req.body.params);
 		soup['api_'+req.body.method](req, res);
 	}
-
-	//if (req.body.method == 'savenote') apisavenote(req, res);
-	//else if (req.body.method == 'sync') apisync(req, res);
-	//else if (req.body.method == 'sendnote') apisendnote(req, res);
 	else {
 		console.log("Error in request body: " + typeof(req.body));
 		console.dir(req.body);
@@ -93,4 +95,4 @@ app.post('/notesoup.php', function(req, res) {
 });
 
 app.listen(3000);
-console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
+console.log("NoteSoup listening on port %d in %s mode", app.address().port, app.settings.env);

@@ -1,0 +1,37 @@
+
+Pull the big client over
+	- /api
+	- json content type
+	- disable AFLAX and other stuff as needed
+
+- restore full image icon set
+	- (ugh)
+
+Routing for /folder/:user/:folder
+	templates next
+
+Sessions and session store in socket.io
+
+API order of battle
+
+Populate empty db
+	Load system/widgets/etc
+
+BUG: Fix The Blocking Widgets Bug
+
+where do folder attrs go?
+	folder/...
+		security
+		dotfiles
+
+Ext v99?  Touch?  Mac?
+
+Message fabric integration with socket.io
+	- rewrite notesoup-push-aflax.js
+
+
+Templates
+
+
+BUG: Don't put default background color in every damn note
+BUG: use shorter attribute names in note data, maybe single letter

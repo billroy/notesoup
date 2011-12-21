@@ -1,64 +1,50 @@
-/**
-*	notesoup.js
-*
-*	Copyright 2007, 2008 Bill Roy
-*	This file is licensed under the Note Soup Client License
-*	See http://notesoup.net/js/LICENSE
-*/
+/*
+	notesoup.js
 
-/** 
-*	This structure is the center of the Note Soup universe.
-*	@constructor 
+	Copyright (c) 2007, Bill Roy
+	This file is licensed under the Note Soup License
+	See the file LICENSE that comes with this distribution
 */
 var notesoup = {
 
-	/** the version we present to the server */
-	clientVersion: 'notesoup-ext-node 0.7',
+	clientVersion: 'notesoup-miso-ext 0.597d',
 
-	debugmode: 0,					/** 0..9 for debugging log spew */
-	sayDebug: false,				/** echo debug log to notification stack? */
-	newNotePositionMode: 'cascade',	/** make a mess with 'random' or use 'cascade' */
-	apiuri: 'api',					/** the mother ship's default code point for us */
-	runScripts: true,				/** true to run ontick, onload, run, and eval() handlers */
-	autoLoadAvatar: false,			/** true to deploy the avatoon on load */
+	debugmode: 0,					// 0..9 for debugging log spew
+	sayDebug: false,				// echo debug log to notification stack?
+	newNotePositionMode: 'cascade',	// make a mess with 'random' or use 'cascade' 
+	apiuri: 'notesoup.php',				// the mother ship's default code point for us
+	runScripts: true,				// true to run ontick, onload, run, and eval() handlers
 
 	// Sync controls
-	syncInterval: 60,				/** seconds between syncs; 0 to disable auto sync */
-	syncUIOnUpdates: true,			/** true to render immediately on update; false defers */
+	syncInterval: 15,				// seconds between syncs; 0 to disable auto sync
+	syncUIOnUpdates: true,			// update immediately and reset update timer
 
 	// Miscellaneous configurable options
-	defaultNoteWidth: 250,			/** baby notes are this height */
-	defaultNoteHeight: 100,			/** baby notes are this width */
-	defaultAccessoryZIndex: 10000,	/** baby notes get this zIndex but note also css files */
+	defaultNoteWidth: 250,
+	defaultNoteHeight: 100,
+	defaultAccessoryZIndex: 10000,	// but note also css files
 
-	useFastFolderSwitching: false,	/** experimental. */
-	foldercache: {},	// folder cache...	/** experimental. */
+	useFastFolderSwitching: false,	// living on the edge...
+	cache: {},	// folder cache...
 
-	imageHost: '',				/** for standalone/php server/air */
-	//imageHost: '/',					/** the cherrypy server wants this. */
-	//imageHost: 'http://notesoup.net/',	/** standalone python */
+	imageHost: '',					// prefix for static image hosting
 
-	/**
-	*	initialize note soup.
-	*	@param {object} [opts] Optional passed-in initializations.
-	*/
 	initialize: function(opts) {
 
 		this['startuptime'] = new Date().getTime();
 
 		// Set passed-in options so they are available for the rest of init
-		if (opts) {
-			this.serveropts = opts;
-			if (typeof(opts) == 'object') this.set(opts);
-		}
+		opts = opts || {};
+		for (var o in opts) {
+			notesoup[o] = opts[o];
+		};
 		
 		if (!this.baseuri) {
-			this.baseuri = window.location.protocol + '//' + window.location.host + '/';
-			//this.baseuri = document.location;
+			this.baseuri = document.location;
 			//this.baseuri = this.baseuri.replace('#','');
 		}
 
-		// Establish the folder name from the browser location
+		// Establish the folder name
 		// TODO: for nested folders this needs to respect more than two uriparts
 		if (!this.foldername.length) {
 			var uriparts = ('' + document.location).split('/');
@@ -75,66 +61,27 @@ var notesoup = {
 			for (var i=0; i<queryparts.length; i++) {
 				var attrpair = queryparts[i].split('=');
 				if (attrpair.length == 2) {
-					if (attrpair[0] == 'folder') {
-						this.foldername = 'user' + '/' + attrpair[1];
+					if (attrpair[0] == 'user') {
+						this.username = attrpair[1];
+						this.foldername = this.username + '/inbox';
+					}
+					else if (attrpair[0] == 'folder') {
+						this.foldername = this.username + '/' + attrpair[1];
 					}
 				}
 			}
 		}
 
-		document.title = 'Note Soup :: ' + this.foldername;
+		document.title = 'Note Soup';
 		this.ui.initialize();
 		if (navigator.userAgent.search('iPhone') >= 0)
 			this.say('Welcome iPhone user!');
-			
-		if (this.username) this.say('Hello, ' + this.username + '.');
-		this.say('Opening ' + notesoup.foldername + '...');
-
-		// handle initial note pre-load
-		if (this.serveropts.initnotes) {
-			for (var i=0; i < this.serveropts.initnotes.length; i++) {
-				var r = this.serveropts.initnotes[i];
-				//alert('RAW NOTE STRING: ' + r);
-				var n = unescape(r);
-				//alert('UNESCAPED: ' + n);
-				var z1 = n.replace(/&lt;/g, '<');
-				//alert('Z1: ' + z1);
-				var z2 = z1.replace(/&gt;/g, '>');
-				var z3 = z2.replace(/&amp;/g, '&');
-				//alert('Z2: ' + z2);
-				var thenote = Ext.util.JSON.decode(z3);
-				//alert('DECODED NOTE DUMPED: ' + this.dump(thenote));
-
-				this.updateNote(thenote);
-				if (thenote.mtime > this.lastupdate) this.lastupdate = thenote.mtime;
-			}
-		}
-
+		this.say('Opening folder ' + notesoup.foldername + '...');
 		this.oneHertzCallback();	// call this late; it triggers sync
-
-		if (this.serveropts.ispublic) notesoup.say('This folder is public.', 'warning');
-		if (this.serveropts.isowner) notesoup.say('This folder belongs to you.');
-		else if (this.serveropts.iseditor) notesoup.say('You can edit things here.');
-		else if (this.serveropts.issender) notesoup.say('You can send things here.');
-
-		if (window && window.event && window.event.shiftKey) {
-			notesoup.say('Scripts supressed.', 'warning');
-			this.runScripts = false;
-		}
-
-		if (!this.pushhost) this.pushhost = '';
-		if (!this.pushport) this.pushport = 7000;
-		notesoup.aflax.flashinit();
-		notesoup.sound.init();
-		notesoup.frontstage.init();
-
 		this.initialized = true;
 		return true;
 	},
 	
-	/**
-	*	clean up note soup
-	*/
 	destroy: function() {
 		this.initialized = false;
 		delete this.processServerResponse;
@@ -144,22 +91,16 @@ var notesoup = {
 		instantsoup.cleanup();
 		delete this;
 	},
-	
-	/**
-	*	merge the passed-in options into notesoup
-	*	@param {object} opts options to merge into notesoup
-	*/
-	set: function(opts) {
-		for (var o in opts) this[o] = opts[o];
-	},
 
-
-	/** The working array of notes synchronized from the current folder */
 	notes: {},
-
-	/** The name of the current folder */
+	username: '',
 	foldername: '',
 	
+	editors: '',
+	readers: '',
+	senders: '',
+
+	readonly: 0,
 	lastupdate: 0,
 	commandid: 0,
 	commandsPending: 0,
@@ -179,37 +120,22 @@ var notesoup = {
 	bytesSentTotal: 0,
 	bytesReceived: [],
 	bytesReceivedTotal: 0,
-	serverTimeDiffStack: [],
 	
 	// UI performance timers
 	uiUpdateTimerLast: 0,
 	uiUpdateTimerTotal: 0,
 	uiUpdateTimerStack: [],
 
-	/**
-	*	prompt for user input - overriden at startup with ui-specific dialog
-	*	@param {string} prompstr The prompt to display
-	*	@param {string} defaultvalue The value to offer the user
-	*/
 	// Overridable prompt method
 	prompt: function(promptstr, defaultvalue) {
 		return prompt(promptstr, defaultvalue);
 	},
 
-	/**
-	*	display a message box and wait for a click
-	*	@param {string} alertstr The string to display
-	*/
 	// Overridable alert method
 	alert: function(alertstr) {
 		return alert(alertstr);
 	},
 
-	/**
-	*	log a string to the debug console, if enabled
-	*	@see setDebug
-	*	@param {string} debugstr The string to log
-	*/
 	// Overridable debug method
 	debug: function(debugstr) {
 		if (this.debugmode) {
@@ -221,20 +147,17 @@ var notesoup = {
 		}
 	},
 
-	/**
-	*	set the debug level (0..9) and open a debug window if needed
-	*	@param {int} level The debug level.  Zero is 'off'.  Three is nice.  Nine is insane.
-	*/
-	setDebug: function(level) {
+	setDebug: function(d) {
 
-		if ((level > 0) && (level <= 9)) {
-			this.debugmode = level;
+		if (d) this.debugmode = d;
+		else this.debugmode = 3;
+
+		if ((this.debugmode > 0) && (this.debugmode <= 9)) {
 			if (!this.stderr) {
-				this.stderr = window.open('','notesoup debug output', 'resizable=yes,scrollbars=yes,width=600,height=400');
+				this.stderr = window.open('','notesoup debug output', 'resizable=1,scrollable=1,width=600,height=400');
 			}
-			if (!this.stderr) alert('oops setdebug');
-			//	this.debug('<link rel="stylesheet" type="text/css" href="css/debug.css"/>note soup debug log ' + new Date());
-			this.debug('<link rel="stylesheet" type="text/css" href="/css/notesoup.css"/>note soup debug log ' + new Date());
+			if (!this.stderr) alert('oops print');
+			this.debug('<link rel="stylesheet" type="text/css" href="css/debug.css"/>note soup debug log ' + new Date());
 		} 
 		else {
 			this.debugmode = 0;
@@ -245,25 +168,7 @@ var notesoup = {
 		}
 		this.say('Debug level: ' + this.debugmode);
 	},
-	
-	/**
-	*	Print the args to the debug window
-	*/
-	print: function() {
-		if (!this.stdout) {
-			this.stdout = window.open('','notesoup output window', 'resizable=yes,scrollbars=yes,width=600,height=400');
-			if (!this.stdout) alert('oops cant print');
-			this.print('<link rel="stylesheet" type="text/css" href="/css/notesoup.css"/>note soup output log ' + new Date());
-		}
-		for (var i = 0; i < arguments.length; i++) this.stdout.document.write(arguments[i]);
-		this.stdout.document.write('<br/>\n');
-	},
 
-	/**
-	*	return a time stamp string in selected format
-	*	@param {float} [t] A Javascript time (Unix * 1000), or null to mean "now"
-	*	@param {string} [format] A format selector from ['ms-elapsed', 'time']
-	*/
 	timeStamp: function(t, format) {
 	
 		if ((typeof(t) == null) || (t == '')) t = new Date();
@@ -289,115 +194,72 @@ var notesoup = {
 			return timestring;
 		}
 	},
-
-	/**
-	*	returns the session elapsed time, stringified
-	*/
-	sessionTime: function() {
-		return this.timeStamp('','');
-	},
 	
+	sessionTime: function() {
+		return this.timeStamp('','');	
+	},
 
-	/**
-	*	return a string representation of an object suitable for dumping
-	*	@param {object} obj the object to dump
-	*/
 	dump: function(obj) {
 		return Ext.util.JSON.encode(obj);
 	},
 
 
-	/** note position generator location */
+	// Note position generator
 	nextx: 200,
 	nexty: 50,
-	
-	/**
-	*	return a good place to put the next new note
-	*	@params {string} mode choose the selection method from ['random', 'switch', and 'tile']
-	*/
 	getNewNotePosition: function(mode) {
 
 		// Random: messy, but supports large piles well
 		// Drop new notes randomly into a [300x300] box at [nextx,nexty]
 		if ((mode == 'random') || ((mode == 'switch') && (this.countNotes() > 10)))
 			return {
-				//x: this.nextx + Math.floor(Math.random() * 300),
-				//y: this.nexty + Math.floor(Math.random() * 300)
-				x: Math.max(6, Math.floor(Math.random() * Ext.lib.Dom.getViewWidth() - notesoup.defaultNoteWidth)),
-				y: Math.max(30, Math.floor(Math.random() * Ext.lib.Dom.getViewHeight() - notesoup.defaultNoteHeight))
+				x: this.nextx + Math.floor(Math.random() * 300),
+				y: this.nexty + Math.floor(Math.random() * 300)
 			};
 
 		// Deterministic: pretty, but crawls off screen for large piles
 		var newpos = {
 			x: this.nextx,
 			y: this.nexty
-		};
-		if (mode != 'vstack') this.nextx += 25;
+		}
+		this.nextx += 25;
 		this.nexty += 25;
 		return newpos;
 	},
 
-	/**
-	*	return a count of notes in the current folder
-	*/
+	// return a count of notes in the current folder
 	countNotes: function() {
 		var count = 0;
 		for (var n in this.notes) count++;
 		return count;
 	},
 
-	forceInt: function(v) {
-		if (typeof(v) == 'number') return v;
-		if (typeof(v) == 'string') {
-			//notesoup.say("Converting string " + v);
-			return parseFloat(v);
-		}
-		return 0;
-	},
 
-	/**
-	*	Update Note
-	*	
-	*	Command from server to populate a note with new data
-	*	Creates the note if it doesn't exist
-	*	@param {object} thenote
+	/*
+		Update Note
+		
+		Command from server to populate a note with new data
+		Creates the note if it doesn't exist
 	*/
-	updateNote: function(theupdate) {
+	updateNote: function(thenote) {
 
 		if (this.debugmode > 4)
-			this.debug('updatenote in: theupdate=' + notesoup.dump(theupdate));
+			this.debug('updatenote in: thenote=' + thenote.toString());
 
-		//this.say('updatenote in: thenote=' + notesoup.dump(theupdate), 'tell');
-			
 		// It's an error to send an update without an id
-		var noteid = theupdate.id;
+		var noteid = thenote.id;
 		if (!noteid) {
-			this.say('Error: update without note id: ' + notesoup.dump(theupdate), 'error');
+			this.say('Error: update without note id: ' + thenote.toString() + ' ' + typeof(thenote), 'error');
 			return;
 		}
-
+		
 		// silently discard deletion tombstones
-		if ('deleted' in theupdate) return;
-		if ('syncme' in theupdate) delete theupdate.syncme;
+		if ('deleted' in thenote) return;
 
 		var eventHandler = 'onupdate';
 		var refreshUI = true;
 		var changeCount = 0;
 		if (noteid in this.notes) {		// note exists - this is an update
-
-			// decline an update to a younger version
-			if (theupdate.mtime == undefined) notesoup.say('upd: incoming no mtime: ' + this.dump(theupdate));
-			if (this.notes[noteid].mtime == undefined) notesoup.say('upd: [] no mtime: ' + this.dump(this.notes[noteid]));
-
-			if (theupdate.mtime < this.notes[noteid].mtime) {
-				//notesoup.say('dropping spurious younger update: ' + noteid + ' ' + theupdate.mtime + ' ' + this.notes[noteid].mtime, 'warning');
-				return;
-			}
-			else if (theupdate.mtime == this.notes[noteid].mtime) {
-				//notesoup.say('passing apparently spurious same-age update: ' + noteid + ' ' + thenote.mtime, 'warning');
-				//return;
-			}
-
 
 			// Check for case where an update arrives on a note being edited
 			// TODO: this is the place where better conflict handling should go
@@ -406,33 +268,27 @@ var notesoup = {
 				return;		// silently ignore for now
 			}
 
-			//// Did anything really change?
-			//for (var o in thenote) {
-			//	if (thenote[o] != notesoup.notes[noteid][o]) {
-			//		changeCount++;
-			//		if (this.debugmode > 3)
-			//			notesoup.say('Server update: ' + changeCount + ' ' + noteid + '.' + o + '=' + thenote[o] + ' was=' + notesoup.notes[noteid][o]);
-			//	}
-			//}
-			//if (changeCount == 0) refreshUI = false;
+			// Did anything really change?
+			for (var o in thenote) {
+				if (thenote[o] != notesoup.notes[noteid][o]) {
+					changeCount++;
+					if (this.debugmode > 3)
+						notesoup.say('Server update: ' + changeCount + ' ' + noteid + '.' + o + '=' + thenote[o] + ' was=' + notesoup.notes[noteid][o]);
+				}
+			}
+			if (changeCount == 0) refreshUI = false;
 
 			// Play in the updates and set the updated flag
-			this.notes[noteid].set(theupdate);
-		}
-		else {		// doesn't exist? new note		
-			this.notes[noteid] = new soupnote(theupdate);
+			this.notes[noteid].set(thenote);
+		} 
+		else {		// doesn't exist? new note
+			this.notes[noteid] = new soupnote(thenote);
 
 			// set up to call onload handler
 			eventHandler = 'onload';
 		}
 
 		var thenote = this.notes[noteid];
-
-		thenote['xPos'] = this.forceInt(thenote['xPos']);
-		thenote['yPos'] = this.forceInt(thenote['yPos']);
-		thenote['width'] = this.forceInt(thenote['width']);
-		thenote['height'] = this.forceInt(thenote['height']);
-		thenote['zIndex'] = this.forceInt(thenote['zIndex']);
 
 		if (!((thenote.xPos > 0) && (thenote.yPos > 0))) {
 			var newpos = this.getNewNotePosition(this.newNotePositionMode);
@@ -441,31 +297,13 @@ var notesoup = {
 
 		if (!(thenote.height > 0)) thenote.height = this.defaultNoteHeight;
 		if (!(thenote.width > 0)) thenote.width = this.defaultNoteWidth;
-		if (!('bgcolor' in thenote)) thenote.bgcolor = notesoup.ui.defaultNoteColor || '#fff8b6';
-
-		// more resize bug
-		//if (('width' in theupdate) || ('height' in theupdate)) 
-		//	thenote.resizeTo(thenote.width, thenote.height);
+		if (!('bgcolor' in thenote)) thenote.bgcolor = '#fff8b6';
 
 		// Clear the syncme bit if it's set
-		if (thenote.syncme) {
-			delete thenote.syncme;
-			if (this.notes[noteid].syncme) {
-				notesoup.say('oops syncme', 'tell');
-			}
-		}
+		delete thenote.syncme; 
 
 		// We aren't editing now
 		delete thenote.editing;
-
-		// Here's where we load the widget into the note
-		if (thenote.imports) {
-			if (notesoup.debugmode > 2)
-				notesoup.say("updatenote: applying imports:" + thenote.imports + ' ' + eventHandler);
-			if ((eventHandler == 'onload') && thenote.imports && thenote.applyImports) {
-				thenote.applyImports();
-			}
-		}
 
 		// Call the onload or onupdate handler
 		thenote.calleventhandler(eventHandler);
@@ -476,24 +314,20 @@ var notesoup = {
 		// Force a UI update if we're running in quick-UI-sync mode
 		// ...but only if something changed
 		if (refreshUI) {
-			if (this.syncUIOnUpdates) {
-				//notesoup.say('updatenote: showing the note');
-				thenote.show();
-			}
+			if (this.syncUIOnUpdates) thenote.show();
 			else thenote.set({showme: true});
 		}
 		//else notesoup.say('Skipped UI refresh...');
 	},
 
 
-	/**
-	*	notify the UI of any updated notes we received from sync
-	*	fired on a timer, kicked on arrival of updates.
-	*/
+	// SyncUI: Notify the UI of any updated notes
+	//
+	//	Fired on a timer, kicked on arrival of updates.
+	//
 	syncUI: function() {
 
 		for (var n in this.notes) {
-			this.notes[n].syncHeight();
 			if ('showme' in this.notes[n]) 
 				if ('show' in this.notes[n])
 					if (typeof(this.notes[n].show) == 'function')
@@ -510,33 +344,13 @@ var notesoup = {
 	},
 
 
-	/**
-	*	saveNoteList: Save a list of notes to the server
-	*/
-	saveNoteList: function(notelist) {
-		this.postRequest({
-			method:"savenote",
-			params:{
-				note:notelist,			// special case for list
-				tofolder: this.foldername,
-				notifyfolder:this.foldername
-			}
-			},{
-				requestMessage: 'Saving ' + notelist.length + ' updated notes...',
-				successMessage: 'Saved.',
-				failureMessage: 'Could not save notes.'
-			});
-	},
-
-
-	/**
-	*	syncToServer: Send updated notes (flagged 'syncme') to the server.
-	*/
+	// syncToServer: Send updated notes (flagged 'syncme') to the server.
+	//
 	syncToServer: function() {
 
 		var notelist = [];
 		for (var n in this.notes) {
-			if (!this.notes[n].nosave && !this.notes[n].isGuest && ('syncme' in this.notes[n]) && this.notes[n].syncme) {
+			if (('syncme' in this.notes[n]) && this.notes[n].syncme) {
 				delete this.notes[n].syncme;
 				notelist.push(this.notes[n]);
 				this.notes[n].syncme = true;
@@ -545,8 +359,21 @@ var notesoup = {
 
 		// Notes to sync back?  Build and post a request
 		if (notelist.length > 0) {
+
 			//notesoup.say('Unsaved notes: ' + notelist);
-			this.saveNoteList(notelist);
+
+			this.postRequest({
+				method:"savenote",
+				params:{
+					note:notelist,			// special case for list
+					tofolder: this.foldername,
+					notifyfolder:this.foldername
+				}
+				},{
+					requestMessage: 'Saving ' + notelist.length + ' updated notes...',
+					successMessage: 'Saved.',
+					failureMessage: 'Could not save notes.'
+				});
 		}
 
 		// Send a sync, but only if we didn't send a sendNote, since that does an implicit sync
@@ -557,27 +384,24 @@ var notesoup = {
 	},
 
 
-	/**
-	*	notesoup client-server api library
-	*/
+	//********************
+	//	Notesoup client-server API
+	//********************
 
 	//	Login
-	/*
-	*	login
-	*	@param {string} username the username to log in
-	*	@param {string} password that user's password
-	*/
 	login: function(username, password) {
 
-		if (!username) {
-			if (this.username) username = this.username;
+		if (username == null || username.length == 0) {
+			username = this.prompt('Enter username:', username);
+			if (username == null) return;
 		}
-		if (!username) {
-			username = this.prompt('Enter username:', this.username);
-			if (!username) return;
+		if (password == null || password.length == 0) {
+			password = this.prompt('Enter password:', password);
+			if (password == null) return;
 		}
-		this.username = username;
-		if (password) this.password = password;
+		this.newloginusername = username;
+		this.newloginpasswordhash = hex_sha1(password);
+		password = '';
 
 		// Send off a knock-knock request; login is completed below once we have the nonce
 		this.postRequest({
@@ -593,45 +417,34 @@ var notesoup = {
 	},
 
 
-	/**
-	*	Handle second phase of two-phase login.  Not for users to call, generally - 
-	*	processed automatically on server 'whosthere' command
-	*	which is returned in response to the login command (see above)
-	*	@param {string} nonce the nonce sent by the server
-	*/	
+	// completeLogin: Handle second phase of two-phase login
+	// not for users to call, generally - 
+	// processed automatically on server 'whosthere' command
+	// which is returned in response to the login command (see above)
+	//
 	completeLogin: function(nonce) {
-
-		if (this.username == null || this.username.length == 0) {
-			this.username = this.prompt('Enter username:', this.username);
-			if (this.username == null) return;
+		if (this.newloginpasswordhash) {
+			this.postRequest({
+				method:'login',
+				params:{
+					username:this.newloginusername,
+					passwordhash:hex_sha1(this.newloginpasswordhash + nonce)
+				}
+			},{
+				requestMessage: 'Logging in as ' + this.newloginusername + '...',
+				successMessage: 'Login succeeded...',
+				failureMessage: 'Login failure.  No soup for you.'
+			});
+			delete this.newloginusername;
+			delete this.newloginpasswordhash;
 		}
-		var password = this.password ? this.password : '';
-		if (!this.password) {
-			password = this.prompt('Enter password for user ' + this.username + ':', '');
+		else {
+			this.alert('Login phase error.', 'warning');
 		}
-		if (!password) return;
-		var passwordhash = hex_sha1(password);
-		password = '';
-		delete this.password;
-
-		this.postRequest({
-			method:'login',
-			params:{
-				username:this.username,
-				passwordhash:hex_sha1(passwordhash + nonce)
-			}
-		},{
-			requestMessage: 'Logging in as ' + this.username + '...',
-			successMessage: 'Login succeeded...',
-			failureMessage: 'Login failure.  No soup for you.'
-		});
-		passwordhash = '';
 	},
 
 
-	/**
-	*	end this login session and navigate to the welcome page
-	*/
+	//	Logout
 	logout: function() {
 		this.postRequest({
 			method:'logout',
@@ -639,29 +452,18 @@ var notesoup = {
 		},{
 			requestMessage: 'Logging out...',
 			successMessage: 'Logged out...',
-			// This is a huh? case... can't log out
+			// This is a wtf case... can't log out
 			failureMessage: 'I\'m sorry, Dave, I can\'t let you do that.'
 		});
 	},
 
 
-	/**
-	*	saveNote: save a note to the server
-	*	@param {object} thenote the note to save.  if no 'id' is present a new note is created.
-	*	@param {string} [tofolder] the folder in which to save the note; if not supplied the current folder (notesoup.foldername) is used
+	/*
+		saveNote: save a note to the server
 	*/
 	saveNote: function(thenote, tofolder) {
 
 		if (this.readonly) return;
-		if (thenote.nosave) {
-			delete thenote.syncme;
-			return;
-		}
-
-		if (thenote.isGuest) {
-			notesoup.say('Ignoring an attempt by a Guest to move in via save(): ' + thenote.id + ' ' + thenote.notename, 'warning');
-			return;
-		}
 
 		this.debug('saveNote: thenote=' + thenote.toString());
 
@@ -678,9 +480,8 @@ var notesoup = {
 				notifyfolder:this.foldername
 			}
 			},{
-				// these are very noisy - removed to damp out the UI gerklunking
-				//requestMessage: 'Saving ' + name + '...',
-				//successMessage: 'Saved.',
+				requestMessage: 'Saving ' + name + '...',
+				successMessage: 'Saved.',
 				failureMessage: 'Could not save note ' + name
 			});
 
@@ -690,12 +491,10 @@ var notesoup = {
 	},
 
 	
-	/**
-	*	appendToNote: append text to a note's text field
-	*	=this.appendToNote('another line', 'test22');
-	*	@param {string} thetext the text to append to the note body
-	*	@param {string} thenoteid the note in question
-	*	@param {string} [tofolder] the folder, required if not the current folder
+	/*
+		appendToNote: append text to a note's text field
+		
+		=this.appendToNote('another line', 'test22');
 	*/
 	appendToNote: function(thetext, thenoteid, tofolder) {
 
@@ -720,26 +519,18 @@ var notesoup = {
 			});
 	},
 	
-	/**
-	*	Send a note
-	*
-	*	Use cases:
-	*	1. Note->Delete (send this note to this user's trash)
-	*	2. Note->Send to user... (send this note to another user's inbox)
-	*	3. Note->Send to notesoup... (send this note to another folder for this user)
-	*	4. Creating a new note from a system or user template; this is send without deleteoriginal
-	*	@param {string} thenoteid the id of the note to send
-	*	@param {string} fromfolder the origin folder, where the note had better be right now
-	*	@param {string} tofolder the destination folder, where the note will end up after the send
-	* 	@param {boolean} deleteoriginal if true the original note will be deleted from the fromfolder
+	/* 
+		Send a note
+
+		Use cases:
+		1. Note->Delete (send this note to this user's trash)
+		2. Note->Send to user... (send this note to another user's inbox)
+		3. Note->Send to notesoup... (send this note to another folder for this user)
+		4. Creating a new note from a system or user template; this is send without deleteoriginal
 	*/
 	sendNote: function(thenoteid, fromfolder, tofolder, deleteoriginal) {
 
 		if (deleteoriginal === undefined) deleteoriginal = true;
-
-		var thename = thenoteid;
-		if ((fromfolder == this.foldername) && ('notename' in notesoup.notes[thenoteid]))
-			thename = notesoup.notes[thenoteid].notename;
 
 		this.postRequest({
 			method:"sendnote",
@@ -751,36 +542,32 @@ var notesoup = {
 				deleteoriginal: deleteoriginal
 			}
 			},{
-				requestMessage: 'Sending ' + thename + ' to ' + tofolder,
+				requestMessage: 'Sending ' + thenoteid + ' to ' + tofolder,
 				successMessage: 'Sent.',
 				failureMessage: 'Could not send note.'
 			});
 	},
 
 
-	/**
-	*	sendNoteToUser: UI sugar function to send a note
-	*	@param {string} thenoteid the id of the note to send
-	*	@param {string} tofolder the destination folder, where the note will end up after the send
-	* 	@param {boolean} deleteoriginal if true the original note will be deleted from the fromfolder
+	/*
+		sendNoteToUser: UI function to send a note
 	*/
 	sendNoteToUser: function(thenoteid, tofolder, deleteoriginal) {
 
 		if (!tofolder) tofolder = prompt('Send to:', '');
 		if (!tofolder) return;
 		
-		// If destination is a bare foldername (does not have a folder spec), tack on '/inbox'
+		// If destination is a bare username (does not have a folder spec), tack on '/inbox'
 		if (tofolder.search('/') < 0) tofolder = tofolder + '/inbox';
 
-		this.sendNote(thenoteid, notesoup.foldername, tofolder, deleteoriginal);
+		this.sendNote(thenoteid, notesoup.foldername, tofolder, true);
 	},
 
 	
-	/**
-	*	Rename note
-	*	Provides a measure of control over the (normally random, system-assigned) filename for a note
-	*	@param {object} thenote the note to rename (the note object, not its id)
-	*	@param {object} the new id you would like it to have
+	/*
+		Rename note
+		
+		Provides a measure of control over the (normally random, system-assigned) filename for a note
 	*/
 	renameNote: function(thenote, newname) {
 
@@ -809,14 +596,13 @@ var notesoup = {
 	},
 
 
-	/**
-	*	destroyNote
-	*	Called by the server after a note-send operation to delete a note 
-	*	from the client's local store and remove it from the UI.
-	*	For example, after a deleteNote moves a note to the trash folder,
-	*	the server commands a destroyNote to make it disappear.
-	*	Not to be confused with {@see deleteNote} which moves a note to the trash.
-	*	@param {string} thenoteid the id of the note to be eliminated
+	/*
+		destroyNote
+
+		Called by the server after a note-send operation to delete a note 
+		from the client's local store and remove it from the UI.
+		For example, after a deleteNote moves a note to the trash folder,
+		the server commands a destroyNote to make it disappear.
 	*/
 	destroyNote: function(thenoteid) {
 
@@ -824,23 +610,18 @@ var notesoup = {
 
 			// Delete from the DOM
 			this.ui.deleteDOMNote(this.notes[thenoteid]);
-
-			// release its ephemeral storage
-			notesoup.notes[thenoteid].clearEphemeral();
 	
 			// Remove from the note array
 			delete this.notes[thenoteid];
-
 		}
 	},
 
 
-	/**
-	*	Delete note
-	*
-	*	Shorthand: Send the note to the user's trash folder
-	*	This is a user command not to be confused with {@see destroynote} above.
-	*	@param {string} thenoteid the id of the note to send to the trash
+	/*
+		Delete note
+
+		Shorthand: Send the note to the user's trash folder
+		This is a user command not to be confused with destroynote below
 	*/
 	deleteNote: function(thenoteid) {
 
@@ -848,54 +629,28 @@ var notesoup = {
 		if (typeof(thenoteid) == 'object') thenoteid = thenoteid.id;
 
 		if (this.readonly) return;
-		this.sendNote(thenoteid, this.foldername, this.getUserFromFolderPath(this.foldername) + '/trash');
+		this.sendNote(thenoteid, this.foldername, this.username + '/trash');
 	},
 	
-	/**
-	*	erase all the notes in this folder by sending them to the trash (after user confirmation)
-	*/
 	erase: function() {
-		if (this.prompt("Really, really send everything to the trash?", 'no') == 'yes')
-			for (var n in this.notes) this.deleteNote(this.notes[n].id);
+		for (var n in this.notes) this.deleteNote(this.notes[n].id);
 	},
 
 
-	/**
-	*	Folder functions
+	/*
+		Folder functions
 	*/
 
-	/**
-	*	return the first path component, i.e., 'user' from 'user/folder'
-	*	@param {string} folderpath the path whose user component you wish to extract
-	*/
+
 	getUserFromFolderPath: function(folderpath) {
 		return folderpath.split('/')[0];
 	},
 
 
-
-	/**
-	*	getFolderList: get the current user's folder list structure
-	*
-	*	The UI work is done in the callback at notesoup.ui.showFolderList.
-	*/
-	getFolderList: function() {
-		this.postRequest({
-			method:"getfolderlist",
-			params:{}
-		},{
-			//requestMessage: 'Fetching folder list... ',
-			//successMessage: 'Done.',
-			failureMessage: 'Failure fetching folder list.'
-		});
-	},
-
-
-	/**
-	*	openFolder: set current folder
-	*	
-	*	The current implementation triggers a navigation/reload on the new uri
-	*	@param {string} tofolder the folder to open
+	/*
+		openFolder: set current folder
+		
+		The current implementation triggers a navigation/reload on the new uri
 	*/
 	openFolder: function(tofolder) {
 
@@ -910,14 +665,14 @@ var notesoup = {
 			//	return;
 			//}
 
-			this.say("Switching to " + tofolder);
+			this.say("Switching to folder " + tofolder);
 
 			// Cache the notes from this folder before we leave
-			this.foldercache[this.foldername] = {
-				notes: {},
+			this.cache[this.foldername] = {
+				data: {},
 				lastupdate: this.lastupdate
 			};
-			for (var n in this.notes) this.foldercache[this.foldername]['notes'][n] = this.notes[n];
+			for (var n in this.notes) this.cache[this.foldername]['data'][n] = this.notes[n];
 
 			// Clear the deck by nuking all the current notes
 			for (var n in this.notes) this.destroyNote(this.notes[n].id);
@@ -925,16 +680,16 @@ var notesoup = {
 
 			// Reset local state to point to the new workspace
 			this.foldername = tofolder;
-			document.title = 'Note Soup :: ' + this.foldername;
+			document.title = 'Note Soup : ' + this.foldername + '...';
 
 			// Retrieve our notes from the cache if they are there
-			if (this.foldername in this.foldercache) {
+			if (this.foldername in this.cache) {
 				this.say('Cache hit! Restoring...', 'warning');
-				for (var n in this.foldercache[this.foldername]['notes']) {
-					this.notes[n] = this.foldercache[this.foldername]['notes'][n];
+				for (var n in this.cache[this.foldername]['data']) {
+					this.notes[n] = this.cache[this.foldername]['data'][n];
 					this.notes[n]['showme'] = true;
 				}
-				this.lastupdate = this.foldercache[this.foldername]['lastupdate'];
+				this.lastupdate = this.cache[this.foldername]['lastupdate'];
 
 				this.say('Restored ' + this.countNotes() + ' notes ' + this.lastupdate);
 			}
@@ -954,8 +709,6 @@ var notesoup = {
 
 		if ((tofolder != null) && (tofolder != '')) {
 
-			notesoup.removeAvatar();
-
 			// the old way:
 			//document.location.href = '/folder/' + this.username + '/' + foldername;
 			this.postRequest({
@@ -964,60 +717,44 @@ var notesoup = {
 					tofolder:tofolder
 				}
 			},{
-				requestMessage: 'Connecting to ' + tofolder + '...',
+				requestMessage: 'Connecting to folder ' + tofolder + '...',
 				successMessage: 'Connected...',
 				failureMessage: 'Could not open folder.'
 			});
 		}
 	},
 
-
-	/**
-	*	return a string of random alphanumeric characters of a specified length
-	*	@param {int} namelen the length of the string
+	/*
+		createFolder: Make a new folder
 	*/
-	randomName: function(namelen) {
-		var charset = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-		var name = '';
-		while (name.length < namelen) 
-			name += charset.charAt(Math.floor(Math.random() * charset.length));
-		return name;
-	},
-
-
-
-	/**
-	*	createFolder: Make a new folder
-	*	@param {string} [tofolder] the folder to create; will prompt the user if this is omitted
-	*/
-	createFolder: function(tofolder, stayhere) {
+	createFolder: function(tofolder) {
 
 		if ((tofolder == null) || (tofolder == '')) 
-			tofolder = prompt('Enter the name of the folder to create:', this.randomName(32));
+			tofolder = prompt('Enter the name of the folder to create:', tofolder);
+
+		// If the path does not appear to have a user part, insert the current user
+		// since the api requires a full folder path
+		if (tofolder.indexOf('/') < 0) {
+			tofolder = this.username + '/' + tofolder;
+		}
 
 		if ((tofolder != null) && (tofolder != '')) {
 
 			this.postRequest({
 				method:"createfolder",
 				params:{
-					tofolder:tofolder,
-					stayhere: stayhere ? true : false
+					tofolder:tofolder
 				}
 			},{
-				requestMessage: 'Creating ' + tofolder + '...',
+				requestMessage: 'Creating folder ' + tofolder + '...',
 				successMessage: 'Created.',
 				failureMessage: 'Could not create folder.'
 			});
 		}
 	},
 
-
-	/**
-	*	set the password on a folder
-	*	=this.setFolderPassword(notesoup.foldername, 'foo')
-	*	@param {string} folder the folder whose password you wish to set
-	*	@param {string} password the new password for the folder
-	*/
+	
+	// =this.setFolderPassword(notesoup.foldername, 'foo')
 	setFolderPassword: function(folder, password) {
 
 		if (folder == null || !folder.length) {
@@ -1026,7 +763,8 @@ var notesoup = {
 		}
 		if (password == null || !password.length) {
 			// TODO: allow null password -> reset to no password
-			password = this.prompt('Enter new password:', this.randomName(8));
+			// TODO: offer a random password here
+			password = this.prompt('Enter new password:', '');
 		}
 
 		// Send off a request
@@ -1044,16 +782,22 @@ var notesoup = {
 	},
 
 
-	/**
-	*	send duplicates of all the notes in one folder into another
-	*	@param {string} fromfolder the folder whose notes are to be copied
-	*	@param {string} tofolder the destination of the copy
+	/*
+		Copy Folder
 	*/
 	copyFolder: function(fromfolder, tofolder) {
 
-		if (fromfolder == null) fromfolder = this.prompt('Copy everything from which folder:', '');
+		if (fromfolder == null) tofolder = this.prompt('Copy everything from which folder:', '');
 		
-		if (tofolder == null) tofolder = this.prompt('Copy everything from ' + fromfolder + ' to folder named:', '');
+		if (fromfolder.split('/').length < 2) {
+			fromfolder = notesoup.username + '/' + tofolder;
+		}
+
+		if (tofolder == null) tofolder = this.prompt('Copy everything from' + fromfolder + ' to folder named:', '');
+		
+		if (tofolder.split('/').length < 2) {
+			tofolder = notesoup.username + '/' + tofolder;
+		}
 
 		if ((tofolder != null) && (tofolder != '')) {
 
@@ -1061,8 +805,8 @@ var notesoup = {
 			this.postRequest({
 				method:"copyfolder",
 				params:{
-					fromfolder: fromfolder,
-					tofolder: tofolder
+					fromfolder:this.foldername,
+					tofolder:tofolder
 				}
 			},{
 				requestMessage: 'Copying to ' + tofolder + '...',
@@ -1073,10 +817,8 @@ var notesoup = {
 	},
 
 
-	/**
-	*	rename a folder.  not supported on S3
-	*	@param {string} fromfolder the old name
-	*	@param {string} tofolder the new name
+	/*
+		Rename Folder
 	*/
 	renameFolder: function(fromfolder, tofolder) {
 
@@ -1102,31 +844,10 @@ var notesoup = {
 			});
 		}
 	},
-
-
-	/**
-	*	delete a folder
-	*/
-	deleteFolder: function(fromfolder) {
-		fromfolder = fromfolder || notesoup.foldername;
-		if (this.prompt("REALLY, REALLY DELETE THIS FOLDER AND EVERYTHING IN IT???", 'no') == 'yes') {
-
-			this.postRequest({
-				method:"deletefolder",
-				params:{
-					fromfolder:fromfolder
-				}
-			},{
-				requestMessage: 'Deleting folder ' + fromfolder + '...',
-				successMessage: 'Deleted.',
-				failureMessage: 'Delete failed.'
-			});
-		}
-	},
 	
-	
-	/**
-	*	empty the trash folder of the requestor; the notes are permanently deleted
+
+	/*
+		Empty the trash folder
 	*/
 	emptyTrash: function() {
 
@@ -1140,145 +861,76 @@ var notesoup = {
 			});
 	},
 
-
-	/**
+	/*
 		Folder access control
-
-		Owner access is required to set permissions on a folder.
-		Today this means only the folder's owner or systemuser can set permissions on it.
+		
+		The folder in question is always the currently open one.
+		Only the folder's owner or systemuser can set permissions on it.
 
 		accessmode = ['readers','editors','senders']
 		accesslist = list of usernames separated by commas; *=all, -=none
-		@param {string} tofolder the folder whose permissions to set
-		@param {string} accessmode the access mode being configured: [senders, readers, editors]
-		@param {string} accesslist the new access list to set on the folder
-	*/
-	getFolderACL: function(tofolder, handler, scope) {
+	*/	
+	setAccessList: function(tofolder, accessmode, accesslist) {
 
-		if (handler) {
-			this.folderaclCallback = handler;
-			this.folderaclCallbackScope = scope;
-		}
-		else {
-			delete this.folderaclCallback;
-			delete this.folderaclCallbackScope;
-		}
-		tofolder = tofolder || notesoup.foldername;
-
-		notesoup.postRequest({
-			method:"getfolderacl",
+		this.postRequest({
+			method:"setaccesslist",
 			params:{
-				tofolder: tofolder
-			}},{
-			requestMessage: 'Fetching access lists for ' + tofolder + '...',
-			successMessage: 'Access lists retreived.',
-			failureMessage: 'Could not fetch access lists.'
-		});
-	},
-
-	/**
-	*	Set the ACL on a folder.
-	*	@param {string} tofolder the folder in question
-	*	@param {object} aclobject a structure containing acl strings for readers, editors, and senders.
-	*/
-	setFolderACL: function(tofolder, aclobj) {
-
-		tofolder = tofolder || notesoup.foldername;
-		var request = {
-			method:"setfolderacl",
-			params:{
-				tofolder:tofolder
+				tofolder:tofolder,
+				accessmode:accessmode,
+				accesslist:accesslist
 			}
-		};
-		if ('readers' in aclobj) request.params['readers'] = aclobj.readers;
-		if ('editors' in aclobj) request.params['editors'] = aclobj.editors;
-		if ('senders' in aclobj) request.params['senders'] = aclobj.senders;
-		
-		this.postRequest(request, {
-			requestMessage: 'Setting access list for ' + tofolder + '...',
-			successMessage: 'Access list updated.',
-			failureMessage: 'Could not update access list.'
-		});
+			},{
+				requestMessage: 'Setting ' + accessmode + ' access list on ' + tofolder + ' to ' + accesslist,
+				successMessage: 'Access list updated.',
+				failureMessage: 'Could not update access list.'
+			});
 	},
 
-	/**
-	*	shorthand to set readers to '*'
-	*	@param {string} tofolder
-	*/
 	makeFolderPublic: function(tofolder) {
-		tofolder = tofolder || this.foldername;
-		this.setFolderACL(tofolder, {'readers': '*'});
+		this.readers = '*,' + this.readers;
+		this.setAccessList(tofolder, 'readers', this.readers);
 	},
 
-	/**
-	*	shorthand to set readers to ''
-	*	@param {string} tofolder
-	*/
 	makeFolderPrivate: function(tofolder) {
-		tofolder = tofolder || this.foldername;
-		this.setFolderACL(tofolder, {'readers': ''});
+		this.readers = '';
+		this.setAccessList(tofolder, 'readers', this.readers);
 	},
 	
-	/**
-	*	shorthand to set reader list
-	*	@param {string} tofolder
-	*/
 	setReaderList: function(tofolder) {
 		var readers = this.prompt('Allow these users to read this folder (enter names separated by commas, or * for all):', this.readers);
 		if ((readers != null) && (readers != '')) {
-			this.setFolderACL(tofolder, {'readers': readers});
+			this.readers = readers;
+			this.setAccessList(tofolder, 'readers', this.readers);
 		}
 	},
 	
-	/**
-	*	shorthand to set editor list
-	*	@param {string} tofolder
-	*/
 	setEditorList: function(tofolder) {
 		var editors = this.prompt('Allow these users to edit this folder (enter names separated by commas, or * for all):', this.editors);
 		if ((editors != null) && (editors != '')) {
-			this.setFolderACL(tofolder, {'editors':editors});
+			this.editors = editors;
+			this.setAccessList(tofolder, 'editors', this.editors);
 		}
 	},
 	
-	/**
-	*	shorthand to set sender list
-	*	@param {string} tofolder
-	*/
 	setSenderList: function(tofolder) {
 		var senders = this.prompt('Allow these users to send notes to this folder (enter names separated by commas, or * for all):', this.editors);
 		if ((senders != null) && (senders != '')) {
-			this.setFolderACL(tofolder, {'senders': senders});
+			this.senders = senders;
+			this.setAccessList(tofolder, 'senders', this.senders);
 		}
 	},
 
+	createUser: function(username, password, stayhere) {
 
-	/*
-	*	create a new user account and configure it for operation
-	*	@param {string} username the new username; an account with this name must not exist
-	*	@param {string} password the new password for the account (plain text)
-	*/
-	createUser: function(username, password) {
-
-		if (!username) {
-			username = prompt('Enter name for new user:', '');
-			if (!username) return;
-		}
-		
-		if (!password) {
-			password = prompt('Enter password for new user:', '');
-			if (!password) return;
-		}
-
-		var passwordhash = hex_sha1(password);
-		password = '';
+		stayhere = (stayhere ? 1 : 0);
 
 		// Create a new user
 		notesoup.postRequest({
 			method:"createuser",
 			params:{
 				username:username,
-				password:passwordhash
+				password:password,
+				stayhere:stayhere
 			}
 		},{
 			requestMessage: 'Creating user ' + username + '...',
@@ -1287,15 +939,55 @@ var notesoup = {
 		});
 	},
 
+	// Send an event to the notification server
+	_myaflax_escape: function(str) {
+		var s = str.split('<');
+		if (s.length > 1) return s.join('&lt;');
+		return str;
+	},
+	//folderFlash: function(str) { this.postEvent(this.foldername, 'flash', this._myaflax_escape(str)); },
+	//folderShow: function(str) { this.postEvent(this.foldername, 'show', this._myaflax_escape(str)); },
+	//folderSay: function(str) { this.postEvent(this.foldername, 'say', this._myaflax_escape(str)); },
 
+	folderFlash: function(str) { notesoup.postEvent(notesoup.foldername, 'flash', str); },
+	folderShow: function(str) { notesoup.postEvent(notesoup.foldername, 'show', str); },
+	folderSay: function(str) {
+		// note the time for rtt calculation
+		notesoup.aflax.say_sent_time = new Date().getTime();
+		notesoup.postEvent(notesoup.foldername, 'say', str); 
+	},
+	folderPing: function(str) { 
+		notesoup.aflax.ping_sent_time = new Date().getTime();	
+		notesoup.postEvent(notesoup.foldername, 'ping', str); 
+		// clear this after a while to avoid spurious replies on other guys' pings
+		window.setTimeout("notesoup.aflax.ping_sent_time=null;", 5000);
+	},
+	folderSee: function(str) {
+		this.say('Opening browser window on: ' + str);
+		notesoup.postEvent(notesoup.foldername, 'see', str);
+	},
+
+	postEvent: function(folder, opstring, arg) {
+
+		notesoup.postRequest({
+			method:"postevent",
+			params:{
+				tofolder: folder,
+				op: [opstring, arg, folder]
+			}
+		},{
+			// These are awfully noisy
+			//requestMessage: 'Sending notification ' + opstring + '...',
+			//successMessage: 'Sent.',
+			failureMessage: 'Could not send notification.'
+		});
+	},
+	
 
 	//	Notesoup timer chain management
-
 	//
-
-	/**
-	*	oneHertzCallback: We get a 1Hz callback, and meter out callouts here
-	*/
+	// oneHertzCallback: We get a 1Hz callback, and meter out callouts here
+	//
 	oneHertzCallback: function() {
 
 		if (this.in1HzCallback) {
@@ -1314,20 +1006,14 @@ var notesoup = {
 	
 			// Sync the UI 
 			this.syncUI();
+			notesoup.ui.syncAll();
 		
-			// Groom the push channel
-			notesoup.aflax.verifyConnection();
-
 			// Is it time to sync with the server?
 			if (this.syncInterval > 0) {
 				if (--this.synctimeremaining <= 0) {
 					this.syncToServer();
 				}
 			}
-
-			// it is to sigh.
-			notesoup.checkFixImages();
-
 			this.in1HzCallback = false;
 		} 
 		// catch (e) { this.say('System error - 1 Hz tick exception:' + this.dump(e), 'error'); }
@@ -1336,10 +1022,7 @@ var notesoup = {
 		window.setTimeout('notesoup.oneHertzCallback();', 1000);
 	},
 	
-	
-	/**
-	*	ontick: Scripting hook: run the 'ontick' hooks in any notes that have them
-	*/
+	// ontick: Scripting hook: run the 'ontick' hooks in any notes that have them
 	ontick: function() {
 
 		if (!notesoup.runScripts) return;
@@ -1360,20 +1043,16 @@ var notesoup = {
 	},
 
 
-	/**
-	*	Reset the sync timer to its countdown value
-	*	It is checked at most 1Hz in the oneHertzCallback
-	*/
+	// Reset the sync timer to its countdown value
+	//
+	// It is checked at most 1Hz in the oneHertzCallback
+	//
 	setSyncTimer: function() {
 		this.synctimeremaining = this.syncInterval;
 	},
 
-
-	/**
-	*	send a sync request to the server
-	*	@params {string} [fromfolder] the folder to sync from
-	*	@see lastupdate
-	*/
+	// Send the sync
+	//
 	sendSync: function(fromfolder) {
 
 		if (fromfolder == null) fromfolder = this.foldername;
@@ -1393,9 +1072,6 @@ var notesoup = {
 		});
 	},
 
-	/**
-	*	set the sync interval
-	*/
 	setRefreshInterval: function() {
 		var seconds = this.prompt('Enter number of seconds between updates or 0 to turn off updates', this.syncInterval);
 		if ((seconds != null) && (seconds != '')) {
@@ -1426,11 +1102,7 @@ var notesoup = {
 		// since we are deep in the event handler for the onreadystate change for
 		// the response to an ajax request.
 		// so we queue it for 20 ms from now.  sue me.
-		//if (opts.successProc) window.setTimeout(opts.successProc, 20);
-
-		if (opts.successProc) {
-			opts.successProc.defer(20, opts.successProcScope, [response, opts]);
-		}
+		if (opts.successProc) window.setTimeout(opts.successProc, 20);
 
 	},
 	onException: function(err) {
@@ -1486,14 +1158,13 @@ var notesoup = {
 			Ext Ajax.Request handler
 		*/
 		var opt = {
-			//url: this.apiuri + request.method,
 			url: this.apiuri,
 			method: 'POST',
 			params: jsonrequest,
 			success: this.onSuccess,
 			//onException: this.onException,
 			failure: this.onFailure
-		};
+		}
 		
 		for (var o in options) opt[o] = options[o];
 		if (options.requestMessage) this.say(options.requestMessage);
@@ -1508,8 +1179,7 @@ var notesoup = {
 			var p = Ext.urlEncode(request.params);
 			//var q = 'http://localhost/~bill/stikiwiki/notesoup.php?' + p;
 			//var q = 'http://sandbox.notesoup.net/notesoup.php?' + p;
-			//var q = this.baseuri + 'notesoup.php?' + p;
-			var q = this.baseuri + 'getapi/?' + p;
+			var q = this.baseuri + 'notesoup.php?' + p;
 			this.loadScript(q);
 			return true;
 		}
@@ -1522,8 +1192,6 @@ var notesoup = {
 		// Update the activity indicator
 		++this.commandsPending;
 		this.updateActivityIndicator('sync', true);
-
-		if (notesoup.notify) notesoup.notify(request.method, '');
 	
 		return true;
 	},
@@ -1560,37 +1228,9 @@ var notesoup = {
 				e.at + ':' + response.responseText, 'error');
 			return;
 		}
-
-		// server may send us a time update
-		if (response.time) {
-			this.lastServerTimeDiff = Math.floor(notesoup.uiUpdateTimerStart - (1000 * response.time));
-			this.serverTimeDiffStack.push(this.lastServerTimeDiff);
-			//notesoup.say('response.time: ' + response.time + '/' + typeof(response.time) + ' ' + this.lastServerTimeDiff);
-			if (this.serverTimeOffset) {
-				var prev = this.serverTimeOffset;
-				this.serverTimeOffset += (this.lastServerTimeDiff - this.serverTimeOffset) * 0.9;
-				this.serverTimeOffset = Math.floor(this.serverTimeOffset);
-				//notesoup.say('Adjusted server time offset from ' + prev + ' to ' +
-				//	this.serverTimeOffset + '(' + this.lastServerTimeDiff + ')', 'whisper');
-			}
-			else {
-				this.serverTimeOffset = this.lastServerTimeDiff;
-				//notesoup.say('Set server time offset to ' + this.lastServerTimeDiff, 'whisper');
-			}
-		}
-
 		this.processServerResponseObject(response, roundtriptime, opts.successMessage, opts.failureMessage);
 	},
-
-	/**
-	*	returns the estimated zulu time on the server, as a number with unix timestamp semantics
-	* 	(multiply by 1000 for a javascript timestamp)
-	*/
-	getServerTime: function() {
-		return (new Date().getTime() + (this.serverTimeOffset || 0.0)) / 1000;
-	},
-
-
+		
 	processServerResponseObject: function(response, roundtriptime, successMessage, failureMessage) {
 
 		// We just got a response from the server; postpone our next
@@ -1604,7 +1244,7 @@ var notesoup = {
 			return;
 		}
 		else if (successMessage) this.say(successMessage);
-
+	
 		// Process command list in the server package
 		var cmdarray;
 		try {
@@ -1628,19 +1268,19 @@ var notesoup = {
 							break;
 
 						case 'endupdate':
-							if (!notesoup.initialLoadComplete) {
-								notesoup.initialLoadComplete = true;
-								if (!notesoup.countNotes()) notesoup.say('There are no notes here.');
-							}
-							notesoup.ui.populateFolderList();
 							break;
 		
 						case 'updatenote':
+	
+							// Note from the server needs de-JSON-escaped notename and text fields
+							//arg['notename'] = this.JSONunescape(arg['notename'] || '');
+							//arg['text'] = this.JSONunescape(arg['text'] || '');
 							logarg = arg['id'];
 							this.updateNote(arg);
 							break;
 		
 						case 'deletenote':
+							// TODO: Handle update collision case where delete arrives here for a note being edited
 							logarg = arg;
 							this.destroyNote(arg);
 							break;
@@ -1671,8 +1311,7 @@ var notesoup = {
 							
 						case 'say':
 							logarg = arg;
-							if (arg.search('!') >= 0) this.frontstage.flash(arg);
-							else this.say(arg);
+							this.say(arg);
 							break;
 
 						case 'show':
@@ -1684,37 +1323,16 @@ var notesoup = {
 							logarg = 'server initiated sync';
 							this.sendSync();
 							break;
-
+							
 						case 'folderlist':
 							logarg = 'folderlist';
 							if ('ui' in notesoup) {
-								if ('updateFolderListMenu' in notesoup.ui) {
-									this.ui.updateFolderListMenu(arg);
+								if ('addFoldersToFolderList' in notesoup.ui) {
+									this.folderlist = arg;
+									this.ui.addFoldersToFolderList(this.folderlist);
 								}
 							}
 							break;
-						
-						case 'templatelist':
-							logarg = 'templatelist';
-							break;		// all the action is in the successProc
-						
-						case 'folderacl':
-							logarg = 'folderacl';
-							this.folderacl = arg;
-							if (this.folderaclCallback) {
-								if (this.folderaclCallbackScope)
-									this.folderaclCallback.call(this.folderaclCallbackScope, arg);
-								else this.folderaclCallback(arg);
-							}
-							break;
-							
-						case 'getnote':
-							logarg = 'getnote';
-							break;		// all the action is in the successProc
-
-						case 'notes':
-							logarg = 'note';
-							break;		// all the action is in the successProc
 		
 						default:
 							this.alert('Unrecognized server command: ' + cmd);
@@ -1724,7 +1342,6 @@ var notesoup = {
 					if (this.debugmode) {
 						this.debug('< ' + cmd + ' ' + logarg);
 					}
-					if (this.notify) this.notify(cmd, logarg);
 				}
 			} catch (e) {
 				this.alert('Error processing ' + cmd + ' ' + logarg + ': ' + e);
@@ -1771,13 +1388,8 @@ var notesoup = {
 	},
 
 
-	/**
-	*	get a list of notes ordered by some attribute
-	*	=this.getNotesOrderedBy('notename', true, 'notename')
-	*	@param {string} attr the attribute to sort on
-	*	@param {boolean} ascending sort ascending (false for descending)
-	*	@param {string} returnattr the attribute to return in the list, usually 'id'
-	*/
+	// =this.getNotesOrderedBy('notename', true, 'notename')
+	//
 	getNotesOrderedBy: function(attr, ascending, returnattr) {
 
 		function attrcmpgt(x, y) {
@@ -1801,27 +1413,35 @@ var notesoup = {
 	},
 	
 
-	/**
-	*	return the number of notes in the active folder
-	*/
 	getNoteCount: function() {
 		var i=0;
 		for (var n in notesoup.notes) i++;
 		return i;
 	},
 
-	getRandomNote: function() {
-		return notesoup.notes[this.getNotesOrderedBy('yPos')[Math.floor(Math.random() * this.getNoteCount())]];
-	},
 
-	/**
-	*	Return a duration in milliseconds given a "fuzzy user input string"
-	*
-	* Formats:
-	*	x seconds, minutes, hours, days, weeks, fortnights, months, years, [decades, centuries, millenia]
-	*
-	*	@param {string} s fuzzy duration string input (like '2 weeks')
-	*/
+	// Z-order debugging tool
+	showZ: function() {
+		var n;
+		var zmax = -1;
+		var zmin = 99999;
+		for (n in this.notes) {
+			note = this.notes[n];
+			debug('note: ' + note.id + ' z=' + note.zIndex + ' ' + typeof(note.zIndex));
+
+			z = note.zIndex;
+			if (typeof(z) == 'string') z = parseInt(z);
+			if (z > zmax) zmax = z;
+			if (z < zmin) zmin = z;
+		}
+		debug('min z=' + zmin + ' max z=' + zmax);
+	},
+	
+
+	// Return a duration in milliseconds given a "fuzzy user input string"
+	//
+	// Formats:
+	//	x seconds, minutes, hours, days, weeks, fortnights, months, years, [decades, centuries, millenia]
 	getDuration: function(s) {
 	
 		var parts = s.split(' ');
@@ -1846,7 +1466,6 @@ var notesoup = {
 		if (unit.substring(unit.length-1) != 's') unit += 's';
 
 		switch (unit) {
-			case 'ms':
 			case 'milliseconds':	return 1;
 			case 'seconds':			return 1000;
 			case 'minutes':		 	return 1000*60;
@@ -1862,12 +1481,8 @@ var notesoup = {
 		}
 	},
 
-
-	/**
-	*	convert a time difference into a user-friendly string representation
-	*	@param {float} diff the time difference
-	*/
 	stringifyTimeDiff: function(diff) {
+		//var msperday = 24*60*60*1000;
 		var mspersecond = 1000;
 		var msperminute = mspersecond * 60;
 		var msperhour = msperminute * 60;
@@ -1894,45 +1509,36 @@ var notesoup = {
 	},
 
 
-	/**
-	*	Load an external resource to simulate markup of the form:
-	*	[script type='text/javascript' src='someurl']
-	*	=this.loadScript('http://pingdog.net/har.js');
-	*
-	*	@param {string} scripturl the url from which to load the script
-	*	@param {object} parentelement optional element in which to insert script; defaults to doc.head
-	*	@param {object} onload optional function to call when the script load is complete
-	*/	
-	loadScript: function(scripturl, parentelement, onload) {
+	// loadScript
+	//
+	// Load an external resource to simulate markup of the form:
+	//	[script type='text/javascript' src='someurl']
+	//
+	//	=this.loadScript('/js/wz_jsgraphics.js');
+	//
+	loadScript: function(scripturl) {
 
-		parentelement = parentelement || document.getElementsByTagName('head')[0];
+		var parentelement = document.getElementsByTagName('head')[0];
 		try {
 			var scriptelement = document.createElement('script');
 			scriptelement.type = 'text/javascript';
 			scriptelement.src = scripturl;
-			if (onload) scriptelement.onload = onload;
-			else scriptelement.onload = notesoup.loadScriptHandler;
-			if (this.debugLevel > 3) this.say('Loading external script: ' + scripturl);
+			this.say('Loading external script: ' + scripturl);
 			parentelement.appendChild(scriptelement);
-			if (this.debugLevel > 3) this.say('Loaded.');
+			this.say('Loaded.');
 		} catch (e) {
 			this.say('Exception loading: ' + scripturl, 'error');
 			dump(e);
 		}
 	},
-	
-	loadScriptHandler: function() {
-		notesoup.say('Script load complete.');
-	},
 
-	
-	/**
-	*	Load an external resource to simulate markup of the form:
-	*	[link rel='stylesheet' type='text/css' href='someuri']
-	*	=this.loadStyle('/css/italics.css');
-	*
-	*	@param {string} cssurl the url from which to load the css
-	*/
+	// loadStyle
+	//
+	// Load an external resource to simulate markup of the form:
+	//	[link rel='stylesheet' type='text/css' href='someuri']
+	//
+	//	=this.loadStyle('/css/italics.css');
+	//
 	loadStyle: function(cssurl) {
 		var parentelement = document.getElementsByTagName('head')[0];
 		try {
@@ -1969,98 +1575,63 @@ var notesoup = {
 		var elt = $('scriptstatus');
 		if (elt) elt.src = this.runScripts ? this.imageHost + 'images/famfamfam.com/plugin.png' : this.imageHost + 'images/famfamfam.com/plugin_disabled.png';
 	},
-	
-	allSay: function(f, duration) {
-		for (var n in notesoup.notes) {
-			if (typeof(f) == 'string') notesoup.notes[n].think(f, duration);
-			else if (typeof(f) == 'function') notesoup.notes[n].think(f.apply(notesoup.notes[n]), duration);
-			else notesoup.say('allSay what?', 'error');
-		}
+
+
+	// BOOKMARKLETS
+
+	makeBootBookmarkletNote: function() {this.getBookmarkletNote(this.getBootBookmarkletLink());},
+
+	makeQuickNoteBookmarkletNote: function() {this.getBookmarkletNote(this.getQuickNoteBookmarkletLink());},
+
+	getBookmarkletNote: function(s) {
+		return this.saveNote({
+			notename: 'Bookmarklet', 
+			text: 'Drag this link to the bookmark bar:<br/>' + s
+		}, this.foldername);
+	},
+
+	getBootBookmarkletLink: function() {
+		return '<a href="' + this.getBootBookmarklet() + '">Instant Soup Bookmarklet</a>';
+	},
+
+	getBootBookmarklet: function() {
+		return this.getBootBookmarkletCode(this.baseuri, 'js/instantsoup.js');
 	},
 	
-	resetz: function() {
-		notesoup.allSay(function() {
-			this.think(''+this.zIndex);
-			this.zIndex = 0;
-			this.save();
-		}, 10000);
-	},
+	getBootBookmarkletCode: function(baseuri, filepart) {
 	
-	hexdump0: function(str) {
-		var hex = '0123456789abcdef';
-		var o = [];
-		for (var i=0; i < str.length; i++) {
-			var c = str.charCodeAt(i);
-			if (i%4 == 0) o.push('&nbsp;');
-			if (i%8 == 0) o.push('<br/>');	
-			o.push(hex[Math.floor(c/16)]);
-			o.push(hex[c%16]);
-			o.push('&nbsp;');
-		}
-		return o.join('');
+		var booterTemplate = [
+			"javascript:function%20boot(url){",
+				"var%20s=document.createElement('script');",
+				"s.setAttribute('language','javascript');",
+				"s.setAttribute('src',url);",
+				"document.body.appendChild(s);}",
+			"window.instantsoupbooturi='",baseuri,"';",
+			"boot('", baseuri+filepart,"');"
+		];
+		return booterTemplate.join('');
 	},
 
-	hexdump: function(str) {
-		var hex = '0123456789abcdef';
-		var o = [];
-		o.push('<pre><br/>');
-		for (var i=0; i < str.length; i+=8) {
-		
-			o.push(''+i, ':&nbsp;');
-			for (var j=i; j<i+8; j++) {
-				var c = (j < str.length) ? str.charCodeAt(j) : 0;
-				if (j%4 == 0) o.push('&nbsp;');
-				o.push(hex[Math.floor(c/16)]);
-				o.push(hex[c%16]);
-				o.push('&nbsp;');
-			}
-			o.push('&nbsp;');
-			for (var j=i; j<i+8; j++) {
-				var c = (j < str.length) ? str.charAt(j) : ' ';
-				if ((c < ' ') || (c > '~')) c = '#';
-				if (c == '<') c = '&lt;';
-				//o.push('&nbsp;');
-				if (j%4 == 0) o.push('&nbsp;');
-				o.push(c);
-			}
-			o.push('<br/>');
-		}
-		o.push('<br/></pre>');
-		return o.join('');
+	getQuickNoteBookmarkletLink: function() {
+		return '<a href="' + this.getQuickNoteBookmarkletCode() + '">Instant Note Bookmarklet</a>';
 	},
 
-
-	/**
-	*	just say no
-	*/
-	no: function() { return false; },
-
-	/**
-	*	Force images to delegate their dragging to their parent note
-	*	TODO: ie. (yi yi.)
-	*/
-	fixImages: function() {
-		//var t1 = new Date().getTime();
-		Ext.DomQuery.select('img').forEach(function(v, i, a) {
-			if (notesoup.debugmode > 9) notesoup.say('Fixing image: ' + v.id);
-			//v.ondragstart = notesoup.no;	// safari is happy with this
-			v.onmousedown = notesoup.no;	// this makes dragging happy but causes target to pop up after mouseup (due to template)
-			//v.onmouseup = notesoup.no;		// this does nothing
-		}, notesoup);
-		this.resetFixImageCounter();
-		//notesoup.say('Fix img: ' + (new Date().getTime() - t1) + ' ms');
-	},
-
-	/*
-	*	Image fixing timer chain.  Sheesh.
-	*/
-	fixImageInterval: 2,
-	fixImageCountdownTimer: 2,
-	resetFixImageCounter: function() { this.fixImageCountdownTimer = this.fixImageInterval; },
-	checkFixImages: function() {
-		if (--this.fixImageCountdownTimer < 0) this.fixImages();
+	getQuickNoteBookmarkletCode: function() {
+	
+		//notesoup.php?note=%7B%22notename%22%3A%22'+newnotetext+'%22%7D&tofolder=user%2Finbox&method=savenote&id=1');
+	
+		var prompterTemplate = [
+			"javascript:function%20boot(url){",
+				"var%20s=document.createElement('script');",
+			"	s.setAttribute('language','javascript');",
+			"	s.setAttribute('src',url);",
+			"	document.body.appendChild(s);}",
+			"var%20t=prompt('Enter%20a%20short%20note','<a%20href='+document.location+'>'+document.title+'</a>');",
+			"boot('", notesoup.baseuri,
+			"notesoup.php?note=%7B%22notename%22%3A%22Quick%20Note%22%2C%22text%22%3A%22'+encodeURIComponent(t.replace(/^\s*|\s*$/g,''))+'%22%7D&tofolder=user%2Finbox&method=savenote&id=1');"
+		];
+		return prompterTemplate.join('');
 	}
-
 };
 
 // end of notesoup.js

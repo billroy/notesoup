@@ -1,75 +1,64 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <!--
-	index.html: Note Soup Stikiwiki
-	Copyright (c) 2007, Bill Roy
+	index.html: Note Soup
+	Copyright (c) 2007-2011 Bill Roy
 	This file is licensed under the Note Soup License
-	See the file LICENSE that comes with this distribution
+	See the file LICENSE
 -->
 <head>
-<link rel="stylesheet" type="text/css" href="resources/css/ext-all.css" />
-<link rel="stylesheet" type="text/css" href="css/notesoup.css" />
+<link rel="stylesheet" type="text/css" href="/resources/css/ext-all.css" />
+<link rel="stylesheet" type="text/css" href="/css/notesoup.css" />
+<link rel="shortcut icon" href="/images/favicon.ico" />
 <style type="text/css" media='print'>
-	div.folderlist,div.toolbar,div.notificationwindow {display: none;}
+	div.folderlist,div.toolbar,div.notificationwindow {display: none !important;}
 	body {background: white;font-size: 12pt;}
 </style>
-<script type="text/javascript" src="js/ext-base.js"> </script>
-<script type="text/javascript" src="js/ext-all.js"> </script>
+
+<script type="text/javascript" src="/js/ext-base.js"> </script>
+
 <!--
-<script type="text/javascript" charset="ISO-8859-1" src="js/miso.js"></script>
+<script type="text/javascript" src="/js/ext-all.js"> </script>
+-->
+<script type="text/javascript" src="/js/ext-all-debug.js"> </script>
+
+<!-- miso or sources
+<script type="text/javascript" charset="ISO-8859-1" src="/js/miso.js"></script>
 -->
 
-<script type="text/javascript" src="js/ext-all-debug.js"> </script>
-<script type="text/javascript" src="js-src/sha1.js"> </script>
-<script type="text/javascript" src="js-src/notesoup.js"> </script>
-<script type="text/javascript" src="js-src/soupnote.js"> </script>
-<script type="text/javascript" src="js-src/notesoup-ui-ext.js"> </script>
-<script type="text/javascript" src="js-src/notesoup-ui-commandbar.js"> </script>
-<script type="text/javascript" src="js-src/notesoup-ui-marquee.js"> </script>
-<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+<script type="text/javascript" src="/js-src/sha1.js"> </script>
+<script type="text/javascript" src="/js-src/notesoup.js"> </script>
+<script type="text/javascript" src="/js-src/soupnote.js"> </script>
+<script type="text/javascript" src="/js-src/notesoup-ui-ext.js"> </script>
+
+<!--
+<script type="text/javascript" src="/js-src/notesoup-push-aflax.js"> </script>
+-->
+
+<script type="text/javascript" src="/js-src/notesoup-ui-commandbar.js"> </script>
+<script type="text/javascript" src="/js-src/notesoup-ui-marquee.js"> </script>
+<script type="text/javascript" src="/js-src/notesoup-ui-folderlist.js"> </script>
+<script type="text/javascript" src="/js-src/notesoup-ui-templatelist.js"> </script>
+<script type="text/javascript" src="/js-src/notesoup-sound.js"> </script>
+<script type="text/javascript" src="/js-src/notesoup-widgets.js"> </script>
+<script type="text/javascript" src="/js-src/notesoup-avatar.js"> </script>
+<script type="text/javascript" src="/js-src/notesoup-frontstage.js"> </script>
+
 <script type="text/javascript">
-function startsoup() {
-//try {
-	var opts = {
-		username:'user',
-		foldername: 'user/inbox',
-		syncInterval: 15
-	};
-		
-	var serverOpts = {
-		sentinel: '<py-eval="1+1">',
-		username: '<py-eval="getSession(\'loginusername\')">',
-		readonly: '<py-eval="getSession(\'readonlysession\')">',
-		readers: '<py-eval="getSession(\'readers\')">',
-		editors: '<py-eval="getSession(\'editors\')">',
-		senders: '<py-eval="getSession(\'senders\')">',
-		pushhost: '<py-eval="getSession(\'pushhost\')">',
-		pushport: '<py-eval="getSession(\'pushport\')">',
-		syncInterval: '<py-eval="getSession(\'syncinterval\')">'
-	};
-
-	if (serverOpts.sentinel == 2) {
-		for (var o in serverOpts) opts[o] = serverOpts[o];
-	}
-	notesoup.initialize(opts);		
-	//} catch(e) { alert('Sorry, there seems to be a problem.  Fatal startup error: ' + e); };
-
-	// Socket IO prototype
-	notesoup.socket = io.connect();
-	notesoup.socket.on("tell", function(data) {
-		notesoup.say(data, "tell");
-	});
-	notesoup.socket.say = function(data) {
-		notesoup.socket.emit("tell", data);
-	};
-
-}
+Ext.onReady(function() {
+	notesoup.initialize('{0}');
+}, notesoup, true);
 </script>
 </head>
-<body onload='startsoup();'>
+<body>
 <div id='toolbar'></div>
-<div id='notificationwindow' class='notificationwindow'></div>
-<div id='notezone'></div>
 <div id='notegrid'></div>
+<div id='backdropcontainer' class='backdropcontainer'>
+	<canvas id='backdrop' width='1200' height='800'></canvas>
+</div>
+<div id='frontstage' class='frontstage'>
+	<div id='frontstagetext' class='frontstagetext'></div>
+</div>
+<div id='notificationwindow' class='notificationwindow'></div>
 </body>
 </html>

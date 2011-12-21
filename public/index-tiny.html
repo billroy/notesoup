@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<!--
+	index.html: Note Soup Stikiwiki
+	Copyright (c) 2007, Bill Roy
+	This file is licensed under the Note Soup License
+	See the file LICENSE that comes with this distribution
+-->
+<head>
+<link rel="stylesheet" type="text/css" href="resources/css/ext-all.css" />
+<link rel="stylesheet" type="text/css" href="css/notesoup.css" />
+<style type="text/css" media='print'>
+	div.folderlist,div.toolbar,div.notificationwindow {display: none;}
+	body {background: white;font-size: 12pt;}
+</style>
+<script type="text/javascript" src="js/ext-base.js"> </script>
+<script type="text/javascript" src="js/ext-all.js"> </script>
+<!--
+<script type="text/javascript" charset="ISO-8859-1" src="js/miso.js"></script>
+-->
+
+<script type="text/javascript" src="js/ext-all-debug.js"> </script>
+<script type="text/javascript" src="js-src/sha1.js"> </script>
+<script type="text/javascript" src="js-src/notesoup.js"> </script>
+<script type="text/javascript" src="js-src/soupnote.js"> </script>
+<script type="text/javascript" src="js-src/notesoup-ui-ext.js"> </script>
+<script type="text/javascript" src="js-src/notesoup-ui-commandbar.js"> </script>
+<script type="text/javascript" src="js-src/notesoup-ui-marquee.js"> </script>
+<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+<script type="text/javascript">
+function startsoup() {
+//try {
+	var opts = {
+		username:'user',
+		foldername: 'user/inbox',
+		syncInterval: 15
+	};
+		
+	var serverOpts = {
+		sentinel: '<py-eval="1+1">',
+		username: '<py-eval="getSession(\'loginusername\')">',
+		readonly: '<py-eval="getSession(\'readonlysession\')">',
+		readers: '<py-eval="getSession(\'readers\')">',
+		editors: '<py-eval="getSession(\'editors\')">',
+		senders: '<py-eval="getSession(\'senders\')">',
+		pushhost: '<py-eval="getSession(\'pushhost\')">',
+		pushport: '<py-eval="getSession(\'pushport\')">',
+		syncInterval: '<py-eval="getSession(\'syncinterval\')">'
+	};
+
+	if (serverOpts.sentinel == 2) {
+		for (var o in serverOpts) opts[o] = serverOpts[o];
+	}
+	notesoup.initialize(opts);		
+	//} catch(e) { alert('Sorry, there seems to be a problem.  Fatal startup error: ' + e); };
+
+	// Socket IO prototype
+	notesoup.socket = io.connect();
+	notesoup.socket.on("tell", function(data) {
+		notesoup.say(data, "tell");
+	});
+	notesoup.socket.say = function(data) {
+		notesoup.socket.emit("tell", data);
+	};
+
+}
+</script>
+</head>
+<body onload='startsoup();'>
+<div id='toolbar'></div>
+<div id='notificationwindow' class='notificationwindow'></div>
+<div id='notezone'></div>
+<div id='notegrid'></div>
+</body>
+</html>

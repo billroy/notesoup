@@ -27,11 +27,11 @@ NoteSoup = {
 connect: function(redis_url) {
 
 	if (redis_url) {
-		console.log("Note Soup connecting to Redis at " + redis_url);
+		console.log("Connecting to Redis at " + redis_url);
 		this.redis = require('redis-url').connect(redis_url);
 	}
 	else {
-		console.log("Note Soup using local Redis");
+		console.log("Connecting to local Redis");
 		this.redis = require("redis").createClient();		// port, host, options
 	}
 	
@@ -64,13 +64,13 @@ api_savenote: function(req, res) {
 	if (!('id' in req.body.params.note)) {
 		self.redis.incr(self.key_nextid(req.body.params.tofolder), function(err, id) {
 			req.body.params.note.id = id.toString();
-			self.apisavenote_with_id(req, res);
+			self.savenote_with_id(req, res);
 		});
 	}
-	else self.apisavenote_with_id(req, res);
+	else self.savenote_with_id(req, res);
 },
 
-apisavenote_with_id: function(req, res) {
+savenote_with_id: function(req, res) {
 
 	var now = new Date().getTime();
 	var jsonnote = JSON.stringify(req.body.params.note);
@@ -95,22 +95,22 @@ api_sync: function(req, res) {
 	res.newlastupdate = new Date().getTime();
 	var self = this;
 
-	// TODO: HGETALL would still be better here
+	// TODO: HGETALL would save a server roundtrip here
 	if (req.body.params.lastupdate == 0) {
 		self.redis.hkeys(self.key_note(req.body.params.fromfolder), function(err, noteids) {
-			self.apisync_sendupdates(req, res, noteids);
+			self.sync_sendupdates(req, res, noteids);
 		});
 	}
 	else {
 		self.redis.zrangebyscore(self.key_mtime(req.body.params.fromfolder), 
 			req.body.params.lastupdate, res.newlastupdate, function(err, noteids) {
-			self.apisync_sendupdates(req, res, noteids);
+			self.sync_sendupdates(req, res, noteids);
 		});
 	}
 },
 
 
-apisync_sendupdates: function(req, res, noteids) {
+sync_sendupdates: function(req, res, noteids) {
 
 	res.updatelist = [];
 	var self = this;
@@ -174,8 +174,6 @@ api_sendnote: function(req, res) {
 
 loadfiles: function(directory, tofolder) {
 
-	var tofolder = 'user/inbox';
-	var directory = '/Users/bill/Sites/soup/data/soupbase/user/inbox';
 	var files = fs.readdirSync(directory);
 	var responses_pending = 0;
 	var self = this;

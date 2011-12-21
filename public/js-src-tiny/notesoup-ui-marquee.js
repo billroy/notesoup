@@ -1,9 +1,9 @@
-/**
-*	Notesoup Marquee Display 1.1 glue
-*
-*	Copyright 2007, 2008 Bill Roy
-*	This file is licensed under the Note Soup Client License
-*	See http://notesoup.net/js/LICENSE
+/*
+	Notesoup Marquee Display 1.1 glue
+
+	Copyright (c) 2007, Bill Roy
+	This file is licensed under the Note Soup License
+	See the file LICENSE that comes with this distribution
 */
 	
 notesoup.marquee = {
@@ -14,9 +14,6 @@ notesoup.marquee = {
 	starttime: 0,
 	endtime: 0,
 
-	/**
-	*	Push some text onto the marquee display queue.
-	*/
 	push: function(someText) {
 		var wasRunning = (notesoup.marquee.payload.length > 0);
 		notesoup.marquee.payload += '\n' + someText;
@@ -26,19 +23,6 @@ notesoup.marquee = {
 		}
 	},
 
-
-	/**
-	*	Slam the marquee display queue with some text.
-	*/
-	put: function(someText) {
-		this.payload = '';
-		this.push(someText);
-	},
-
-
-	/**
-	*	Periodical updater: interpret the next byte in the display queue.
-	*/
 	update: function() {
 		if (notesoup.marquee.offset >= notesoup.marquee.payload.length) {
 			notesoup.marquee.payload = '';
@@ -50,7 +34,7 @@ notesoup.marquee = {
 		}
 
 		if (notesoup.marquee.payload[notesoup.marquee.offset] == '[') {
-			//notesoup.say('found [');
+			notesoup.say('found [');
 			notesoup.marquee.offset++;
 			notesoup.marquee.offset++;
 			notesoup.doCommand(notesoup.ui.commandbar.getValue());
@@ -69,6 +53,3 @@ notesoup.marquee = {
 		window.setTimeout('notesoup.marquee.update();', notesoup.marquee.interval);
 	}
 };
-
-notesoup.registeredCommands.push(['/marquee', 'Play a message in the command bar.', notesoup.marquee.push]);
-
