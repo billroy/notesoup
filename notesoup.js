@@ -196,7 +196,9 @@ api_sendnote: function(req, res) {
 },
 
 api_postevent: function(req, res) {
+	console.log('PostEvent via api:');
 	console.dir(req.body.params);
+	//io.socket.send(res.body.params.
 	return this.sendreply(req, res, []);
 },
 

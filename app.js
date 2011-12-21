@@ -33,18 +33,13 @@ var io = require('socket.io').listen(app);
 
 io.sockets.on('connection', function(socket) {
 	console.log('Socket connection accepted.');
-	socket.on('soupnet', function(data) {
-		console.log('Broadcasting push message:');
-		console.dir(data);
-		io.sockets.emit('soupnet', data);
+	socket.on('subscribe', function(request) {
+		console.log('Subscription request:');
+		console.dir(request);
+		socket.on(request.channel, function(msg) {
+			io.sockets.emit(request.channel, msg);
+		});
 	});
-
-	//socket.emit('message', 'Welcome to the Soup.');
-	//io.sockets.emit('tell', "One has Joined the Soup.");
-	//socket.on('tell', function (data) {
-	//	console.log(data);
-	//	io.sockets.emit('tell', data);
-	//});
 });
 
 // Configuration

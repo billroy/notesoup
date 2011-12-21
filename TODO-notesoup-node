@@ -14,7 +14,9 @@ Sessions and session store in socket.io
 API order of battle
 
 Populate empty db
-	Load system/widgets/etc
+	system/welcome
+	system/widgets
+	...
 
 BUG: Fix The Blocking Widgets Bug
 
@@ -24,9 +26,6 @@ where do folder attrs go?
 		dotfiles
 
 Ext v99?  Touch?  Mac?
-
-Message fabric integration with socket.io
-	- rewrite notesoup-push-aflax.js
 
 
 Templates

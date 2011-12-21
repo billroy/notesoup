@@ -5,25 +5,16 @@
 *	This file is licensed under the Note Soup Client License
 *	See http://notesoup.net/js/LICENSE
 */
-/** @constructor */
+
 notesoup.push = {
 
 	socket: null,
 	connected: false,
 
 	init: function() {
-
-		// Socket IO is our push matrix
-		
 		this.socket = io.connect();
 		this.socket.on('connect', this.onconnect);
-		this.socket.on('soupnet', this.ondata);
 		//this.socket.on('disconnect', ...);
-
-//		notesoup.socket.say = function(data) {
-//			notesoup.socket.emit("tell", data);
-//		};
-
 	},
 
 	// callback on connection
@@ -35,48 +26,50 @@ notesoup.push = {
 		// force the activity indicator to update to show our stuatus
 		//notesoup.updateActivityIndicator('', false);
 
-		// Send a registration request
-		notesoup.push.subscribe('/folder/' + notesoup.foldername, notesoup.push.handleNotification, this);
+		// Subscribe to the folder channel
+		notesoup.push.subscribe('/folder/' + notesoup.foldername);
+
+		// Subscribe to the user talk channel
 		if (notesoup.loggedin && notesoup.username)
-			this.subscribe('/talk/' + notesoup.username, notesoup.push.handleNotification, this);
+			notesoup.push.subscribe('/talk/' + notesoup.username);
 
 		if (notesoup.autoLoadAvatar)
 			notesoup.insertAvatar.defer(200, notesoup);
 	},
 
+	subscribe: function(channel) {
 
-	send: function(msg) {
+		notesoup.push.socket.on(channel, notesoup.push.handleNotification);
 
-		// Silently ignore blanks
-		//if (msg.length <= 0) return;
-
-		if (this.connected) this.socket.emit('soupnet', msg);
-		else notesoup.say('Cannot send notification: server disconnected');
-	},
-
-	// message callback
-	ondata: function(request) {
-
-		notesoup.say('ONDATA:' + notesoup.dump(request));
-
-		if (notesoup.debugmode > 2) notesoup.debug('Notification: ' + request);
-
-//		if (msg.charAt(0) != '{') {
-//			notesoup.say('Server says: ' + msg, 'error');
-//			notesoup.say(notesoup.hexdump(msg));
+		// Send a registration request
+//		if (!notesoup.pushClientID) {
+//			notesoup.pushClientID = notesoup.randomName(10);
+//			if (notesoup.debugmode) notesoup.say('push client id is: ' + notesoup.pushClientID);
 //		}
 
-		if (request) return notesoup.push.deliverNotification(request);
-		else {
-			notesoup.say('Sorry, cannot decipher notification: ' + jsonmsg, 'error');
-		}
+		var request = {
+//			method: 'subscribe',
+//			clientid: notesoup.pushClientID,
+			channel: channel
+		};
+		if (notesoup.loggedin) request.authtoken = document.cookie.split('=')[1];
+
+		notesoup.push.send('subscribe', request);
+	},
+
+	send: function(channel, msg) {
+		channel = channel || '/folder/' + notesoup.foldername;
+		if (notesoup.push.connected) notesoup.push.socket.emit(channel, msg);
+		else notesoup.say('Cannot send notification: server disconnected');
 	},
 
 	handleNotification: function(request) {
 
-		if (!((request.channeluri == '/folder/' + notesoup.foldername) || 
-				(notesoup.loggedin && notesoup.username && (request.channeluri == '/talk/' + notesoup.username)))) {
-			notesoup.say('Ignoring notification for channel: ' + request.channeluri, 'warn');
+		notesoup.say('Notification:' + notesoup.dump(request));
+
+		if (!((request.channel == '/folder/' + notesoup.foldername) || 
+				(notesoup.loggedin && notesoup.username && (request.channel == '/talk/' + notesoup.username)))) {
+			notesoup.say('Ignoring notification for channel: ' + request.channel, 'warn');
 			return;
 		}
 
@@ -95,68 +88,22 @@ notesoup.push = {
 				else notesoup.frontstage.hide();
 			}
 			else if (cmd == 'flash') notesoup.frontstage.flash(arg.text, arg.color || notesoup.frontstage.color);
-			else if (cmd == 'join') this.onjoin(request);
-			else if (cmd == 'leave') this.onleave(request);
-			else if (cmd == 'say') this.onsay(request);
-			else if (cmd == 'tell') this.ontell(request);
-			else if (cmd == 'ping') this.onping(request);
-			else if (cmd == 'pong') this.onpong(request);
-			else if (cmd == 'see') this.onsee(request);
-			else if (cmd == 'sync') this.onsync(request);
-			else if (cmd == 'rcon') this.onrcon(request);
-			else if (cmd == 'play') this.onplay(request);
-			else if (cmd == 'sendself') this.onsendself(request);
+			else if (cmd == 'join') notesoup.push.onjoin(request);
+			else if (cmd == 'leave') notesoup.push.onleave(request);
+			else if (cmd == 'say') notesoup.push.onsay(request);
+			else if (cmd == 'tell') notesoup.push.ontell(request);
+			else if (cmd == 'ping') notesoup.push.onping(request);
+			else if (cmd == 'pong') notesoup.push.onpong(request);
+			else if (cmd == 'see') notesoup.push.onsee(request);
+			else if (cmd == 'sync') notesoup.push.onsync(request);
+			else if (cmd == 'rcon') notesoup.push.onrcon(request);
+			else if (cmd == 'play') notesoup.push.onplay(request);
+			else if (cmd == 'sendself') notesoup.push.onsendself(request);
 			else notesoup.say('Unrecognized command from server: ' + msg, 'error');
 		} catch(e) {
 			notesoup.say('Error handling push command: ' + notesoup.dump(e), 'error');
 		}
 	},
-
-	subscriptions: [],
-
-	subscribe: function(channeluri, handler, handlerScope) {
-		// Send a registration request
-		if (!notesoup.pushClientID) {
-			notesoup.pushClientID = notesoup.randomName(10);
-			if (notesoup.debugmode) notesoup.say('push client id is: ' + notesoup.pushClientID);
-		}
-		var request = {
-			method: 'subscribe',
-			clientid: notesoup.pushClientID,
-			channeluri: channeluri
-		};
-		if (notesoup.loggedin) request.authtoken = document.cookie.split('=')[1];
-		var jsonrequest = Ext.util.JSON.encode(request);
-		//notesoup.say('Sending subscription request...' + jsonrequest);
-		this.send(jsonrequest);
-
-		for (var i=0; i<this.subscriptions.length; i++) {
-			if (channeluri == this.subscriptions[i].channeluri) {
-				//notesoup.say('oops: duplicate subscription ' + channeluri, 'tell');
-				return;
-			}
-		}
-
-		this.subscriptions.push({
-			channeluri: channeluri,
-			handler: handler || notesoup.push.handleNotification,
-			handlerScope: handlerScope || notesoup.push
-		});
-	},
-
-	deliverNotification: function(notification) {
-		try {
-			for (var i=0; i < this.subscriptions.length; i++) {
-				var s = this.subscriptions[i];
-				if (s.channeluri == notification.channeluri) {
-					s.handler.apply(s.handlerScope, [notification]);
-				}
-			}
-		} catch (e) {
-			notesoup.say('Exception delivering notification: ' + e.message + ' at ' + e.at + ': ' + notesoup.dump(notification), 'error');
-		}
-	},
-
 
 	onjoin: function(request) {
 		//notesoup.say('JOIN: ' + notesoup.dump(request));
@@ -196,7 +143,8 @@ notesoup.push = {
 			handled = handled || notesoup.notes[n].calleventhandler('onsay', request);
 		}
 		if (!handled) {
-			notesoup.sound.play('/sound/35383__UncleSigmund_2198B0_tweet.mp3');
+			if (notesoup.sound)
+				notesoup.sound.play('/sound/35383__UncleSigmund_2198B0_tweet.mp3');
 			//notesoup.say(request.sender + ' says: ' + request.data, 'tell');
 			notesoup.say(request.sender + ' says: ' + request.data);
 		}
@@ -212,18 +160,18 @@ notesoup.push = {
 
 	onping: function(request) {
 		notesoup.say('Ping!');
-		this.pingcount++;
+		//notesoup.push.pingcount++;
 		//notesoup.say(notesoup.dump(request), 'warning');
 		notesoup.sound.play('/sound/6164__NoiseCollector.mp3');
-		notesoup.postEvent(request.channeluri, 'pong', request);
+		notesoup.postEvent(request.channel, 'pong', request);
 		notesoup.refreshAvatar();
 	},
 
 	onpong: function(request) {
 
 		// calculate rtt for the push message, if we sent it
-		if (this.ping_sent_time) {
-			this.rttlast = Math.floor((new Date().getTime() - this.ping_sent_time)/2);
+		if (notesoup.push.ping_sent_time) {
+			notesoup.push.rttlast = Math.floor((new Date().getTime() - notesoup.push.ping_sent_time)/2);
 			notesoup.say('PONG rtt/2=' + notesoup.push.rttlast + 'ms from ' + request.sender);
 		}
 	},
@@ -289,7 +237,7 @@ notesoup.set({
 		window.setTimeout("notesoup.push.ping_sent_time=null;", 5000);
 	},
 	folderSee: function(str) {
-		this.say('Opening browser window on: ' + str);
+		notesoup.say('Opening browser window on: ' + str);
 		notesoup.postEvent('/folder/' + notesoup.foldername, 'see', str);
 	},
 	folderSync: function(str) {
@@ -302,7 +250,7 @@ notesoup.set({
 	},
 	folderRefresh: function(str) {
 		notesoup.say('Refreshing all connected workspaces...');
-		this.folderRcon('=notesoup.openFolder(notesoup.foldername);');
+		notesoup.push.folderRcon('=notesoup.openFolder(notesoup.foldername);');
 	},
 	folderPlay: function(str) {
 		notesoup.say('Playing on all stations: ' + str);
@@ -316,15 +264,15 @@ notesoup.set({
 	*	@param {string} opstring the operation tag ('ping', 'say', ...)
 	*	@param {object} arg	arguments to be passed with the operation (the 'foo' in '/say foo')
 	*/
-	postEvent: function(channeluri, opstring, arg) {
+	postEvent: function(channel, opstring, arg) {
 	
-		//notesoup.say('postEvent: ' + channeluri + ' ' + opstring + ' ' + notesoup.dump(arg));
+		//notesoup.say('postEvent: ' + channel + ' ' + opstring + ' ' + notesoup.dump(arg));
 
 		if (notesoup.push.connected) {
 			var request = {
 				method: 'notify',
-				clientid: notesoup.pushClientID,
-				channeluri: channeluri,
+//				clientid: notesoup.pushClientID,
+				channel: channel,
 				op: opstring,
 				data: arg
 			};
@@ -335,16 +283,16 @@ notesoup.set({
 			notesoup.push.send(jsonrequest);
 			//notesoup.say('Notification sent.');
 ***/
-			notesoup.push.send(request);
+			notesoup.push.send(channel, request);
 			return;
 		}
 
 		notesoup.postRequest({
 			method:"postevent",
 			params:{
-				tochannel: channeluri,
-				op: [opstring, arg, channeluri],
-				clientid: this.pushClientID
+				tochannel: channel,
+				op: [opstring, arg, channel],
+//				clientid: notesoup.push.pushClientID
 			}
 		},{
 			// These are awfully noisy
@@ -363,10 +311,10 @@ notesoup.set({
 	noisynotify: function(op, arg) {
 		if ((op == 'deletenote') || (op == 'sendnote') || (op == 'sync')) {
 			if (notesoup.sound && notesoup.sound.play) {
-				if (new Date().getTime() > (this.lastSoundTime + this.minSoundInterval)) {
+				if (new Date().getTime() > (notesoup.push.lastSoundTime + this.minSoundInterval)) {
 					//notesoup.say(op, 'tell');
 					notesoup.sound.play('/sound/41344__ivanbailey__1.mp3');
-					this.lastSoundTime = new Date().getTime();
+					notesoup.push.lastSoundTime = new Date().getTime();
 				}
 			}
 		}

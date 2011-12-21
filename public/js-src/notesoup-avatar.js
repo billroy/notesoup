@@ -16,7 +16,7 @@ notesoup.set({
 		try {
 
 			// wait for stable push layer
-			if ((!notesoup.aflax.connected) || ((new Date() - notesoup.aflax.connected) < 100))
+			if ((!notesoup.push.connected) || ((new Date() - notesoup.push.connected) < 100))
 				return notesoup.reinsertAvatar();
 
 			// first time?  build the avatar note
