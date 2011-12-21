@@ -1,5 +1,5 @@
 body {
-	background: url("../images/graph12.gif");
+	background: url("../images/grid12-green.png");
 }
 .commandbar {
 	font: normal 14px lucida grande, verdana, tahoma, arial, helvetica, sans-serif !important;
@@ -15,6 +15,7 @@ body {
 	font: normal 1em lucida grande, verdana, tahoma, arial, helvetica, sans-serif !important;
 }
 .notetitle {
+	font: bold 1em lucida grande, verdana, tahoma, arial, helvetica, sans-serif !important;
 	font-weight: bold;
 	text-align: center;
 }
@@ -56,10 +57,27 @@ div.notedroptarget {
 	background-color: #aaffaa;
 }
 .frozen {
-	border: 2px black solid;
+	border: 2px darkblue solid;
 }
 .foldertree, .x-tree-node-leaf, .x-menu-item {
 	font: normal 14px lucida grande, verdana, tahoma, arial, helvetica, sans-serif !important;
 }
 .notegrid {
+}
+div.frontstage {
+	position: absolute;
+	top: 35;
+	left: 0;
+	width: 640;
+	height: 480;
+	text-align: center;
+	display: none;
+	background-color: black;
+	color: white;
+	font-family: american typewriter, lucida grande, verdana, sans-serif;
+	font-size: 4em;
+	z-index: 30100;
+	opacity: .75;
+}
+div.backdropcontainer {
 }

@@ -171,6 +171,9 @@ api_sendnote: function(req, res) {
 		});
 },
 
+api_postevent: function(req, res) {
+//	console.dir(req.body.params);
+},
 
 loadfiles: function(directory, tofolder) {
 

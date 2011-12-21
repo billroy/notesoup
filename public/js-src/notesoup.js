@@ -34,9 +34,8 @@ var notesoup = {
 	useFastFolderSwitching: false,	/** experimental. */
 	foldercache: {},	// folder cache...	/** experimental. */
 
-	imageHost: '',				/** for standalone/php server/air */
-	//imageHost: '/',					/** the cherrypy server wants this. */
-	//imageHost: 'http://notesoup.net/',	/** standalone python */
+	imageHost: '',					/** for node statics */
+	//imageHost: 'http://images.notesoup.net/',	/** for a static server */
 
 	/**
 	*	initialize note soup.
@@ -122,9 +121,7 @@ var notesoup = {
 			this.runScripts = false;
 		}
 
-		if (!this.pushhost) this.pushhost = '';
-		if (!this.pushport) this.pushport = 7000;
-		notesoup.aflax.flashinit();
+		notesoup.push.init();
 		notesoup.sound.init();
 		notesoup.frontstage.init();
 
@@ -1315,9 +1312,6 @@ var notesoup = {
 			// Sync the UI 
 			this.syncUI();
 		
-			// Groom the push channel
-			notesoup.aflax.verifyConnection();
-
 			// Is it time to sync with the server?
 			if (this.syncInterval > 0) {
 				if (--this.synctimeremaining <= 0) {
