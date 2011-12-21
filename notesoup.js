@@ -41,6 +41,19 @@ connect: function(redis_url) {
 },
 
 
+dispatch: function(req, res) {
+	if (typeof(this['api_'+req.body.method]) != "function") {
+		console.log("No method for request: ");
+		console.dir(req.body);
+		this.senderror(req, res, "The server does not know how to " + req.body.method);
+		return 0;
+	}
+	console.log("api req: " + req.body.method);
+	console.dir(req.body.params);
+	this['api_'+req.body.method](req, res);
+	return 1;
+},
+
 // Redis key mapping
 //
 key_note: function(folder) 		{ return 'notes/' + folder; },
@@ -48,7 +61,18 @@ key_mtime: function(folder) 	{ return 'mtime/' + folder; },
 key_nextid:  function(folder)	{ return 'next/'  + folder; },
 
 
-apisendreply: function(req, res, updatelist) {
+senderror: function(req, res, errormessage) {
+	var reply = {
+		result: '',
+		error: errormessage,
+		id: req.body.id,
+		command: []		
+	}
+	res.send(reply);
+},
+
+
+sendreply: function(req, res, updatelist) {
 
 	var reply = {
 		result: '',
@@ -84,7 +108,7 @@ savenote_with_id: function(req, res) {
 			replies.forEach(function (reply, index) {
 				console.log("Reply " + index + ": " + reply.toString());
 	        });
-			self.apisendreply(req, res, [['updatenote', req.body.params.note]]);
+			self.sendreply(req, res, [['updatenote', req.body.params.note]]);
         });
 },
 
@@ -126,7 +150,7 @@ sync_sendupdates: function(req, res, noteids) {
 			res.updatelist.push(['endupdate','']);
 		}
 		res.updatelist.push(['setupdatetime', res.newlastupdate.toString()]);
-		self.apisendreply(req, res, res.updatelist);
+		self.sendreply(req, res, res.updatelist);
 	});
 },
 
@@ -163,17 +187,24 @@ api_sendnote: function(req, res) {
 							.zrem(self.key_mtime(req.body.params.fromfolder), req.body.params.noteid)
 							.exec(function(err, reply) {
 								res.updatelist.push(['deletenote', req.body.params.noteid]);
-								self.apisendreply(req, res, res.updatelist);
+								self.sendreply(req, res, res.updatelist);
 							});
 					}
-					else self.apisendreply(req, res, res.updatelist);
+					else self.sendreply(req, res, res.updatelist);
 				});
 		});
 },
 
 api_postevent: function(req, res) {
 //	console.dir(req.body.params);
+	return this.sendreply(req, res, []);
 },
+
+api_getnotes: function(req, res) {
+//	console.dir(req.body.params);
+	return this.sendreply(req, res, []);
+},
+
 
 loadfiles: function(directory, tofolder) {
 

@@ -29,18 +29,21 @@ var express = require('express')
 
 var app = module.exports = express.createServer();
 
-/*****
 var io = require('socket.io').listen(app);
 
 io.sockets.on('connection', function (socket) {
-	socket.emit('tell', 'Welcome to the Soup.');
-	//io.sockets.emit('tell', "One has Joined the Soup.");
-	socket.on('tell', function (data) {
-		console.log(data);
-		io.sockets.emit('tell', data);
+	console.log('Socket connection accepted.');
+	socket.on('message', function(data) {
+		io.sockets.emit('message', data);
 	});
+
+	//socket.emit('message', 'Welcome to the Soup.');
+	//io.sockets.emit('tell', "One has Joined the Soup.");
+	//socket.on('tell', function (data) {
+	//	console.log(data);
+	//	io.sockets.emit('tell', data);
+	//});
 });
-*****/
 
 // Configuration
 
@@ -51,7 +54,7 @@ app.configure(function(){
   app.use(express.methodOverride());
   //app.use(app.router);
   app.use(express.static(__dirname + '/public'));
-  app.use(express.errorHandler());
+//  app.use(express.errorHandler());
 });
 
 app.configure('development', function(){
@@ -75,24 +78,7 @@ app.get('/folder/:user/:folder', function(req, res) {
 });
 
 app.post('/api', function(req, res) {
-	//console.log("Request body: " + typeof(req.body));
-	//console.dir(req.body);
-	//console.log("Memory usage:");
-	//console.dir(process.memoryUsage());
-
-	if (typeof(soup['api_'+req.body.method]) == "function") {
-		console.log("api req: " + req.body.method);
-		console.dir(req.body.params);
-		soup['api_'+req.body.method](req, res);
-	}
-	else {
-		console.log("Error in request body: " + typeof(req.body));
-		console.dir(req.body);
-		console.log("*****");
-		console.dir(req);
-		res.send("Huh?");
-	}
-	
+	soup.dispatch(req, res);	
 });
 
 app.listen(3000);

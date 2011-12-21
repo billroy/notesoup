@@ -122,7 +122,7 @@ var notesoup = {
 		}
 
 		notesoup.push.init();
-		notesoup.sound.init();
+		//notesoup.sound.init();
 		notesoup.frontstage.init();
 
 		this.initialized = true;

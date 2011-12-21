@@ -1,0 +1,44 @@
+<!--  Folder List  -->
+div.folderlist {
+	position: absolute;
+	top: 40px;
+	left: 0px;
+	width: 10em;
+	padding: 1px 1px 1px 1px;
+	margin: 2px 2px 2px 2px;
+	border: 1px #444 solid;
+	z-index:10000;
+	background-color: white;
+}
+div.folderlistitem {
+	font: normal 0.8em lucida grande, verdana, tahoma, arial, helvetica, sans-serif !important;
+	text-align: left;
+	padding: 2px 2px 2px 2px;
+	margin: 1px 1px 1px 1px;
+	border: 1px #bbb solid;
+	cursor: pointer;
+}
+div.folderlistitemicon {
+	float: left;
+	width: 20px;
+	background: transparent url(/images/famfamfam.com/folder.png) no-repeat 0 0;
+	cursor: pointer;
+}
+div.folderlistitem:hover {
+	color: white;
+	background-color: #101080;
+}
+div.folderlistitemdroptarget {
+	background-color: #80ff80;
+	border: 1px #80ff80 solid;
+}
+div.folderlistitemcurrent {
+	font-weight: bold ;
+	font: bold 0.6em lucida grande, verdana, tahoma, arial, helvetica, sans-serif !important;
+	background-color: #dbe3f4;
+}
+div.folderlistheader {
+	font-size: 1em;
+	font-weight: bold;
+	text-align: center;
+}

@@ -15,7 +15,7 @@ notesoup.push = {
 
 		// Socket IO is our push matrix
 		
-		this.socket = io.connect();
+		this.socket = io.connect('http://localhost');	// todo: server?
 		this.socket.on("connect", this.onconnect);
 		this.socket.on("message", this.ondata);
 
@@ -25,55 +25,22 @@ notesoup.push = {
 
 	},
 
+	// callback on connection
 	onconnect: function(msg) {
-		if (msg) {
 
-			// Race: we can get here before notesoup is initialized
-			if (!notesoup.initialized) {
-				//if (notesoup.debugmode)
-				notesoup.say('onconnect data-too-early retrying...', 'warning');
-				
-				//notesoup.say('clientversion:' + notesoup.clientVersion);
-				//notesoup.say('imageHost:' + notesoup.imageHost);
-				//notesoup.say('initialize:' + typeof(notesoup.initialize));
-				//notesoup.say('dump:' + typeof(notesoup.dump));
-				//notesoup.say('serveropts:' + typeof(notesoup.serveropts));
+		notesoup.push.connected = new Date();
+		if (notesoup.debugmode) notesoup.say('Push Channel is go.');
 
-				notesoup.say('ui.init:' + typeof(notesoup.ui.initialize));
-				notesoup.say('arrangeMenu' + typeof(notesoup.ui.arrangeMenu));
-				notesoup.say('sharingMenu' + typeof(notesoup.ui.sharingMenu));
-				notesoup.say('backgroundColorMenu' + typeof(notesoup.ui.backgroundColorMenu));
-				notesoup.say('folderMenu' + typeof(notesoup.ui.folderMenu));
-				//notesoup.say('colorMenu' + typeof(notesoup.ui.colorMenu));
-				//notesoup.say('colorMenuHandler' + typeof(notesoup.ui.colorMenuHandler));
-				//notesoup.say('sendMenu' + typeof(notesoup.ui.sendMenu));
-				//notesoup.say('showNoteMenu' + typeof(notesoup.ui.showNoteMenu));
-				//notesoup.say('commandbar' + typeof(notesoup.ui.commandbar));
-				//notesoup.say('tb' + typeof(notesoup.ui.tb));
-				//notesoup.say('defaultNoteColor' + typeof(notesoup.ui.defaultNoteColor));
-				//notesoup.say('loadingText' + typeof(notesoup.ui.loadingText));
-				
-				window.setTimeout("notesoup.aflax.onconnect(true);", 1000);
-				return;
-			}
+		// force the activity indicator to update to show our stuatus
+		//notesoup.updateActivityIndicator('', false);
 
-			this.connected = new Date();
-			if (notesoup.debugmode) notesoup.say('Push Channel is go.');
+		// Send a registration request
+		notesoup.push.subscribe('/folder/' + notesoup.foldername, notesoup.push.handleNotification, this);
+		if (notesoup.loggedin && notesoup.username)
+			this.subscribe('/talk/' + notesoup.username, notesoup.push.handleNotification, this);
 
-			// force the activity indicator to update to show our stuatus
-			//notesoup.updateActivityIndicator('', false);
-
-			// Send a registration request
-			this.subscribe('/folder/' + notesoup.foldername, this.handleNotification, this);
-			if (notesoup.loggedin && notesoup.username)
-				this.subscribe('/talk/' + notesoup.username, this.handleNotification, this);
-
-			if (notesoup.autoLoadAvatar)
-				notesoup.insertAvatar.defer(200, notesoup);
-		}
-		else {
-			notesoup.say('Notification server not available.', 'warning');
-		}
+		if (notesoup.autoLoadAvatar)
+			notesoup.insertAvatar.defer(200, notesoup);
 	},
 
 
@@ -82,11 +49,11 @@ notesoup.push = {
 		// Silently ignore blanks
 		if (msg.length <= 0) return;
 
-		if (this.connection) this.socket.emit(msg);
+		if (this.connected) this.socket.emit(msg);
 		else notesoup.say('Cannot send notification: server disconnected');
 	},
 
-
+	// message callback
 	ondata: function(msg) {
 
 		notesoup.say('ONDATA: ' + msg);
@@ -98,7 +65,7 @@ notesoup.push = {
 		}
 
 		var request = Ext.util.JSON.decode(jsonmsg);
-		if (request) return this.deliverNotification(request);
+		if (request) return notesoup.push.deliverNotification(request);
 		else {
 			notesoup.say('Sorry, cannot decipher notification: ' + jsonmsg, 'error');
 		}
@@ -122,7 +89,6 @@ notesoup.push = {
 
 			if (cmd == 'updatenote') notesoup.updateNote(arg);
 			else if (cmd == 'deletenote') notesoup.destroyNote(arg);
-			else if (cmd == 'idle') { notesoup.aflax.onidle(request); }
 			else if (cmd == 'show') {
 				if (arg && arg.length) notesoup.frontstage.say(arg);
 				else notesoup.frontstage.hide();
@@ -172,8 +138,8 @@ notesoup.push = {
 
 		this.subscriptions.push({
 			channeluri: channeluri,
-			handler: handler || notesoup.aflax.handleNotification,
-			handlerScope: handlerScope || notesoup.aflax
+			handler: handler || notesoup.push.handleNotification,
+			handlerScope: handlerScope || notesoup.push
 		});
 	},
 
@@ -190,12 +156,6 @@ notesoup.push = {
 		}
 	},
 
-
-	onclose: function() {
-		notesoup.say('Connection to notification server is closed.', 'tell');
-		notesoup.push.connection = null;
-		window.setTimeout("notesoup.aflax.init();", 500);
-	},
 
 	onjoin: function(request) {
 		//notesoup.say('JOIN: ' + notesoup.dump(request));
@@ -224,10 +184,10 @@ notesoup.push = {
 	onsay: function(request) {
 
 		// calculate rtt for the push message, if we sent it
-		if (notesoup.aflax.say_sent_time) {
-			notesoup.aflax.rttlast = Math.floor(new Date().getTime() - notesoup.aflax.say_sent_time);
+		if (notesoup.push.say_sent_time) {
+			notesoup.push.rttlast = Math.floor(new Date().getTime() - notesoup.push.say_sent_time);
 			if (notesoup.debugMode) 
-				notesoup.say('Notification rtt=' + notesoup.aflax.rttlast + 'ms');
+				notesoup.say('Notification rtt=' + notesoup.push.rttlast + 'ms');
 		}
 
 		var handled = false;
@@ -263,7 +223,7 @@ notesoup.push = {
 		// calculate rtt for the push message, if we sent it
 		if (this.ping_sent_time) {
 			this.rttlast = Math.floor((new Date().getTime() - this.ping_sent_time)/2);
-			notesoup.say('PONG rtt/2=' + notesoup.aflax.rttlast + 'ms from ' + request.sender);
+			notesoup.say('PONG rtt/2=' + notesoup.push.rttlast + 'ms from ' + request.sender);
 		}
 	},
 
@@ -318,14 +278,14 @@ notesoup.set({
 	folderShow: function(str) { notesoup.postEvent('/folder/' + notesoup.foldername, 'show', str); },
 	folderSay: function(str) {
 		// note the time for rtt calculation
-		notesoup.aflax.say_sent_time = new Date().getTime();
+		notesoup.push.say_sent_time = new Date().getTime();
 		notesoup.postEvent('/folder/' + notesoup.foldername, 'say', str); 
 	},
 	folderPing: function(str) { 
-		notesoup.aflax.ping_sent_time = new Date().getTime();	
+		notesoup.push.ping_sent_time = new Date().getTime();	
 		notesoup.postEvent('/folder/' + notesoup.foldername, 'ping', str); 
 		// this after a while to avoid spurious replies on other guys' pings
-		window.setTimeout("notesoup.aflax.ping_sent_time=null;", 5000);
+		window.setTimeout("notesoup.push.ping_sent_time=null;", 5000);
 	},
 	folderSee: function(str) {
 		this.say('Opening browser window on: ' + str);
@@ -370,7 +330,7 @@ notesoup.set({
 			if (notesoup.loggedin) request.authtoken = document.cookie.split('=')[1];
 			var jsonrequest = Ext.util.JSON.encode(request);
 			//notesoup.say('Sending notification...' + jsonrequest);
-			notesoup.aflax.send(jsonrequest);
+			notesoup.push.send(jsonrequest);
 			//notesoup.say('Notification sent.');
 			return;
 		}

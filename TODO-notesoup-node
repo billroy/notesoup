@@ -1,4 +1,8 @@
 
+
+- BLOCKING BUG: can't load socket.io.js???
+
+
 Pull the big client over
 	- /api
 	- json content type
@@ -9,6 +13,14 @@ Pull the big client over
 
 Routing for /folder/:user/:folder
 	templates next
+
+finish event plumbing
+
+- stub out api_ handling
+- error message return!
+
+---
+
 
 Sessions and session store in socket.io
 
