@@ -248,6 +248,33 @@ api_openfolder: function(req, res) {
 },
 
 
+/**
+*	return a string of random alphanumeric characters of a specified length
+*	@param {int} namelen the length of the string
+*/
+randomName: function(namelen) {
+	var charset = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	var name = '';
+	while (name.length < namelen) 
+		name += charset.charAt(Math.floor(Math.random() * charset.length));
+	return name;
+},
+
+
+api_knockknock: function(req, res) {
+	// save login nonce
+	this.sendreply(req, res, [['whosthere', this.randomName(32)]]);
+},
+
+_api_login: function(req, res) {
+	// restore nonce
+	//...
+},
+
+api_logout: function(req, res) {
+	this.sendreply(req, res, [['navigateto', '/']]);
+},
+
 loadfiles: function(directory, tofolder) {
 
 	var files = fs.readdirSync(directory);

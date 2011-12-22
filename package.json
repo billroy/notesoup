@@ -1,5 +1,5 @@
 {
-    "name": "notesoup-node-server"
+    "name": "notesoup"
   , "version": "0.0.1"
   , "private": true
   , "dependencies": {
