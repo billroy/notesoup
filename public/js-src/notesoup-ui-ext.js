@@ -9,7 +9,7 @@
 /** Extjs 2.0 UI integration */
 notesoup.ui = {
 
-	defaultNoteColor: '#FFFF99',
+	defaultNoteColor: '#FFFF30',		// '#ffff99' is nice too, the old color
 
 	/**
 	*	merge the passed-in options into notesoup.ui
