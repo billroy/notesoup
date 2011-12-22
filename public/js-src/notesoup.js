@@ -18,7 +18,7 @@ var notesoup = {
 	debugmode: 0,					/** 0..9 for debugging log spew */
 	sayDebug: false,				/** echo debug log to notification stack? */
 	newNotePositionMode: 'cascade',	/** make a mess with 'random' or use 'cascade' */
-	apiuri: 'api',					/** the mother ship's default code point for us */
+	apiuri: '/api',					/** the mother ship's default code point for us */
 	runScripts: true,				/** true to run ontick, onload, run, and eval() handlers */
 	autoLoadAvatar: false,			/** true to deploy the avatoon on load */
 
@@ -34,7 +34,7 @@ var notesoup = {
 	useFastFolderSwitching: false,	/** experimental. */
 	foldercache: {},	// folder cache...	/** experimental. */
 
-	imageHost: '',					/** for node statics */
+	imageHost: '/',					/** for node statics */
 	//imageHost: 'http://images.notesoup.net/',	/** for a static server */
 
 	/**

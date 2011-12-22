@@ -209,7 +209,13 @@ api_getnotes: function(req, res) {
 
 api_getfolderlist: function(req, res) {
 //	console.dir(req.body.params);
-	return this.sendreply(req, res, []);
+// TODO: fetch from redis
+	return this.sendreply(req, res, [['folderlist',['user/inbox','user/public','user/trash']]]);
+},
+
+api_openfolder: function(req, res) {
+//	console.dir(req.body.params);
+	return this.sendreply(req, res, [['navigateto', '/folder/' + req.body.params.tofolder]]);
 },
 
 
