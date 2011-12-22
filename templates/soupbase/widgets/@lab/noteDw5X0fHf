@@ -1,0 +1,1 @@
+{"xPos":61,"from":"widgets in widgets/@lab","bgcolor":"#FFFF99","text":"<script type='text/javascript'>\ndocument.body.style.background = '#' + notesoup.ui.getRandomColor();\n</script>","yPos":79,"height":55,"zIndex":64,"width":100,"notename":"random background","mtime":1196988973.232324,"id":"noteDw5X0fHf"}

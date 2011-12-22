@@ -1,0 +1,1 @@
+{"feedurl":"http://www.nytimes.com/services/xml/rss/nyt/HomePage.xml","onload":"this.getFeed(this.feedurl);","xPos":266,"refreshcountdown":291,"width":"250","yPos":607,"height":208,"zIndex":37,"bgcolor":"#FFFF99","entrytimelimit":10,"entrycountdown":2,"notename":"NYT > NYTimes.com Home","mtime":1196202147.609656,"entry":0,"refreshtimelimit":300,"id":"notee0W4Z0mI"}

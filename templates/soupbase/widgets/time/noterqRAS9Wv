@@ -1,0 +1,1 @@
+{"xPos":618,"ontick":"this.getContentDiv().innerHTML = '<h2><center>' + notesoup.timeStamp('','time') + '</h2></center>';","width":100,"yPos":58,"height":55,"zIndex":22,"bgcolor":"#99CCFF","notename":"clock","mtime":1196202577.008737,"sentby":"widgets from system/templates","id":"noterqRAS9Wv"}

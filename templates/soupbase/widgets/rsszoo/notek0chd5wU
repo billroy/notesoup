@@ -1,0 +1,1 @@
+{"feedurl":"http://news.google.com/?output=rss","onload":"this.getFeed(this.feedurl);","xPos":13,"refreshcountdown":294,"width":"250","yPos":36,"height":466,"zIndex":25,"bgcolor":"#CCFFFF","entrytimelimit":10,"entrycountdown":5,"notename":"Google News","mtime":1196202149.170959,"entry":0,"refreshtimelimit":300,"id":"notek0chd5wU"}

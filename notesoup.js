@@ -230,7 +230,11 @@ loadfiles: function(directory, tofolder) {
 	var self = this;
 
 	files.forEach(function(filename) {
-	
+		if (filename.charAt(0) == '.') {
+			console.log('Skipping system file ' + filename);
+			return;
+		}
+		console.log('Loading ' + directory + ' ' + filename);
 		var filepath = directory + '/' + filename;
 		var filetext = fs.readFileSync(filepath, 'utf8');		// specifying 'utf8' to get a string result
 		var note = JSON.parse(filetext);
@@ -262,7 +266,26 @@ loadfiles: function(directory, tofolder) {
 			clearInterval(timer);
 		}
 	}, 1000);
+},
+
+loaduser: function(user) {
+
+	var userpath = __dirname + '/templates/soupbase/' + user;
+	var folders = fs.readdirSync(userpath);
+	var responses_pending = 0;
+	var self = this;
+
+	folders.forEach(function(foldername) {
+		if (foldername.charAt(0) == '.') {
+			console.log('Skipping system file ' + foldername);
+			return;
+		}
+		console.log('Loading folder ' + user + '/' + foldername);
+		self.loadfiles(userpath + '/' + foldername, user + '/' + foldername);
+	});
 }
+
+
 };	// NoteSoup = {...};
 
 module.exports = NoteSoup;

@@ -387,6 +387,7 @@ var notesoup = {
 		var changeCount = 0;
 		if (noteid in this.notes) {		// note exists - this is an update
 
+/***** TODO: fix mtime handling
 			// decline an update to a younger version
 			if (theupdate.mtime == undefined) notesoup.say('upd: incoming no mtime: ' + this.dump(theupdate));
 			if (this.notes[noteid].mtime == undefined) notesoup.say('upd: [] no mtime: ' + this.dump(this.notes[noteid]));
@@ -399,7 +400,7 @@ var notesoup = {
 				//notesoup.say('passing apparently spurious same-age update: ' + noteid + ' ' + thenote.mtime, 'warning');
 				//return;
 			}
-
+*****/
 
 			// Check for case where an update arrives on a note being edited
 			// TODO: this is the place where better conflict handling should go

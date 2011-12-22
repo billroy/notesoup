@@ -1,0 +1,1 @@
+{"xPos":457,"from":"widgets from widgets/inbox","bgcolor":"#7fff70","text":"<center><input type='submit' value='fast sync' onclick='notesoup.folderRcon(\"=notesoup.syncInterval=6;\");'/></center>","yPos":549,"height":74,"width":100,"notename":"fast sync","mtime":1196598014.000000,"id":"note204BdorR"}
