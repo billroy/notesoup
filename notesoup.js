@@ -174,7 +174,7 @@ api_sendnote: function(req, res) {
 // crash again here
 
 			note.id = reply[1].toString();
-			var jsonnote = JSON.stringify(note);
+			//var jsonnote = JSON.stringify(note);
 			var now = new Date().getTime();
 
 			self.redis.multi()
@@ -198,6 +198,38 @@ api_sendnote: function(req, res) {
 				});
 		});
 },
+
+api_appendtonote: function(req, res) {
+	var self = this;
+	self.redis.hget(self.key_note(req.body.params.tofolder), 
+		req.body.params.noteid, function(err, note) {
+
+		if (note) {
+			console.log('Append1: ' + typeof(note) + ' -' + note + '-');			
+
+			if (typeof(note) === 'string') {
+				console.log('Append2: ' + typeof(note) + ' -' + note + '-');			
+				note = JSON.parse(note);
+			}
+			console.log('Append: note ' + typeof(note));
+			console.dir(note);
+
+			if (note.text) note.text = note.text + req.body.params.text;
+			else note.text = req.body.params.text;
+
+			console.dir(note);
+
+			var now = new Date().getTime();
+			self.redis.multi()
+				.hset(self.key_note(req.body.params.tofolder), note.id, note)
+				.zadd(self.key_mtime(req.body.params.tofolder), now, req.body.params.noteid)
+				.exec(function(err, reply) {
+					self.sendreply(req, res, [['updatenote', note]]);
+			});
+		}
+	});
+},
+
 
 api_postevent: function(req, res) {
 	console.log('PostEvent via api:');
@@ -278,6 +310,25 @@ save_password_hash: function(req, res, user, passwordhash) {
 	});
 },
 
+key_foldermeta: function(folder) {
+	return 'fldr/' + folder;
+},
+
+api_setfolderacl: function(req, res) {
+
+	var self = this;
+	var acl = {};
+	if (req.body.params.editors) acl.editors = req.body.params.editors;
+	if (req.body.params.readers) acl.readers = req.body.params.readers;
+	if (req.body.params.senders) acl.senders = req.body.params.senders;
+
+	console.log("SetACL " + req.body.params.tofolder);
+	console.dir(acl);
+
+	self.redis.hmset(self.key_foldermeta(req.body.params.tofolder), acl, function(err, reply) {
+		self.sendreply(req, res, [['say','Folder permissions updated.']]);
+	});
+},
 
 api_knockknock: function(req, res) {
 	// save login nonce

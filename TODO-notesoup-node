@@ -4,6 +4,8 @@
 	- TypeError: 'null' is not an object (evaluating 'note.set')
 	- http:// imports fetch using /geturl!
 
+- bug: note color change doesn't go on notify bus, waits for sync instead
+
 - bug: why are numeric noteids failing on the client?
 	- actually it's not numeric id's it's json notes
 
@@ -16,19 +18,12 @@
 - API buildout order of battle
 	- folder handling
 
-	- ACL handling: where do folder attrs go?
-		- meta/<user>/<folder>/.public
-			.userinfo holds the password hash
-				time to rename to .passwd
-			acl files: .readers, .editors, .senders, 
-		- access control checks across the API
+- access control checks across the API
 
 - bugs:
 	- bug: mtimes in the note, or not?
 		- savenote, sendnote, loadfiles
 	- bug: same for id?
-	- bug: tooltip CSS?
-	- bug: debug console css?
 
 Ext v99?  Touch?  Mac?
 
