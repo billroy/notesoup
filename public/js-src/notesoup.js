@@ -885,7 +885,9 @@ var notesoup = {
 	getFolderList: function() {
 		this.postRequest({
 			method:"getfolderlist",
-			params:{}
+			params:{			
+				user: notesoup.username
+			}
 		},{
 			//requestMessage: 'Fetching folder list... ',
 			//successMessage: 'Done.',

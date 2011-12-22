@@ -206,8 +206,9 @@ notesoup.ui = {
 				},
 				{text: 'Browse the Widget Library', handler: function() {
 					window.open('/folder/widgets/public', '', '', false);
-				}, icon: notesoup.imageHost + 'images/famfamfam.com/door_in.png'},
-
+				}, icon: notesoup.imageHost + 'images/famfamfam.com/door_in.png'}
+/*****
+				,
 				'-',
 				{text: 'Upload Files...', handler: function() {
 					//notesoup.ui.createNoteFromTemplate('File Upload');
@@ -215,8 +216,8 @@ notesoup.ui = {
 						notename: 'File Upload',
 						imports: 'system/widgets/@File Upload'
 					});
-
 				}, icon: notesoup.imageHost + 'images/famfamfam.com/page_white_add.png'},
+*****/
 			]
 		});
 

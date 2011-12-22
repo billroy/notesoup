@@ -95,10 +95,10 @@ soupnote.prototype.reapplyImports = function(msdelay) {
 soupnote.prototype.applyImports = function() {
 
 	if (this.imports in this.getEphemeral('appliedimports', [])) {
-		//notesoup.say('Import already applied: ' + this.imports + ' ' + this.id);
+		notesoup.say('Import already applied: ' + this.imports + ' ' + this.id);
 		return;
 	}
-	//notesoup.say('Applying import ' + this.imports + ' to note ' + this.id);
+	notesoup.say('Applying import ' + this.imports + ' to note ' + this.id);
 
 	// handle imports: url 
 	if ((this.imports.substring(0, 5) == 'http:') || (this.imports.substring(0, 6) == 'https:')) {
@@ -108,23 +108,33 @@ soupnote.prototype.applyImports = function() {
 	}
 
 	var importNote = notesoup.getImport(this.imports);
-	//notesoup.say('Import=' + notesoup.dump(importNote));
-	if (importNote < 0) this.reapplyImports(200);
-	if (!importNote) notesoup.say('Import cannot be found: ' + this.imports, 'error');
+	notesoup.say('Import=' + notesoup.dump(importNote));
+	if (importNote < 0) {
+		notesoup.say('Import spin...');
+		this.reapplyImports(200);
+	}
+	else if (!importNote) notesoup.say('Import cannot be found: ' + this.imports, 'error');
 	else {
 		var elt = Ext.get(this.id + notesoup.ui.contentSuffix);
 		if (elt) {
 			this.addAppliedImport(this.imports);
+
+			notesoup.say("Merging widget DNA");
 			
 			// merge in widget attributes for un-set values only
 			for (var k in importNote) {
+				notesoup.say('Considering ' + k);
 				if (k in ['id', 'text']) continue;
 				if (k in this) continue;
+				notesoup.say('Merging ' + k);
 				this[k] = importNote[k];
 			}
 			elt.update(importNote.text, true);	// true to load scripts
 		}
-		else this.reapplyImports(20);
+		else {
+			notesoup.say("Import no elt.");
+			this.reapplyImports(20);
+		}
 	}
 };
 

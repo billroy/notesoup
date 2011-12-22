@@ -1,12 +1,10 @@
 
 - BUG: Fix The Blocking Widgets Bug
+	- bug: oops gen 1
+	- http:// imports fetch using /geturl!
 
-- bug: oops gen 1
-	
 - bug: why are numeric noteids failing on the client?
-
-- issue: imports-hostname root for imports javascripts
-	imports: 'http://chowder.notesoup.net/js-src/...
+	- actually it's not numeric id's it's json notes
 
 - Sessions and session store in socket.io
 
@@ -27,3 +25,38 @@
 	- bug: debug console css?
 
 Ext v99?  Touch?  Mac?
+
+
+	# Only a few methods are allowed if we're not logged in
+	if method == 'knockknock': return apiknockknock(params)
+	if method == 'login': return apilogin(params)
+	if method == 'logout': return apilogout(params)
+	if method == 'createuser': return apicreateuser(params)
+	if method == 'getfeed': return apigetfeed(params)
+	if method == 'getnote': return apigetnote(params)
+
+	# Command below this point are only allowed for logged-in requestors
+	if not params['requestor']:	
+		return APILoginError(nullparams)
+
+	if method == 'appendtonote': return apiappendtonote(params)
+	if method == 'renamenote': return apirenamenote(params)
+	if method == 'geturl': return apigeturl(params)
+	if method == 'gettemplatelist': return apigettemplatelist(params)
+
+	# openfolder is above in pre-login
+	# so is getfolderlist
+
+	if method == 'setfolderpassword': return apisetfolderpassword(params)
+	if method == 'setfolderacl': return apisetfolderacl(params)
+	if method == 'getfolderacl': return apigetfolderacl(params)
+
+	if method == 'deletefolder': return apideletefolder(params)
+	if method == 'renamefolder': return apirenamefolder(params)
+	if method == 'copyfolder': return apicopyfolder(params)
+	if method == 'emptytrash': return apiemptytrash(params)
+
+	# createuser is above in pre-login
+	if method == 'deleteuser': return apideleteuser(params)
+
+	if method == 'postevent': return apipostevent(params)

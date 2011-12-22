@@ -222,14 +222,25 @@ api_getnotes: function(req, res) {
 	});
 },
 
-api_getfolderlist: function(req, res) {
-	console.dir(req.body.params);
-// TODO: fetch from redis
-//	var self = this;
-//	self.redis.keys('notes/
+key_folderquery: function(user) {
+	return this.key_note(user + '/*');
+},
 
-	// needs username for the session
-	this.sendreply(req, res, [['folderlist',['user/inbox','user/public','user/trash']]]);
+api_getfolderlist: function(req, res) {
+	var self = this;
+
+	// Todo: should use session username
+	self.redis.keys(self.key_folderquery(req.body.params.user), function(err, keylist) {
+		var folderlist = [];
+		keylist.forEach(function(key) {
+			folderlist.push(key.substr(6));	// prune off 'notes/'
+		});
+		self.sendreply(req, res, [['folderlist', folderlist]]);
+	});
+},
+
+api_createfolder: function(req, res) {
+	this.api_openfolder(req, res);
 },
 
 api_openfolder: function(req, res) {
@@ -267,13 +278,13 @@ loadfiles: function(directory, tofolder) {
 		self.redis.incr(self.key_nextid(tofolder), function(err, id) {
 	
 			note.id = id.toString();
-			var now = new Date().getTime();
+			note.mtime = new Date().getTime();
 			var jsonnote = JSON.stringify(note);
 			++responses_pending;
 	
 			self.redis.multi() 
 				.hset(self.key_note(tofolder), note.id, jsonnote)
-				.zadd(self.key_mtime(tofolder), now, note.id)
+				.zadd(self.key_mtime(tofolder), note.mtime, note.id)
 				.exec(function (err, replies) {
 					--responses_pending;
 					//console.log("MULTI got " + replies.length + " replies");
