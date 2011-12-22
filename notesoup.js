@@ -165,10 +165,14 @@ api_sendnote: function(req, res) {
 		.exec(function(err, reply) {
 
 			// Bug: crash here on Duplicate Note: note is null?!
-			//console.log("Send note bulk reply:");
-			//console.dir(reply);
+			console.log("Send note bulk reply:");
+			console.dir(reply);
 
 			var note = reply[0];
+
+// crash: on a race, if the note isn't there, the server dies here.
+// crash again here
+
 			note.id = reply[1].toString();
 			var jsonnote = JSON.stringify(note);
 			var now = new Date().getTime();
