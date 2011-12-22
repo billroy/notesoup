@@ -207,6 +207,11 @@ api_getnotes: function(req, res) {
 	return this.sendreply(req, res, []);
 },
 
+api_getfolderlist: function(req, res) {
+//	console.dir(req.body.params);
+	return this.sendreply(req, res, []);
+},
+
 
 loadfiles: function(directory, tofolder) {
 

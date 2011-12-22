@@ -32,7 +32,7 @@ io.sockets.on('connection', function(socket) {
 });
 
 var fs = require("fs");
-var html_template = fs.readFileSync(__dirname + '/public/index.html', 'utf-8');
+var html_template = fs.readFileSync(__dirname + '/templates/index.html', 'utf-8');
 
 // Configuration
 
