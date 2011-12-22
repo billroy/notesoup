@@ -248,8 +248,15 @@ soupnote.prototype.onrender = function() {
 	}
 	else outerDiv.setStyle('zIndex', this.zIndex);
 
+	// Establish the background color
+	this.displaybg = '#fff8b6';
+
+	//this.bgcolor || notesoup.ui.defaultNoteColor;
+
 	notesoup.ui.noteTemplate.overwrite(theDiv.dom, this);
+
 	delete this.displayText;
+	delete this.displaybg;
 
 	//this.syncDivs();
 

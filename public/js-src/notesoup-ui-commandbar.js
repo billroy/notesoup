@@ -156,7 +156,7 @@ notesoup.set({
 	
 		// Frame up a new note
 		var thenote = {
-			bgcolor: notesoup.ui.defaultNoteColor,
+			//bgcolor: notesoup.ui.defaultNoteColor,
 			width: 250,
 			height: 100
 		};
@@ -217,7 +217,7 @@ notesoup.set({
 	createNoteFromSlashDelimitedLines: function(cmd) {
 		// Frame up a new note
 		var thenote = {
-			'bgcolor':notesoup.ui.defaultNoteColor,
+			//'bgcolor':notesoup.ui.defaultNoteColor,
 			'width':'250',
 			'height':'100'
 		};
@@ -246,7 +246,7 @@ notesoup.set({
 	
 		// Frame up a new note
 		var thenote = {
-			'bgcolor':notesoup.ui.defaultNoteColor,
+			//'bgcolor':notesoup.ui.defaultNoteColor,
 			'width':'250',
 			'height':'100',
 			'feedurl': cmd,

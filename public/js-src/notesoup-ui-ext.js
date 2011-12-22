@@ -9,6 +9,8 @@
 /** Extjs 2.0 UI integration */
 notesoup.ui = {
 
+	defaultNoteColor: '#FFFF99',
+
 	/**
 	*	merge the passed-in options into notesoup.ui
 	*	@param {object} opts options to merge into notesoup.ui
@@ -601,7 +603,7 @@ notesoup.ui = {
 		this.filterbarEl.on('keyup', this.filterBarWatcher);
 
 		//Ext.dd.DragDropMgr.mode = 1;	// set INTERSECT mode for dd (breaks Ext.tree DD)
-		notesoup.ui.defaultNoteColor = '#FFFF99';
+		//notesoup.ui.defaultNoteColor = '#FFFF99';
 		notesoup.ui.defaultEffectsDuration = 0.3;
 
 		//notesoup.ui.getRunScriptsCookie();
@@ -972,7 +974,7 @@ notesoup.ui = {
 				' style="display:none;float:right;cursor:pointer"/>',
 			'</div>',
 			'<div class="notebody" id="{id}_content" ',
-			'style="background:{bgcolor}">{displayText}</div>',
+			'style="background:{displaybg}">{displayText}</div>',
 		'</div></div></div>',
 		'<div class="x-box-bl"><div class="x-box-br" id="{id}_br"><div class="x-box-bc"></div></div></div>'
 	],
@@ -992,7 +994,7 @@ notesoup.ui = {
 					' style="float:right;cursor:pointer"/>',
 				'</div>',
 				'<div class="notebody" id="{id}_content" ',
-				'style="background:{bgcolor}">{displayText}</div>',
+				'style="background:{displaybg}">{displayText}</div>',
 			'</div>',
 		//'</div></div></div>',
 		//...'<div class="x-box-bl"><div class="x-box-br" id="{id}_br"><div class="x-box-bc"></div></div></div>'
@@ -1014,7 +1016,7 @@ notesoup.ui = {
 				//	' style="float:right;cursor:pointer"/>',
 				//'</div>',
 				'<div class="notebody" id="{id}_content" ',
-				'style="background:{bgcolor}"',
+				'style="background:{displaybg}"',
 				'>{displayText}</div>',
 			'</div>',
 		//'</div></div></div>',

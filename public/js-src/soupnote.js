@@ -447,6 +447,8 @@ soupnote.prototype.rendernote = function() {
 		this.displayText = this.displayText.replace(/\n/g, '\n<br/>');
 	}	
 
+	this.displaybg = this.bgcolor || notesoup.ui.defaultNoteColor;
+
 	var thumb = false;
 	var isimage = this.isimage;
 	var isfolder = false;
@@ -489,7 +491,7 @@ soupnote.prototype.rendernote = function() {
 							//'" src="{displayText}" width="' + this.width + '" onmousedown="return false;" ondragstart="return false;" />',
 							'" src="{displayText}" width="' + this.width + '" />',
 					islink ? '</a>' : '',
-					"<div style='background:{bgcolor}'>",
+					"<div style='background:{displaybg}'>",
 						"{notename}<br/>",
 						"<div id='", this.id, "'_content'></div>",
 					"</div>"
@@ -537,6 +539,7 @@ soupnote.prototype.rendernote = function() {
 
 	var markup = template.applyTemplate(this);
 	delete this.displayText;
+	delete this.displaybg;
 	return markup;
 };
 
@@ -684,7 +687,7 @@ soupnote.prototype.fieldeditor = function() {
 	if (contentdiv) {
 		contentdiv.dom.innerHTML = '';
 		fieldForm.render(contentdiv);
-		if (this.bgcolor) $(this.id + notesoup.ui.contentSuffix).style.background = this.bgcolor;
+		$(this.id + notesoup.ui.contentSuffix).style.background = this.bgcolor || notesoup.ui.defaultNoteColor;
 	}
 	this.setEphemeral('fieldForm', fieldForm);
 

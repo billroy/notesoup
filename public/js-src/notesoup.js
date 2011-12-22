@@ -443,7 +443,7 @@ var notesoup = {
 
 		if (!(thenote.height > 0)) thenote.height = this.defaultNoteHeight;
 		if (!(thenote.width > 0)) thenote.width = this.defaultNoteWidth;
-		if (!('bgcolor' in thenote)) thenote.bgcolor = notesoup.ui.defaultNoteColor || '#fff8b6';
+		//if (!('bgcolor' in thenote)) thenote.bgcolor = notesoup.ui.defaultNoteColor || '#fff8b6';
 
 		// more resize bug
 		//if (('width' in theupdate) || ('height' in theupdate)) 

@@ -1,12 +1,9 @@
 
 
 - bug: mtimes in the note, or not?
+- bug: same for id?
 
 - bug: tooltip CSS?
-- bug: avatar won't appear
-
-Routing for /folder/:user/:folder
-	templates next
 
 Sessions and session store in socket.io
 
@@ -25,10 +22,3 @@ where do folder attrs go?
 		dotfiles
 
 Ext v99?  Touch?  Mac?
-
-
-Templates
-
-
-BUG: Don't put default background color in every damn note
-BUG: use shorter attribute names in note data, maybe single letter
