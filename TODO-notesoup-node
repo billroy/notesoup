@@ -38,7 +38,7 @@ Ext v99?  Touch?  Mac?
 *	if method == 'login': return apilogin(params)
 **	if method == 'logout': return apilogout(params)
 
-	if method == 'createuser': return apicreateuser(params)
+*	if method == 'createuser': return apicreateuser(params)
 	if method == 'getfeed': return apigetfeed(params)
 	if method == 'getnote': return apigetnote(params)
 
@@ -52,6 +52,7 @@ Ext v99?  Touch?  Mac?
 		- this is required to load widget .js on the fly
 
 	if method == 'gettemplatelist': return apigettemplatelist(params)
+		- needs 'requestor' - logged in user from session
 
 	# openfolder is above in pre-login
 	# so is getfolderlist

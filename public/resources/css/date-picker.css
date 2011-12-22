@@ -1,16 +1,16 @@
 /*
- * Ext JS Library 1.1
+ * Ext JS Library 2.0
  * Copyright(c) 2006-2007, Ext JS, LLC.
  * licensing@extjs.com
  * 
- * http://www.extjs.com/license
+ * http://extjs.com/license
  */
 
 .x-date-picker {
     border: 1px solid #1b376c;
     border-top:0 none;
     background:#fff;
-	 position:relative;
+	position:relative;
 }
 .x-date-picker a {
     -moz-outline:0 none;
@@ -20,7 +20,7 @@
     border-collapse:separate;
 }
 .x-date-middle,.x-date-left,.x-date-right {
-	background: url(../images/default/basic-dialog/hd-sprite.gif) repeat-x 0 -83px;
+	background: url(../images/default/shared/hd-sprite.gif) repeat-x 0 -83px;
 	color:#FFF;
 	font:bold 11px "sans serif", tahoma, verdana, helvetica;
 	overflow:hidden;
