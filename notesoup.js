@@ -261,6 +261,24 @@ randomName: function(namelen) {
 },
 
 
+key_usermeta: function(user) {
+	return 'user/' + user + '/.passwd';
+},
+
+api_createuser: function(req, res) {
+	this.save_password_hash(req, res, req.body.params.username, req.body.params.password);
+},
+
+inboxfolder: 'inbox',
+
+save_password_hash: function(req, res, user, passwordhash) {
+	var self = this;
+	self.redis.set(self.key_usermeta(user), passwordhash, function(err, reply) {
+		self.sendreply(req, res, [['navigateto', '/folder/' + user + '/' + self.inboxfolder]]);
+	});
+},
+
+
 api_knockknock: function(req, res) {
 	// save login nonce
 	this.sendreply(req, res, [['whosthere', this.randomName(32)]]);

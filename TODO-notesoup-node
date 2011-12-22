@@ -1,15 +1,17 @@
 
 - BUG: Fix The Blocking Widgets Bug
 	- bug: oops gen 1
-
 	- TypeError: 'null' is not an object (evaluating 'note.set')
-
 	- http:// imports fetch using /geturl!
 
 - bug: why are numeric noteids failing on the client?
 	- actually it's not numeric id's it's json notes
 
 - Sessions and session store in socket.io
+	- username
+	- requires: cookie store (file cookie store ok?)
+	- requires: .userinfo / apicreateuser
+	- enables: api_login
 
 - API buildout order of battle
 	- folder handling
