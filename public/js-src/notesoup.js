@@ -778,39 +778,6 @@ var notesoup = {
 		this.sendNote(thenoteid, notesoup.foldername, tofolder, deleteoriginal);
 	},
 
-	
-	/**
-	*	Rename note
-	*	Provides a measure of control over the (normally random, system-assigned) filename for a note
-	*	@param {object} thenote the note to rename (the note object, not its id)
-	*	@param {object} the new id you would like it to have
-	*/
-	renameNote: function(thenote, newname) {
-
-		if (this.readonly) return;
-		var oldname = thenote.id;
-
-		if ((newname == null) || (newname == ''))
-			newname = this.prompt('Enter a new filename:', oldname);
-
-		if (newname != null && (newname != '') && (newname != oldname)) {
-
-			// TODO: Filter user input for evil chars before the request
-			this.postRequest({
-				method:"renamenote",
-				params:{
-					fromfolder:this.foldername,
-					fromname:oldname,
-					toname:newname
-				}
-			},{
-				requestMessage: 'Renaming ' + thenote.notename + ' from ' + oldname + ' to ' + newname,
-				successMessage: 'Renamed.',
-				failureMessage: 'Could not rename note.'
-			});
-		}
-	},
-
 
 	/**
 	*	destroyNote
@@ -853,7 +820,8 @@ var notesoup = {
 		if (this.readonly) return;
 		this.sendNote(thenoteid, this.foldername, this.getUserFromFolderPath(this.foldername) + '/trash');
 	},
-	
+
+
 	/**
 	*	erase all the notes in this folder by sending them to the trash (after user confirmation)
 	*/

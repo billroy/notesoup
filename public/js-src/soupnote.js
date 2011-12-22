@@ -699,7 +699,8 @@ soupnote.prototype.validateedit = function(o) {
 	//notesoup.say('afteredit: ' + this.id + ' ' + o.record.get('name') + ' ' + o.field + ' ' + o.value + ' ' + o.originalValue + ' ' + o.row + ' ' + o.column);
 	var field = o.record.get('name');
 	if (field == 'id') {
-		notesoup.renameNote(this, o.value);
+		//notesoup.renameNote(this, o.value);
+		notesoup.say('Sorry, the id field is read-only.', 'error');
 	}
 	else {
 		notesoup.say('Setting ' + field + ' to ' + o.value);

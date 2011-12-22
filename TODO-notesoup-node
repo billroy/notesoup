@@ -7,7 +7,7 @@
 - bug: note color change doesn't go on notify bus, waits for sync instead
 
 - bug: why are numeric noteids failing on the client?
-	- actually it's not numeric id's it's json notes
+	- actually it's not numeric id's it's "[Object object]" notes
 
 - Sessions and session store in socket.io
 	- username
@@ -15,10 +15,8 @@
 	- requires: .userinfo / apicreateuser
 	- enables: api_login
 
-- API buildout order of battle
-	- folder handling
-
-- access control checks across the API
+- API buildout 
+	- big: access control checks across the API
 
 - bugs:
 	- bug: mtimes in the note, or not?
@@ -38,28 +36,20 @@ Ext v99?  Touch?  Mac?
 	if method == 'getnote': return apigetnote(params)
 
 	# Command below this point are only allowed for logged-in requestors
-	if not params['requestor']:	
-		return APILoginError(nullparams)
 
-	if method == 'appendtonote': return apiappendtonote(params)
-	if method == 'renamenote': return apirenamenote(params)
 	if method == 'geturl': return apigeturl(params)
 		- this is required to load widget .js on the fly
 
 	if method == 'gettemplatelist': return apigettemplatelist(params)
 		- needs 'requestor' - logged in user from session
 
-	# openfolder is above in pre-login
-	# so is getfolderlist
-
 	if method == 'setfolderpassword': return apisetfolderpassword(params)
+		- use api_setfolderacl {password: password}
 		- checking the password requires http auth or equiv.
 
-	if method == 'setfolderacl': return apisetfolderacl(params)
 	if method == 'getfolderacl': return apigetfolderacl(params)
 
 	if method == 'deletefolder': return apideletefolder(params)
-	if method == 'renamefolder': return apirenamefolder(params)
 	if method == 'copyfolder': return apicopyfolder(params)
 	if method == 'emptytrash': return apiemptytrash(params)
 

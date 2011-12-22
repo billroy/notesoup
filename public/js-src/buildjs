@@ -1,7 +1,7 @@
 #!/bin/bash
 cat	sha1.js \
 	notesoup.js soupnote.js notesoup-ui-ext.js \
-	../js/AFLAX/aflax.js notesoup-push-aflax.js \
+	notesoup-push-socketio.js \
 	notesoup-ui-commandbar.js notesoup-ui-marquee.js \
 	notesoup-ui-folderlist.js notesoup-ui-templatelist.js \
 	notesoup-sound.js notesoup-widgets.js notesoup-avatar.js \

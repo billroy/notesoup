@@ -165,20 +165,18 @@ api_sendnote: function(req, res) {
 		.exec(function(err, reply) {
 
 			// Bug: crash here on Duplicate Note: note is null?!
-			console.log("Send note bulk reply:");
+			console.log('Send note bulk reply: ');
 			console.dir(reply);
 
-			var note = reply[0];
-
-// crash: on a race, if the note isn't there, the server dies here.
-// crash again here
-
+			var note = JSON.parse(reply[0]);
+			console.log('Fetched note: ' + typeof(note));
+			console.dir(note);
 			note.id = reply[1].toString();
-			//var jsonnote = JSON.stringify(note);
+			console.log('New note id: ' + note.id);
 			var now = new Date().getTime();
 
 			self.redis.multi()
-				.hset(self.key_note(req.body.params.tofolder), note.id, note)
+				.hset(self.key_note(req.body.params.tofolder), note.id, JSON.stringify(note))
 				.zadd(self.key_mtime(req.body.params.tofolder), now, note.id)
 				.exec(function(err, reply) {
 
@@ -202,10 +200,10 @@ api_sendnote: function(req, res) {
 api_appendtonote: function(req, res) {
 	var self = this;
 	self.redis.hget(self.key_note(req.body.params.tofolder), 
-		req.body.params.noteid, function(err, note) {
+		req.body.params.noteid, function(err, notetext) {
 
-		if (note) {
-			if (typeof(note) === 'string') note = JSON.parse(note);
+		if (notetext) {
+			var note = JSON.parse(notetext);
 			console.log('Append: note ' + typeof(note));
 			console.dir(note);
 
@@ -314,6 +312,7 @@ api_setfolderacl: function(req, res) {
 	if (req.body.params.editors) acl.editors = req.body.params.editors;
 	if (req.body.params.readers) acl.readers = req.body.params.readers;
 	if (req.body.params.senders) acl.senders = req.body.params.senders;
+	if (req.body.params.password) acl.password = req.body.params.password;
 
 	console.log("SetACL " + req.body.params.tofolder);
 	console.dir(acl);
@@ -387,9 +386,7 @@ loadfiles: function(directory, tofolder) {
 	// Wait for the last command to complete
 	var timer = setInterval(function() {
 		if (responses_pending > 0) console.log("Loadfiles waiting for responses: " + responses_pending);
-		else {
-			clearInterval(timer);
-		}
+		else clearInterval(timer);
 	}, 100);
 },
 
