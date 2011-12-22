@@ -2,6 +2,7 @@
 var soup = require('./notesoup.js');
 soup.connect(process.env.REDIS_URL);
 
-soup.loaduser('system');
+//soup.loaduser('system');
+soup.loaduser('widgets');
 
 //process.exit(0);

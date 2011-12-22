@@ -4,21 +4,18 @@
 - bug: same for id?
 
 - bug: tooltip CSS?
+- bug: debug console css?
+
 
 Sessions and session store in socket.io
 
-API order of battle
+API buildout order of battle
 
-Populate empty db
-	system/welcome
-	system/widgets
-	...
 
 BUG: Fix The Blocking Widgets Bug
 
 where do folder attrs go?
-	folder/...
-		security
-		dotfiles
+	meta/<user>/<folder>/.public
+	dotfiles: .readers, .editors, .senders, .passwd
 
 Ext v99?  Touch?  Mac?
