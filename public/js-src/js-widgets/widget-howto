@@ -1,0 +1,148 @@
+
+
+1. Casual javascript at the command bar
+
+Run some javascript from the command line:
+
+	=notesoup.say("Hello, world!");
+
+
+2. A note with a little script in it
+
+Create a note with script in the body text,
+run it with Note Menu -> Run As Script:
+
+	Hello World/notesoup.say("Hello, world!");
+
+
+3. Simple embedded javascript with markup
+
+
+3.1 Run once when a note is loaded
+
+Use script tags to embed javascript into the note body, just as you would on a web page.  When the note is loaded, the script executes.
+
+For example, copy and paste this script into the Show Source field of a note:
+
+	<script type=text/javascript>
+	notesoup.say("Hello, world!");
+	</script>
+	This is the Hello World note.
+
+This will say "Hello, world!" when you Save it, and thereafter when you refresh the folder and the note is loaded
+
+
+3.2 Run once when a button is clicked
+
+Here we add a function to the note to handle the button click, and some markup to display a button.
+
+Functions are not persisted in JSON, so this initialization is properly performed every time the note is loaded.
+
+	<script type='text/javascript'>
+	var note = notesoup.ui.getEnclosingNote(this);
+	note.set({
+		onclick: function() {
+			notesoup.say("Hello, world!");
+		}
+	});
+	</script>
+	<center><input type='submit' value='go' onclick='notesoup.ui.getEnclosingNote(this).onclick();'/></center>
+	
+
+3.3 Run once per second
+
+	<script type='text/javascript'>
+	var note = notesoup.ui.getEnclosingNote(this);
+	note.set({
+		ontick: function() {
+			notesoup.say("Hello, world!");
+		}
+	});
+	</script>
+	This is a very noisy little example note.
+
+
+4. Advanced embedded javascript
+
+Here we see for the first time the canonical form for a simple note soup widget.
+
+The code finds its containing note and sets up init() and ontick() handlers.  Then it calls init() and off we go.
+
+We see the init() method modifying the note and save()'ing its new settings.
+
+We also see the ontick function setting the markup displayed for the note using setContentDiv().  This happens about once per second.
+
+	<script type='text/javascript'>
+	/**
+	*	timer.js - Note Soup timer widget
+	*	Copyright 2007 by Bill Roy
+	*	All rights reserved.
+	*/
+	var note = notesoup.ui.getEnclosingNote(this);
+	note.set({
+		init: function() {
+			if (!(this.starttime) || (this.id != this.oldid)) {
+				this.starttime = new Date().toString();
+				this.oldid = this.id;
+				this.save();
+				notesoup.say('Timer started: ' + this.starttime);
+			}
+		},
+	
+		ontick: function() {
+			this.setContentDiv([
+				'<center><h2>', 
+						notesoup.stringifyTimeDiff(new Date() - Date.parse(this.starttime)), 
+					'</h2>', '<br/>',
+					'<h5>since ', this.starttime, '</h5>',
+				'</center>'
+			].join(''));
+		}
+	});
+	note.init();
+	</script>
+
+
+5. Offboard Javascript Bootstrap Widget Loading
+
+Supposing you had timer.js just as above but without the script tags (i.e., a purely javascript file), somewhere on the internet, you could bootstrap load its essence into the note of your choice with a code fragment like this:
+
+	<script type='text/javascript'>
+	/**
+	*	Note Soup test widget bootstrap loader
+	*	Copyright 2007 by Bill Roy
+	*	All rights reserved.
+	*/
+	notesoup.loadScript('http://example.com/timer.js', null,
+		function(widgetClass) {
+			this.set(notesoup[widgetClass]);
+			this.init(widgetClass);
+		}.createDelegate(notesoup.ui.getEnclosingNote(this), ['test'])
+	);
+	</script>
+
+
+6. Indirect code: the widget as a code pointer
+
+	Single inheritance of a particular note.
+
+	Import from local folder:
+	{imports: '@avatar'}		note with notename of avatar
+	{imports: 'note4Kd4f6hC'}	note with id of note...
+
+	Import from remote folder: (read permission required)
+	{imports: 'system/widgets/@avatar'}
+	{imports: 'system/widgets/note4Kd4f6hC'}
+
+
+6.1: for later:
+- multiple imports
+- nested / recursive imports
+- import path
+	check current path
+	check user/widgets
+	check system/widgets
+
+- loop detection (implemented but untested)
+	ephemeral list 'imported'
+	

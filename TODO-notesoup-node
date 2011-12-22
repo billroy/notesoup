@@ -2,18 +2,8 @@
 - BUG: Fix The Blocking Widgets Bug
 
 - bug: oops gen 1
-
-- getnote bugs
-	- bug: id's are numeric, not string, in the reply
-	- bug: getnote sends id as number
 	
-	- bug: why are numeric noteids failing on the client?
-
-- data cleanup
-	- bug: prune defaultnotecolor on import
-	- bug: prune syncme on import
-	- http://chowder.notesoup.net in the widget sources
-		prune imports:...
+- bug: why are numeric noteids failing on the client?
 
 - issue: imports-hostname root for imports javascripts
 	imports: 'http://chowder.notesoup.net/js-src/...
