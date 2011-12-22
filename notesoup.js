@@ -205,23 +205,16 @@ api_appendtonote: function(req, res) {
 		req.body.params.noteid, function(err, note) {
 
 		if (note) {
-			console.log('Append1: ' + typeof(note) + ' -' + note + '-');			
-
-			if (typeof(note) === 'string') {
-				console.log('Append2: ' + typeof(note) + ' -' + note + '-');			
-				note = JSON.parse(note);
-			}
+			if (typeof(note) === 'string') note = JSON.parse(note);
 			console.log('Append: note ' + typeof(note));
 			console.dir(note);
 
 			if (note.text) note.text = note.text + req.body.params.text;
 			else note.text = req.body.params.text;
 
-			console.dir(note);
-
 			var now = new Date().getTime();
 			self.redis.multi()
-				.hset(self.key_note(req.body.params.tofolder), note.id, note)
+				.hset(self.key_note(req.body.params.tofolder), note.id, JSON.stringify(note))
 				.zadd(self.key_mtime(req.body.params.tofolder), now, req.body.params.noteid)
 				.exec(function(err, reply) {
 					self.sendreply(req, res, [['updatenote', note]]);
