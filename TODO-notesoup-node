@@ -1,13 +1,12 @@
 
-finish event plumbing
 
-- mtimes in the note, or not?
+- bug: mtimes in the note, or not?
+
+- bug: tooltip CSS?
+- bug: avatar won't appear
 
 Routing for /folder/:user/:folder
 	templates next
-
----
-
 
 Sessions and session store in socket.io
 

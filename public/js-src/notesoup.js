@@ -67,6 +67,7 @@ var notesoup = {
 			}
 		}
 
+/****
 		// MISO: Create an ad-hoc folder for ?folder=newadhocfoldername
 		var uriparts = ('' + document.location).split('?');
 		if (uriparts.length == 2) { 	// have one query part
@@ -80,6 +81,7 @@ var notesoup = {
 				}
 			}
 		}
+****/
 
 		document.title = 'Note Soup :: ' + this.foldername;
 		this.ui.initialize();
@@ -122,7 +124,7 @@ var notesoup = {
 		}
 
 		notesoup.push.init();
-		//notesoup.sound.init();
+		if (notesoup.sound) notesoup.sound.init();
 		notesoup.frontstage.init();
 
 		this.initialized = true;
