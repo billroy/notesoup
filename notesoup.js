@@ -207,19 +207,33 @@ api_postevent: function(req, res) {
 },
 
 api_getnotes: function(req, res) {
-//	console.dir(req.body.params);
-	return this.sendreply(req, res, []);
+	var self = this;
+	self.redis.hgetall(self.key_note(req.body.params.fromfolder), function(err, jsonnotes) {
+		if (!jsonnotes) return;
+		//console.log("Got notes from " + req.body.params.fromfolder);
+		//console.dir(json_notes);
+		var parsed_notes = {};
+		for (var n in jsonnotes) {
+			var note = JSON.parse(jsonnotes[n]);
+			parsed_notes[note.id] = note;
+		}
+		
+		self.sendreply(req, res, [['notes', parsed_notes]]);
+	});
 },
 
 api_getfolderlist: function(req, res) {
-//	console.dir(req.body.params);
+	console.dir(req.body.params);
 // TODO: fetch from redis
-	return this.sendreply(req, res, [['folderlist',['user/inbox','user/public','user/trash']]]);
+//	var self = this;
+//	self.redis.keys('notes/
+
+	// needs username for the session
+	this.sendreply(req, res, [['folderlist',['user/inbox','user/public','user/trash']]]);
 },
 
 api_openfolder: function(req, res) {
-//	console.dir(req.body.params);
-	return this.sendreply(req, res, [['navigateto', '/folder/' + req.body.params.tofolder]]);
+	this.sendreply(req, res, [['navigateto', '/folder/' + req.body.params.tofolder]]);
 },
 
 
@@ -239,6 +253,17 @@ loadfiles: function(directory, tofolder) {
 		var filetext = fs.readFileSync(filepath, 'utf8');		// specifying 'utf8' to get a string result
 		var note = JSON.parse(filetext);
 	
+		// Clean up the note a bit
+		if (note.bgcolor == '#FFFF99') delete note.bgcolor;
+		if ('syncme' in note) delete note.syncme;
+		if (note.imports) {
+			note.imports = note.imports.replace('http://chowder.notesoup.net', '');
+		}
+
+		if (note.backImage) {
+			note.backImage = note.backImage.replace('http://notesoup.net', '');
+		}
+
 		self.redis.incr(self.key_nextid(tofolder), function(err, id) {
 	
 			note.id = id.toString();
@@ -251,10 +276,10 @@ loadfiles: function(directory, tofolder) {
 				.zadd(self.key_mtime(tofolder), now, note.id)
 				.exec(function (err, replies) {
 					--responses_pending;
-					console.log("MULTI got " + replies.length + " replies");
-					replies.forEach(function (reply, index) {
-						console.log("Reply " + index + ": " + reply.toString());
-					});
+					//console.log("MULTI got " + replies.length + " replies");
+					//replies.forEach(function (reply, index) {
+					//	console.log("Reply " + index + ": " + reply.toString());
+					//});
 				});
 		});
 	});
@@ -265,7 +290,7 @@ loadfiles: function(directory, tofolder) {
 		else {
 			clearInterval(timer);
 		}
-	}, 1000);
+	}, 100);
 },
 
 loaduser: function(user) {

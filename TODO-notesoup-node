@@ -1,21 +1,39 @@
 
+- BUG: Fix The Blocking Widgets Bug
 
-- bug: mtimes in the note, or not?
-- bug: same for id?
+- bug: oops gen 1
 
-- bug: tooltip CSS?
-- bug: debug console css?
+- getnote bugs
+	- bug: id's are numeric, not string, in the reply
+	- bug: getnote sends id as number
+	
+	- bug: why are numeric noteids failing on the client?
 
+- data cleanup
+	- bug: prune defaultnotecolor on import
+	- bug: prune syncme on import
+	- http://chowder.notesoup.net in the widget sources
+		prune imports:...
 
-Sessions and session store in socket.io
+- issue: imports-hostname root for imports javascripts
+	imports: 'http://chowder.notesoup.net/js-src/...
 
-API buildout order of battle
+- Sessions and session store in socket.io
 
+- API buildout order of battle
+	- folder handling
 
-BUG: Fix The Blocking Widgets Bug
+	- ACL handling: where do folder attrs go?
+		- meta/<user>/<folder>/.public
+			.userinfo holds the password hash
+				time to rename to .passwd
+			acl files: .readers, .editors, .senders, 
+		- access control checks across the API
 
-where do folder attrs go?
-	meta/<user>/<folder>/.public
-	dotfiles: .readers, .editors, .senders, .passwd
+- bugs:
+	- bug: mtimes in the note, or not?
+	- bug: same for id?
+	- bug: tooltip CSS?
+	- bug: debug console css?
 
 Ext v99?  Touch?  Mac?
