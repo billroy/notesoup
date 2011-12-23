@@ -319,25 +319,25 @@ api_login: function(req, res) {
 		var salted_hash = crypto.createHash('sha1')
 							.update(passwordhash + req.session.nonce)
 							.digest('hex');
-		console.log('Login: saved  hash ' + passwordhash);
-		console.log('Login: saved nonce ' + req.session.nonce);
-		console.log('Login: salted hash ' + salted_hash);
-		console.log('Login: client hash ' + req.body.params.passwordhash);
+		//console.log('Login: saved  hash ' + passwordhash);
+		//console.log('Login: saved nonce ' + req.session.nonce);
+		//console.log('Login: salted hash ' + salted_hash);
+		//console.log('Login: client hash ' + req.body.params.passwordhash);
 		if (salted_hash == req.body.params.passwordhash) {
 			req.session.loggedin = true;
-			req.session.username = req.params.username;
+			req.session.username = req.body.params.username;
 			self.sendreply(req, res, [['navigateto', '/folder/' + req.body.params.username + '/' + self.inboxfolder]]);
 		}
 		else {
-			self.clearsessiondata(req, req);
+			self.clearsessiondata(req, res);
 			self.senderror(req, res, 'Invalid login.');
 		}
 	});
 },
 
 clearsessiondata: function(req, res) {
-	this.session.loggedin = false;
-	delete this.session.username;
+	delete req.session.loggedin;
+	delete req.session.username;
 	delete req.session.nonce;
 },
 

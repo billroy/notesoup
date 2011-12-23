@@ -7,8 +7,8 @@
 - bug: note color change doesn't go on notify bus, waits for sync instead
 	- notify plumbing (tofolder...)
 
-- bug: why are numeric noteids failing on the client?
-	- actually it's not numeric id's it's "[Object object]" notes
+- guest user setup in template/soupbase
+	- folder permissions
 
 - Sessions and session store in socket.io
 	- username
@@ -18,6 +18,10 @@
 
 - auto load system and widgets if they aren't there
 - loadnotes: capture .files for acl
+
+- bug: /say blah
+	- "undefined says: blah"
+	- username wiring in the message layer
 
 - API buildout 
 	- big: access control checks across the API

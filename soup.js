@@ -75,16 +75,16 @@ function render_folder(req, res, user, folder) {
 	// provision the client options	
 	// TODO: hook up real security / sessions login
 	var opts = {
-		loggedin:	true,
-		username:	user,
+		loggedin:	req.session.loggedin || false,
+		username:	req.session.username || 'guest',
 		isowner:	true,
 		iseditor:	true,
 		isreader:	true,
 		issender:	true,
-		foldername:	user + '/' + folder,
 		ispublic:	true
 	//	initnotes:{}
 	};
+	opts.foldername = opts.username + '/' + folder;
 
 	// render index.html as a template with these options
 	var this_page = html_template;
