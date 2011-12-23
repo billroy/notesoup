@@ -579,9 +579,13 @@ notesoup.ui = {
 
 			new Ext.Toolbar.Separator(),
 			new Ext.Toolbar.Button({
-				text: 'log out',
-				tooltip: {text:'end your session', title:'Log Out'},
-				handler: function() {notesoup.logout();}
+				text: notesoup.loggedin ? 'logout ' + notesoup.username : 'login',
+				tooltip: notesoup.loggedin ? {text:'end your session', title:'Log Out'}
+										   : {text:'log in', title:'Log In'},
+				handler: function() {
+					if (notesoup.loggedin) notesoup.logout();
+					else notesoup.login();
+				}
 			}),
 			
 			new Ext.Toolbar.Separator(),

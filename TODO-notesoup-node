@@ -36,12 +36,8 @@
 Ext v99?  Touch?  Mac?
 
 
-	# Only a few methods are allowed if we're not logged in
-**	if method == 'knockknock': return apiknockknock(params)
-*	if method == 'login': return apilogin(params)
-**	if method == 'logout': return apilogout(params)
+- bug: # Only a few methods are allowed if we're not logged in
 
-**	if method == 'createuser': return apicreateuser(params)
 	if method == 'getfeed': return apigetfeed(params)
 	if method == 'getnote': return apigetnote(params)
 

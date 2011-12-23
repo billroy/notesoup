@@ -604,7 +604,7 @@ var notesoup = {
 	*/	
 	completeLogin: function(nonce) {
 
-		if (this.username == null || this.username.length == 0) {
+		if (!this.username || this.username == 'guest') {
 			this.username = this.prompt('Enter username:', this.username);
 			if (this.username == null) return;
 		}
