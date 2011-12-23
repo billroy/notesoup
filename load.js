@@ -1,7 +1,7 @@
 
 // add notes from file-based soup to user/inbox in the redis store
 
-var tofolder = 'guest/inbox';
+var tofolder = 'bill/inbox';
 var directory = '/Users/bill/Sites/soup/data/soupbase/user/inbox';
 
 var soup = require('./notesoup.js');

@@ -576,11 +576,12 @@ var notesoup = {
 //			if (this.username) username = this.username;
 //		}
 		if (!username) {
-			username = this.prompt('Enter username:', this.username);
+			username = this.prompt('Enter username:', '');
 			if (!username) return;
 		}
 		this.username = username;
 		if (password) this.password = password;
+		else delete this.password;
 
 		// Send off a knock-knock request; login is completed below once we have the nonce
 		this.postRequest({
@@ -604,17 +605,15 @@ var notesoup = {
 	*/	
 	completeLogin: function(nonce) {
 
-		if (!this.username || this.username == 'guest') {
-			this.username = this.prompt('Enter username:', this.username);
-			if (this.username == null) return;
-		}
-		var password = this.password ? this.password : '';
+//		if (!this.username) {
+//			this.username = this.prompt('Enter username:', this.username);
+//			if (this.username == null) return;
+//		}
 		if (!this.password) {
-			password = this.prompt('Enter password for user ' + this.username + ':', '');
+			this.password = this.prompt('Enter password for user ' + this.username + ':', '');
 		}
-		if (!password) return;
-		var passwordhash = hex_sha1(password);
-		password = '';
+		if (!this.password) return;
+		var passwordhash = hex_sha1(this.password);
 		delete this.password;
 
 		this.postRequest({

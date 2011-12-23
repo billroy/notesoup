@@ -59,10 +59,8 @@ app.configure('production', function() {
 });
 
 app.get('/', function(req, res) {
-	console.log("Index...");
 	if (req.session.loggedin) res.redirect('/folder/' + req.session.username + '/inbox');
-	else res.redirect('/folder/guest/inbox');
-	//render_folder(req, res, 'guest', 'inbox');
+	else res.redirect('/folder/system/welcome');
 });
 
 app.get('/folder/:user/:folder', function(req, res) {

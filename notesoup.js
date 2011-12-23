@@ -262,7 +262,10 @@ effectiveuser: function(req, res) {
 
 navigatehome: function(req, res) {
 	var self = this;
-	return [['navigateto', '/folder/' + self.effectiveuser(req, res) + '/' + self.inboxfolder]];
+	if (req.session.loggedin)
+		return [['navigateto', '/folder/' + self.effectiveuser(req, res) + '/' + self.inboxfolder]];
+	else
+		return [['navigateto', '/']];
 },
 
 deletefolder: function(req, res, folder) {

@@ -2,6 +2,10 @@ Notesoup/Node/Redis TODO list
 12/23/11 -br
 
 
+- API buildout 
+	- big bug: ACL checks across the API
+	- api_anon_ vs. api_
+
 - BUG: savenote: accept note list
 	- note backup/restore depends on it and fails because it isn't accepted
 
@@ -18,19 +22,17 @@ Notesoup/Node/Redis TODO list
 
 - q: where is connect saving the file session store?
 
-- startup: auto load system and widgets if they aren't there
 - startup: command line option for push server on/off
 	- npm install optimist
 
+- startup: auto load system and widgets if they aren't there
 - loadnotes: capture .files for acl
 - dumpnotes
-- guest user: initial content in template/soupbase
+- guest user: content in template/soupbase/guest
 	- folder permissions
 	- welcome/help
 	- auto-refresh every 15 minutes
-
-- API buildout 
-	- big: access control checks across the API
+- new user: content in template/soupbase/newuser
 
 - bug: css for note titles is different from tiny soup?!
 
