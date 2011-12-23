@@ -1107,7 +1107,7 @@ var notesoup = {
 			params:{}
 			},{
 				requestMessage: 'Emptying the trash...',
-				successMessage: 'The trash is empty.',
+				//successMessage: 'The trash is empty.',
 				failureMessage: 'Failed.'
 			});
 	},

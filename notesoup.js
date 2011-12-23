@@ -268,7 +268,7 @@ navigatehome: function(req, res) {
 		return [['navigateto', '/']];
 },
 
-deletefolder: function(req, res, folder) {
+deletefolder: function(req, res, folder, execfunc) {
 	var self = this;
 	// BUG: need that evil filename character check here!
 	self.redis.multi()
@@ -276,17 +276,21 @@ deletefolder: function(req, res, folder) {
 		.del(self.key_mtime(folder))
 		.del(self.key_nextid(folder))
 		.del(self.key_foldermeta(folder))
-		.exec(function(err, replies) {
-			self.sendreply(req, res, self.navigatehome(req, res));
-	});
+		.exec(execfunc());
 },
 
 api_deletefolder: function(req, res) {
-	this.deletefolder(req, res, req.body.params.fromfolder);
+	var self = this;
+	self.deletefolder(req, res, req.body.params.fromfolder, function(err, replies) {
+		self.sendreply(req, res, self.navigatehome(req, res));
+	});
 },
 
 api_emptytrash: function(req, res) {
-	this.deletefolder(req, res, self.effectiveuser(req, res) + '/trash');
+	var self = this;
+	self.deletefolder(req, res, this.effectiveuser(req, res) + '/trash', function(err, replies) {
+		self.sendreply(req, res, [['say', 'The trash is empty.']]);
+	});
 },
 
 
