@@ -590,6 +590,13 @@ notesoup.ui = {
 			
 			new Ext.Toolbar.Separator(),
 			new Ext.Toolbar.Button({
+				text: 'new account',
+				tooltip: {text:'create a new user account', title:'Create User'},
+				handler: function() {notesoup.createUser();}
+			}),
+
+			new Ext.Toolbar.Separator(),
+			new Ext.Toolbar.Button({
 				//text: 'get soup',
 				text: '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
 				cls:"x-btn-text-icon",

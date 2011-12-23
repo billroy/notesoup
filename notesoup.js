@@ -261,7 +261,8 @@ effectiveuser: function(req, res) {
 },
 
 navigatehome: function(req, res) {
-	return [['navigateto', '/folder/' + this.effectiveuser(req, res) + '/' + this.inboxfolder]];
+	var self = this;
+	return [['navigateto', '/folder/' + self.effectiveuser(req, res) + '/' + self.inboxfolder]];
 },
 
 deletefolder: function(req, res, folder) {
@@ -271,6 +272,7 @@ deletefolder: function(req, res, folder) {
 		.del(self.key_note(folder))
 		.del(self.key_mtime(folder))
 		.del(self.key_nextid(folder))
+		.del(self.key_foldermeta(folder))
 		.exec(function(err, replies) {
 			self.sendreply(req, res, self.navigatehome(req, res));
 	});
@@ -281,7 +283,7 @@ api_deletefolder: function(req, res) {
 },
 
 api_emptytrash: function(req, res) {
-	this.deletefolder(req, res, self.effectiveuser() + '/trash');
+	this.deletefolder(req, res, self.effectiveuser(req, res) + '/trash');
 },
 
 
@@ -302,6 +304,7 @@ key_usermeta: function(user) {
 },
 
 api_createuser: function(req, res) {
+	this.initsessiondata(req, res);
 	this.save_password_hash(req, res, req.body.params.username, req.body.params.password);
 },
 
@@ -345,29 +348,34 @@ api_login: function(req, res) {
 	var self = this;
 	self.redis.get(self.key_usermeta(req.body.params.username), function(err, passwordhash) {
 
-		// auto-create account if it doesn't exist (no .password)
 		if (!passwordhash) {
-			self.savepasswordhash(req, res, req.body.params.username, req.body.params.passwordhash);
+			self.clearsessiondata(req, res);
+			self.senderror(req, res, 'Invalid login.');
 			return;
 		}
 
 		var salted_hash = crypto.createHash('sha1')
 							.update(passwordhash + req.session.nonce)
 							.digest('hex');
-		//console.log('Login: saved  hash ' + passwordhash);
-		//console.log('Login: saved nonce ' + req.session.nonce);
-		//console.log('Login: salted hash ' + salted_hash);
-		//console.log('Login: client hash ' + req.body.params.passwordhash);
+		console.log('Login: saved  hash ' + passwordhash);
+		console.log('Login: saved nonce ' + req.session.nonce);
+		console.log('Login: salted hash ' + salted_hash);
+		console.log('Login: client hash ' + req.body.params.passwordhash);
 		if (salted_hash == req.body.params.passwordhash) {
-			req.session.loggedin = true;
-			req.session.username = req.body.params.username;
-			self.sendreply(req, res, [['navigateto', '/folder/' + req.body.params.username + '/' + self.inboxfolder]]);
+			self.initsessiondata(req, res);
+			self.sendreply(req, res, self.navigatehome(req, res));
 		}
 		else {
 			self.clearsessiondata(req, res);
 			self.senderror(req, res, 'Invalid login.');
 		}
 	});
+},
+
+initsessiondata: function(req, res) {
+	req.session.loggedin = true;
+	req.session.username = req.body.params.username;
+	delete req.session.nonce;
 },
 
 clearsessiondata: function(req, res) {

@@ -572,9 +572,9 @@ var notesoup = {
 	*/
 	login: function(username, password) {
 
-		if (!username) {
-			if (this.username) username = this.username;
-		}
+//		if (!username) {
+//			if (this.username) username = this.username;
+//		}
 		if (!username) {
 			username = this.prompt('Enter username:', this.username);
 			if (!username) return;

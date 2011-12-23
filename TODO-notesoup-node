@@ -12,11 +12,11 @@ Notesoup/Node/Redis TODO list
 
 - bug: note color change doesn't go on notify bus, waits for sync instead
 	- notify plumbing (tofolder...)
+- bug: /say blah
+	- "undefined says: blah"
+	- username wiring in the message layer
 
-- guest user: initial content in template/soupbase
-	- folder permissions
-	- welcome/help
-	- auto-refresh every 15 minutes
+- q: where is connect saving the file session store?
 
 - startup: auto load system and widgets if they aren't there
 - startup: command line option for push server on/off
@@ -24,10 +24,10 @@ Notesoup/Node/Redis TODO list
 
 - loadnotes: capture .files for acl
 - dumpnotes
-
-- bug: /say blah
-	- "undefined says: blah"
-	- username wiring in the message layer
+- guest user: initial content in template/soupbase
+	- folder permissions
+	- welcome/help
+	- auto-refresh every 15 minutes
 
 - API buildout 
 	- big: access control checks across the API

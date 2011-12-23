@@ -60,7 +60,9 @@ app.configure('production', function() {
 
 app.get('/', function(req, res) {
 	console.log("Index...");
-	render_folder(req, res, 'user', 'inbox');
+	if (req.session.loggedin) res.redirect('/folder/' + req.session.username + '/inbox');
+	else res.redirect('/folder/guest/inbox');
+	//render_folder(req, res, 'guest', 'inbox');
 });
 
 app.get('/folder/:user/:folder', function(req, res) {
