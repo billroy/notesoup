@@ -5,6 +5,7 @@
 	- http:// imports fetch using /geturl!
 
 - bug: note color change doesn't go on notify bus, waits for sync instead
+	- notify plumbing (tofolder...)
 
 - bug: why are numeric noteids failing on the client?
 	- actually it's not numeric id's it's "[Object object]" notes
@@ -12,11 +13,16 @@
 - Sessions and session store in socket.io
 	- username
 	- requires: cookie store (file cookie store ok?)
-	- requires: .userinfo / apicreateuser
+	- (done) requires: .userinfo / apicreateuser
 	- enables: api_login
+
+- auto load system and widgets if they aren't there
+- loadnotes: capture .files for acl
 
 - API buildout 
 	- big: access control checks across the API
+
+- bug: css for note titles is different from tiny soup?!
 
 - bugs:
 	- bug: mtimes in the note, or not?
@@ -31,7 +37,7 @@ Ext v99?  Touch?  Mac?
 *	if method == 'login': return apilogin(params)
 **	if method == 'logout': return apilogout(params)
 
-*	if method == 'createuser': return apicreateuser(params)
+**	if method == 'createuser': return apicreateuser(params)
 	if method == 'getfeed': return apigetfeed(params)
 	if method == 'getnote': return apigetnote(params)
 

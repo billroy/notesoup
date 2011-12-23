@@ -21,6 +21,7 @@ Database use:
 *****/
 
 var fs = require('fs');
+var crypto = require('crypto');
 
 NoteSoup = {
 
@@ -39,7 +40,6 @@ connect: function(redis_url) {
 		console.log("Redis Error " + err);
 	});
 },
-
 
 dispatch: function(req, res) {
 	if (typeof(this['api_'+req.body.method]) != "function") {
@@ -60,7 +60,6 @@ key_note: function(folder) 		{ return 'notes/' + folder; },
 key_mtime: function(folder) 	{ return 'mtime/' + folder; },
 key_nextid:  function(folder)	{ return 'next/'  + folder; },
 
-
 senderror: function(req, res, errormessage) {
 	var reply = {
 		result: '',
@@ -70,7 +69,6 @@ senderror: function(req, res, errormessage) {
 	}
 	res.send(reply);
 },
-
 
 sendreply: function(req, res, updatelist) {
 
@@ -88,31 +86,29 @@ api_savenote: function(req, res) {
 	if (!('id' in req.body.params.note)) {
 		self.redis.incr(self.key_nextid(req.body.params.tofolder), function(err, id) {
 			req.body.params.note.id = id.toString();
-			self.savenote_with_id(req, res);
+			self.savenote(req, res, req.body.params.note, req.body.params.tofolder);
 		});
 	}
-	else self.savenote_with_id(req, res);
+	else self.savenote(req, res, req.body.params.note, req.body.params.tofolder);
 },
 
-savenote_with_id: function(req, res) {
+savenote: function(req, res, note, tofolder) {
 
 	var now = new Date().getTime();
-	var jsonnote = JSON.stringify(req.body.params.note);
+	var jsonnote = JSON.stringify(note);
 	var self = this;
 
-	self.redis.multi() 
-		.hset(self.key_note(req.body.params.tofolder), req.body.params.note.id, jsonnote)
-		.zadd(self.key_mtime(req.body.params.tofolder), now, req.body.params.note.id)
+	self.redis.multi()
+		.hset(self.key_note(tofolder), note.id, jsonnote)
+		.zadd(self.key_mtime(tofolder), now, note.id)
 	 	.exec(function (err, replies) {
-			console.log("MULTI got " + replies.length + " replies");
+			console.log("SaveNote got " + replies.length + " replies");
 			replies.forEach(function (reply, index) {
 				console.log("Reply " + index + ": " + reply.toString());
 	        });
-			self.sendreply(req, res, [['updatenote', req.body.params.note]]);
+			self.sendreply(req, res, [['updatenote', note]]);
         });
 },
-
-
 
 api_sync: function(req, res) {
 
@@ -133,7 +129,6 @@ api_sync: function(req, res) {
 	}
 },
 
-
 sync_sendupdates: function(req, res, noteids) {
 
 	res.updatelist = [];
@@ -153,8 +148,6 @@ sync_sendupdates: function(req, res, noteids) {
 		self.sendreply(req, res, res.updatelist);
 	});
 },
-
-
 
 api_sendnote: function(req, res) {
 	var self = this;
@@ -210,17 +203,10 @@ api_appendtonote: function(req, res) {
 			if (note.text) note.text = note.text + req.body.params.text;
 			else note.text = req.body.params.text;
 
-			var now = new Date().getTime();
-			self.redis.multi()
-				.hset(self.key_note(req.body.params.tofolder), note.id, JSON.stringify(note))
-				.zadd(self.key_mtime(req.body.params.tofolder), now, req.body.params.noteid)
-				.exec(function(err, reply) {
-					self.sendreply(req, res, [['updatenote', note]]);
-			});
+			self.savenote(req, res, note, req.body.params.tofolder);
 		}
 	});
 },
-
 
 api_postevent: function(req, res) {
 	console.log('PostEvent via api:');
@@ -270,7 +256,6 @@ api_openfolder: function(req, res) {
 	this.sendreply(req, res, [['navigateto', '/folder/' + req.body.params.tofolder]]);
 },
 
-
 /**
 *	return a string of random alphanumeric characters of a specified length
 *	@param {int} namelen the length of the string
@@ -282,7 +267,6 @@ randomName: function(namelen) {
 		name += charset.charAt(Math.floor(Math.random() * charset.length));
 	return name;
 },
-
 
 key_usermeta: function(user) {
 	return 'user/' + user + '/.passwd';
@@ -323,16 +307,42 @@ api_setfolderacl: function(req, res) {
 },
 
 api_knockknock: function(req, res) {
-	// save login nonce
-	this.sendreply(req, res, [['whosthere', this.randomName(32)]]);
+	req.session.nonce = this.randomName(32);	// save login nonce
+	this.sendreply(req, res, [['whosthere', req.session.nonce]]);
 },
 
-_api_login: function(req, res) {
-	// restore nonce
-	//...
+api_login: function(req, res) {
+	// fetch username passwordhash
+	var self = this;
+	self.redis.get(self.key_usermeta(req.body.params.username), function(err, passwordhash) {
+
+		var salted_hash = crypto.createHash('sha1')
+							.update(passwordhash + req.session.nonce)
+							.digest('hex');
+		console.log('Login: saved  hash ' + passwordhash);
+		console.log('Login: saved nonce ' + req.session.nonce);
+		console.log('Login: salted hash ' + salted_hash);
+		console.log('Login: client hash ' + req.body.params.passwordhash);
+		if (salted_hash == req.body.params.passwordhash) {
+			req.session.loggedin = true;
+			req.session.username = req.params.username;
+			self.sendreply(req, res, [['navigateto', '/folder/' + req.body.params.username + '/' + self.inboxfolder]]);
+		}
+		else {
+			self.clearsessiondata(req, req);
+			self.senderror(req, res, 'Invalid login.');
+		}
+	});
+},
+
+clearsessiondata: function(req, res) {
+	this.session.loggedin = false;
+	delete this.session.username;
+	delete req.session.nonce;
 },
 
 api_logout: function(req, res) {
+	this.clearsessiondata(req, res);
 	this.sendreply(req, res, [['navigateto', '/']]);
 },
 
@@ -384,7 +394,8 @@ loadfiles: function(directory, tofolder) {
 	});
 
 	// Wait for the last command to complete
-	var timer = setInterval(function() {
+	var timer;
+	timer = setInterval(function() {
 		if (responses_pending > 0) console.log("Loadfiles waiting for responses: " + responses_pending);
 		else clearInterval(timer);
 	}, 100);
@@ -406,7 +417,6 @@ loaduser: function(user) {
 		self.loadfiles(userpath + '/' + foldername, user + '/' + foldername);
 	});
 }
-
 
 };	// NoteSoup = {...};
 
