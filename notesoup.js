@@ -316,6 +316,12 @@ api_login: function(req, res) {
 	var self = this;
 	self.redis.get(self.key_usermeta(req.body.params.username), function(err, passwordhash) {
 
+		// auto-create account if it doesn't exist (no .password)
+		if (!passwordhash) {
+			self.savepasswordhash(req, res, req.body.params.username, req.body.params.passwordhash);
+			return;
+		}
+
 		var salted_hash = crypto.createHash('sha1')
 							.update(passwordhash + req.session.nonce)
 							.digest('hex');

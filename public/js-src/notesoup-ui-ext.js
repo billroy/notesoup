@@ -573,7 +573,7 @@ notesoup.ui = {
 			new Ext.Toolbar.Separator(),
 			new Ext.Toolbar.Button({
 				text: 'legal',
-				tooltip: {text:'things our legal eagles would have you know', title:'Legal Stuff'},
+				tooltip: {text:'things the legal eagles would have you know', title:'Legal Stuff'},
 				handler: function() {notesoup.openFolder('system/legal');}
 			}),
 

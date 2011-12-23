@@ -1,4 +1,9 @@
 
+
+- auto create account on login / no .passwd
+
+- BUG: openfolder system/about gets guest/about
+
 - BUG: Fix The Blocking Widgets Bug
 	- bug: oops gen 1
 	- TypeError: 'null' is not an object (evaluating 'note.set')
