@@ -256,6 +256,35 @@ api_openfolder: function(req, res) {
 	this.sendreply(req, res, [['navigateto', '/folder/' + req.body.params.tofolder]]);
 },
 
+effectiveuser: function(req, res) {
+	return req.session.loggedin ? req.session.username : 'guest';
+},
+
+navigatehome: function(req, res) {
+	return [['navigateto', '/folder/' + this.effectiveuser(req, res) + '/' + this.inboxfolder]];
+},
+
+deletefolder: function(req, res, folder) {
+	var self = this;
+	// BUG: need that evil filename character check here!
+	self.redis.multi()
+		.del(self.key_note(folder))
+		.del(self.key_mtime(folder))
+		.del(self.key_nextid(folder))
+		.exec(function(err, replies) {
+			self.sendreply(req, res, self.navigatehome(req, res));
+	});
+},
+
+api_deletefolder: function(req, res) {
+	this.deletefolder(req, res, req.body.params.fromfolder);
+},
+
+api_emptytrash: function(req, res) {
+	this.deletefolder(req, res, self.effectiveuser() + '/trash');
+},
+
+
 /**
 *	return a string of random alphanumeric characters of a specified length
 *	@param {int} namelen the length of the string

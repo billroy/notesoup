@@ -1,8 +1,9 @@
+Notesoup/Node/Redis TODO list
+12/23/11 -br
 
 
-- auto create account on login / no .passwd
-
-- BUG: openfolder system/about gets guest/about
+- BUG: savenote: accept note list
+	- note backup/restore depends on it and fails because it isn't accepted
 
 - BUG: Fix The Blocking Widgets Bug
 	- bug: oops gen 1
@@ -12,17 +13,17 @@
 - bug: note color change doesn't go on notify bus, waits for sync instead
 	- notify plumbing (tofolder...)
 
-- guest user setup in template/soupbase
+- guest user: initial content in template/soupbase
 	- folder permissions
+	- welcome/help
+	- auto-refresh every 15 minutes
 
-- Sessions and session store in socket.io
-	- username
-	- requires: cookie store (file cookie store ok?)
-	- (done) requires: .userinfo / apicreateuser
-	- enables: api_login
+- startup: auto load system and widgets if they aren't there
+- startup: command line option for push server on/off
+	- npm install optimist
 
-- auto load system and widgets if they aren't there
 - loadnotes: capture .files for acl
+- dumpnotes
 
 - bug: /say blah
 	- "undefined says: blah"
@@ -60,9 +61,7 @@ Ext v99?  Touch?  Mac?
 
 	if method == 'getfolderacl': return apigetfolderacl(params)
 
-	if method == 'deletefolder': return apideletefolder(params)
 	if method == 'copyfolder': return apicopyfolder(params)
-	if method == 'emptytrash': return apiemptytrash(params)
 
 	# createuser is above in pre-login
 	if method == 'deleteuser': return apideleteuser(params)

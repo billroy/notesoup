@@ -77,6 +77,7 @@ function render_folder(req, res, user, folder) {
 	var opts = {
 		loggedin:	req.session.loggedin || false,
 		username:	req.session.username || 'guest',
+		foldername:	user + '/' + folder,
 		isowner:	true,
 		iseditor:	true,
 		isreader:	true,
@@ -84,7 +85,6 @@ function render_folder(req, res, user, folder) {
 		ispublic:	true
 	//	initnotes:{}
 	};
-	opts.foldername = opts.username + '/' + folder;
 
 	// render index.html as a template with these options
 	var this_page = html_template;
