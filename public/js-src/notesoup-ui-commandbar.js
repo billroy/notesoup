@@ -298,6 +298,9 @@ notesoup.registeredCommands = [
 	['{', '{json note} saves a note from json-formatted input', function(cmd) {
 		notesoup.saveNote(Ext.util.JSON.decode(cmd));
 	}],
+	['[', '[{json note},{json note}] saves a list of notes from json-formatted input', function(cmd) {
+		notesoup.saveNote(Ext.util.JSON.decode(cmd));
+	}],
 	['#', '#text creates a text-only element', function(cmd) {
 		notesoup.saveNote({
 			text: cmd.substring(1),

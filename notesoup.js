@@ -107,6 +107,7 @@ api_savenote: function(req, res) {
 	if (typeof(req.body.params.note[0]) == 'undefined') {	// a single note, not an array
 		req.body.params.note = [req.body.params.note];
 	}
+	// todo: test this without Series
 	async.forEachSeries(req.body.params.note,
 		function(note, next) {
 			req.body.params.thenote = note;

@@ -1,12 +1,6 @@
 Notesoup/Node/Redis TODO list
 12/24/11 -br
 
-- BUG: savenote: accept note list
-	- note backup/restore depends on it and fails because it isn't accepted
-
-- BUG: savenote([]) race condition
-	- savenote saves notes but command[] is null when the API return happens
-	- time to learn the apply() pipeline stuff
 
 ---
 
