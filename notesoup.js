@@ -23,6 +23,7 @@ Database use:
 var fs = require('fs');
 var crypto = require('crypto');
 var util = require('util');
+var async = require('async');
 
 NoteSoup = {
 
@@ -375,6 +376,7 @@ inboxfolder: 'inbox',
 save_password_hash: function(req, res, user, passwordhash) {
 	var self = this;
 	self.redis.set(self.key_usermeta(user), passwordhash, function(err, reply) {
+		res.updatelist.push(['say','Password saved.']);
 	});
 },
 
@@ -454,59 +456,57 @@ api_logout: function(req, res) {
 	this.sendreply(req, res);
 },
 
-loadfiles: function(directory, tofolder) {
+loadfolder: function(directory, tofolder) {
 
-	var files = fs.readdirSync(directory);
-	var responses_pending = 0;
 	var self = this;
+	var files = fs.readdirSync(directory);
 
-	files.forEach(function(filename) {
-		if (filename.charAt(0) == '.') {
-			this.log('Skipping system file ' + filename);
-			return;
+	self.load = {};
+	self.load.directory = directory;
+	self.load.tofolder = tofolder;
+	self.log('Loading directory ' + directory + ' to ' + tofolder);
+	async.forEach(files,
+		function(file, next) { self.loadfile(file, next); }, 
+		function(err) { 
+			if (err) self.log('Loadfolder: ' + err); 
 		}
-		this.log('Loading ' + directory + ' ' + filename);
-		var filepath = directory + '/' + filename;
-		var filetext = fs.readFileSync(filepath, 'utf8');		// specifying 'utf8' to get a string result
-		var note = JSON.parse(filetext);
-	
-		// Clean up the note a bit
-		if (note.bgcolor == '#FFFF99') delete note.bgcolor;
-		if ('syncme' in note) delete note.syncme;
-		if (note.imports) {
-			note.imports = note.imports.replace('http://chowder.notesoup.net', '');
-		}
+	);
+	self.log('Folder load complete.');
+},
 
-		if (note.backImage) {
-			note.backImage = note.backImage.replace('http://notesoup.net', '');
-		}
+loadfile: function(filename, next) {
+	var self = this;
+	if (filename.charAt(0) == '.') {
+		self.log('Skipping system file ' + filename);
+		next();
+		return;
+	}
+	self.log('Loading ' + self.load.directory + '/' + filename + ' ' + self.load.tofolder);
 
-		self.redis.incr(self.key_nextid(tofolder), function(err, id) {
-	
-			note.id = id.toString();
-			note.mtime = new Date().getTime();
-			var jsonnote = JSON.stringify(note);
-			++responses_pending;
-	
-			self.redis.multi() 
-				.hset(self.key_note(tofolder), note.id, jsonnote)
-				.zadd(self.key_mtime(tofolder), note.mtime, note.id)
-				.exec(function (err, replies) {
-					--responses_pending;
-					//this.log("MULTI got " + replies.length + " replies");
-					//replies.forEach(function (reply, index) {
-					//	this.log("Reply " + index + ": " + reply.toString());
-					//});
-				});
-		});
+	var filepath = self.load.directory + '/' + filename;
+	var filetext = fs.readFileSync(filepath, 'utf8');		// specifying 'utf8' to get a string result
+	var note = JSON.parse(filetext);
+
+	// Clean up the note a bit
+	if (note.bgcolor == '#FFFF99') delete note.bgcolor;
+	if (note.bgcolor == '#ffff99') delete note.bgcolor;
+	if ('syncme' in note) delete note.syncme;
+	if (note.imports) note.imports = note.imports.replace('http://chowder.notesoup.net', '');
+	if (note.backImage) note.backImage = note.backImage.replace('http://notesoup.net', '');
+
+	self.redis.incr(self.key_nextid(self.load.tofolder), function(err, id) {
+
+		note.id = id.toString();
+		note.mtime = new Date().getTime();
+		var jsonnote = JSON.stringify(note);
+
+		self.redis.multi() 
+			.hset(self.key_note(self.load.tofolder), note.id, jsonnote)
+			.zadd(self.key_mtime(self.load.tofolder), note.mtime, note.id)
+			.exec(function (err, replies) {
+				next();
+			});
 	});
-
-	// Wait for the last command to complete
-	var timer;
-	timer = setInterval(function() {
-		if (responses_pending > 0) this.log("Loadfiles waiting for responses: " + responses_pending);
-		else clearInterval(timer);
-	}, 100);
 },
 
 loaduser: function(user) {

@@ -7,6 +7,6 @@ var directory = '/Users/bill/Sites/soup/data/soupbase/user/inbox';
 var soup = require('./notesoup.js');
 soup.connect(process.env.REDIS_URL);
 
-soup.loadfiles(directory, tofolder);
+soup.loadfolder(directory, tofolder);
 
 //process.exit(0);

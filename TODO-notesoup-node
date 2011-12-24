@@ -1,17 +1,19 @@
 Notesoup/Node/Redis TODO list
 12/24/11 -br
 
-- test: sendreply() / res.updatelist.push fixes
-	- console.log only expands 2 levels deep via util.inspect()
-		- so this may be just a fart:
-		- BUG: return values from server are [Object]ionable
-	- check the return values from the server
-	- it would be useful to see 1 level deeper, to 3
-
 - BUG: savenote: accept note list
 	- note backup/restore depends on it and fails because it isn't accepted
 
+- BUG: savenote([]) race condition
+	- savenote saves notes but command[] is null when the API return happens
+	- time to learn the apply() pipeline stuff
+
 ---
+
+- don't pass req, res around
+	- this.req, this.res instead
+
+- BUG: there is no error handling
 
 - BUG: Fix The Blocking Widgets Bug
 	- bug: oops gen 1
@@ -24,7 +26,7 @@ Notesoup/Node/Redis TODO list
 	- send via email would be nice too
 
 - alpha server on http://alpha.notesoup.net:3000
-	- todo: run as a service
+	- todo: run nodejs as a service
 	- todo: backup .db
 
 - API buildout 
@@ -39,6 +41,8 @@ Notesoup/Node/Redis TODO list
 
 - startup: command line option for push server on/off
 	- npm install optimist
+
+- bug: node load.js doesn't terminate properly
 
 - startup: auto load system and widgets if they aren't there
 - loadnotes: 

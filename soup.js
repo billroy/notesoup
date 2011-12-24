@@ -72,7 +72,7 @@ function render_folder(req, res, user, folder) {
 	//console.dir(req.params);
 
 	// provision the client options	
-	// TODO: hook up real security / sessions login
+	// TODO: hook up real ACL
 	var opts = {
 		loggedin:	req.session.loggedin || false,
 		username:	req.session.username || 'guest',
