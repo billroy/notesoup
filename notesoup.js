@@ -22,34 +22,35 @@ Database use:
 
 var fs = require('fs');
 var crypto = require('crypto');
+var util = require('util');
 
 NoteSoup = {
 
 connect: function(redis_url) {
 
 	if (redis_url) {
-		console.log("Connecting to Redis at " + redis_url);
+		this.log("Connecting to Redis at " + redis_url);
 		this.redis = require('redis-url').connect(redis_url);
 	}
 	else {
-		console.log("Connecting to local Redis");
+		this.log("Connecting to local Redis");
 		this.redis = require("redis").createClient();		// port, host, options
 	}
 	
 	this.redis.on("error", function (err) {
-		console.log("Redis Error " + err);
+		this.log("Redis Error " + err);
 	});
 },
 
 dispatch: function(req, res) {
 	if (typeof(this['api_'+req.body.method]) != "function") {
-		console.log("No method for request: ");
-		console.dir(req.body);
+		this.log("No method for request: ");
+		this.dir(req.body);
 		this.senderror(req, res, "The server does not know how to " + req.body.method);
 		return 0;
 	}
-	console.log("api req: " + req.body.method);
-	console.dir(req.body.params);
+	this.log("api req: " + req.body.method);
+	this.dir(req.body.params);
 	res.updatelist = [];
 	this['api_'+req.body.method](req, res);
 	return 1;
@@ -60,6 +61,14 @@ dispatch: function(req, res) {
 key_note: function(folder) 		{ return 'notes/' + folder; },
 key_mtime: function(folder) 	{ return 'mtime/' + folder; },
 key_nextid:  function(folder)	{ return 'next/'  + folder; },
+
+log: function(text) {
+	console.log(text);
+},
+
+dir: function(thing) {
+	console.log(util.inspect(thing, false, 3, true));
+},
 
 senderror: function(req, res, errormessage) {
 	var reply = {
@@ -78,10 +87,12 @@ sendreply: function(req, res) {
 		error: null,
 		id: req.body.id,
 		command: res.updatelist
-	}
-	console.log('Reply:');
-	console.dir(res.updatelist);
-	console.dir(reply);
+	};
+
+	this.log('Reply:');
+	this.dir(res.updatelist);
+	this.dir(reply);
+
 	res.send(reply);
 },
 
@@ -130,17 +141,17 @@ savenote: function(req, res, note, tofolder) {
 		.hset(self.key_note(tofolder), note.id, jsonnote)
 		.zadd(self.key_mtime(tofolder), now, note.id)
 	 	.exec(function (err, replies) {
-			console.log("SaveNote got " + replies.length + " replies");
+			self.log("SaveNote got " + replies.length + " replies");
 			replies.forEach(function (reply, index) {
-				console.log("Reply " + index + ": " + reply.toString());
+				self.log("Reply " + index + ": " + reply.toString());
 	        });
 	});
 },
 
 notifychange: function(tofolder, update) {
 	var self = this;
-	console.log("Notify: ");
-	console.dir(update);
+	self.log("Notify: ");
+	self.dir(update);
 	self.io.sockets.emit(tofolder, update);
 },
 
@@ -168,8 +179,8 @@ sync_sendupdates: function(req, res, noteids) {
 	var self = this;
 	self.redis.hmget(self.key_note(req.body.params.fromfolder), noteids, function(err, notes) {
 		if (notes) {
-			console.log("Syncing notes:");
-			console.dir(notes);
+			self.log("Syncing notes:");
+			self.dir(notes);
 			res.updatelist.push(['beginupdate','']);
 			for (var i=0; i<notes.length; i++) {
 				var note = JSON.parse(notes[i]);
@@ -190,14 +201,14 @@ api_sendnote: function(req, res) {
 		.exec(function(err, reply) {
 
 			// Bug: crash here on Duplicate Note: note is null?!
-			console.log('Send note bulk reply: ');
-			console.dir(reply);
+			self.log('Send note bulk reply: ');
+			self.dir(reply);
 
 			var note = JSON.parse(reply[0]);
-			console.log('Fetched note: ' + typeof(note));
-			console.dir(note);
+			self.log('Fetched note: ' + typeof(note));
+			self.dir(note);
 			note.id = reply[1].toString();
-			console.log('New note id: ' + note.id);
+			self.log('New note id: ' + note.id);
 			var now = new Date().getTime();
 
 			self.redis.multi()
@@ -229,8 +240,8 @@ api_appendtonote: function(req, res) {
 
 		if (notetext) {
 			var note = JSON.parse(notetext);
-			console.log('Append: note ' + typeof(note));
-			console.dir(note);
+			self.log('Append: note ' + typeof(note));
+			self.dir(note);
 
 			if (note.text) note.text = note.text + req.body.params.text;
 			else note.text = req.body.params.text;
@@ -242,8 +253,8 @@ api_appendtonote: function(req, res) {
 },
 
 api_postevent: function(req, res) {
-	console.log('PostEvent via api:');
-	console.dir(req.body.params);
+	this.log('PostEvent via api:');
+	this.dir(req.body.params);
 	//io.socket.send(res.body.params.
 	return this.sendreply(req, res);
 },
@@ -252,8 +263,8 @@ api_getnotes: function(req, res) {
 	var self = this;
 	self.redis.hgetall(self.key_note(req.body.params.fromfolder), function(err, jsonnotes) {
 		if (!jsonnotes) return;
-		//console.log("Got notes from " + req.body.params.fromfolder);
-		//console.dir(json_notes);
+		//self.log("Got notes from " + req.body.params.fromfolder);
+		//self.dir(json_notes);
 		var parsed_notes = {};
 		for (var n in jsonnotes) {
 			var note = JSON.parse(jsonnotes[n]);
@@ -380,8 +391,8 @@ api_setfolderacl: function(req, res) {
 	if (req.body.params.senders) acl.senders = req.body.params.senders;
 	if (req.body.params.password) acl.password = req.body.params.password;
 
-	console.log("SetACL " + req.body.params.tofolder);
-	console.dir(acl);
+	self.log("SetACL " + req.body.params.tofolder);
+	self.dir(acl);
 
 	self.redis.hmset(self.key_foldermeta(req.body.params.tofolder), acl, function(err, reply) {
 		res.updatelist.push(['say','Folder permissions updated.']);
@@ -409,10 +420,10 @@ api_login: function(req, res) {
 		var salted_hash = crypto.createHash('sha1')
 							.update(passwordhash + req.session.nonce)
 							.digest('hex');
-		console.log('Login: saved  hash ' + passwordhash);
-		console.log('Login: saved nonce ' + req.session.nonce);
-		console.log('Login: salted hash ' + salted_hash);
-		console.log('Login: client hash ' + req.body.params.passwordhash);
+		self.log('Login: saved  hash ' + passwordhash);
+		self.log('Login: saved nonce ' + req.session.nonce);
+		self.log('Login: salted hash ' + salted_hash);
+		self.log('Login: client hash ' + req.body.params.passwordhash);
 		if (salted_hash == req.body.params.passwordhash) {
 			self.initsessiondata(req, res);
 			self.navigatehome(req, res);
@@ -451,10 +462,10 @@ loadfiles: function(directory, tofolder) {
 
 	files.forEach(function(filename) {
 		if (filename.charAt(0) == '.') {
-			console.log('Skipping system file ' + filename);
+			this.log('Skipping system file ' + filename);
 			return;
 		}
-		console.log('Loading ' + directory + ' ' + filename);
+		this.log('Loading ' + directory + ' ' + filename);
 		var filepath = directory + '/' + filename;
 		var filetext = fs.readFileSync(filepath, 'utf8');		// specifying 'utf8' to get a string result
 		var note = JSON.parse(filetext);
@@ -482,9 +493,9 @@ loadfiles: function(directory, tofolder) {
 				.zadd(self.key_mtime(tofolder), note.mtime, note.id)
 				.exec(function (err, replies) {
 					--responses_pending;
-					//console.log("MULTI got " + replies.length + " replies");
+					//this.log("MULTI got " + replies.length + " replies");
 					//replies.forEach(function (reply, index) {
-					//	console.log("Reply " + index + ": " + reply.toString());
+					//	this.log("Reply " + index + ": " + reply.toString());
 					//});
 				});
 		});
@@ -493,7 +504,7 @@ loadfiles: function(directory, tofolder) {
 	// Wait for the last command to complete
 	var timer;
 	timer = setInterval(function() {
-		if (responses_pending > 0) console.log("Loadfiles waiting for responses: " + responses_pending);
+		if (responses_pending > 0) this.log("Loadfiles waiting for responses: " + responses_pending);
 		else clearInterval(timer);
 	}, 100);
 },
@@ -507,10 +518,10 @@ loaduser: function(user) {
 
 	folders.forEach(function(foldername) {
 		if (foldername.charAt(0) == '.') {
-			console.log('Skipping system file ' + foldername);
+			this.log('Skipping system file ' + foldername);
 			return;
 		}
-		console.log('Loading folder ' + user + '/' + foldername);
+		this.log('Loading folder ' + user + '/' + foldername);
 		self.loadfiles(userpath + '/' + foldername, user + '/' + foldername);
 	});
 }

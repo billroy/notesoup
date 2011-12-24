@@ -1,0 +1,163 @@
+# HOWTO: Simple Note Soup Deployment on Ubuntu 11.10 64bit t1.micro from Canonical
+#
+# full image list here: http://uec-images.ubuntu.com/releases/11.10/release/
+
+# launch the instance
+https://console.aws.amazon.com/ec2/home?region=us-east-1#launchAmi=ami-bf62a9d6
+
+SECURITY: Ensure port 3000 inbound is open in the Security Group you launch with
+	- or open it later when you discover you can't hit the server
+
+# LOCAL: if needed, on the local machine: set up .pem file:
+mv ~/Downloads/notesoup.pem ~/.ssh
+chmod 400 ~/.ssh/notesoup.pem
+
+# LOCAL: ssh to the instance
+ssh -i ~/.ssh/notesoup.pem ubuntu@ec2-67-202-59-193.compute-1.amazonaws.com
+
+# REMOTE: on the instance from here
+
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install git nodejs redis-server npm
+
+- TODO: update redis config
+	- where is the data?
+	- what changes
+
+- TODO: redis data file backup
+
+# install note soup
+cd ~
+git clone ssh://talky@bitlash.net/~/notesoup-node.git
+cd notesoup-node
+node loadsoup.js
+# ^C to exit when done
+
+# run the server
+node soup.js
+
+# browse to http://localhost:3000 or http://yourserver:3000
+
+- TODO: install forever to keep node running
+
+- Give the server a name like "alpha.notesoup.net"
+	- sign in to DNS provider
+	- set up CNAME record pointing to:
+		ec2-67-202-59-193.compute-1.amazonaws.com.
+		- don't forget the dot at the end
+
+
+
+################################################################################
+unhappy times on amazon linux ami
+	- no apt-get
+	- incompetent yum and me
+################################################################################
+
+#
+# INSTALL
+# Bare-machine notesoup/node/redis install on Amazon 32-bit .micro AMI
+
+bugs:
+	- installed node 0.7.0-pre by accident (forgot to git checkout)
+		- so npm bitches
+		- so disabled npm version check to force npm install.  ugh.
+	- cd node;git checkout 0.6.6;make
+		- can't find openssl!
+		./configure --without-openssl
+	- redis has a fatal error in make test
+	
+
+# on the local machine: set up .pem file:
+#mv ~/Downloads/notesoup.pem ~/.ssh
+#chmod 400 ~/.ssh/notesoup.pem
+
+# ssh into the server; substitute your server id
+ssh -i ~/.ssh/notesoup.pem ec2-user@ec2-107-22-12-210.compute-1.amazonaws.com
+
+# on the server, for the rest:
+
+sudo yum install git make gcc gcc-c++ zlib-devel
+#glibc-static may also be needed if make fails below
+
+mkdir ~/downloads
+cd ~/downloads
+git clone https://github.com/joyent/node.git
+cd node
+git checkout v0.6.6
+./configure
+make
+make test
+sudo make install
+
+# or put /usr/local/bin on the path
+sudo ln -s /usr/local/bin/node /usr/bin/node
+
+cd ~/downloads
+curl http://npmjs.org/install.sh | sudo sh
+
+sudo ln -s /usr/local/bin/npm /usr/bin/npm
+
+# redis
+cd ~/downloads
+wget http://redis.googlecode.com/files/redis-2.4.5.tar.gz
+tar xzf redis-2.4.5.tar.gz
+cd redis-2.4.5
+make
+make test
+sudo make install
+
+# set redis to run as a daemon: see http://redis.io/topics/quickstart
+sudo mkdir /etc/redis; sudo mkdir /var/redis
+sudo cp utils/redis_init_script /etc/init.d/redis_6379
+	add these lines to init.d/redis_6379
+		# chkconfig: 2345 10 90
+		# description: redis server
+
+sudo cp redis.conf /etc/redis/6379.conf
+	edit per instructions on redis.io
+
+sudo mkdir /var/redis/6379
+
+sudo chkconfig --add redis_6379 
+
+
+sudo ln -s /usr/local/bin/redis-server /usr/bin/redis-server
+sudo ln -s /usr/local/bin/redis-benchmark /usr/bin/redis-benchmark
+sudo ln -s /usr/local/bin/redis-cli /usr/bin/redis-cli
+sudo ln -s /usr/local/bin/redis-check-dump /usr/bin/redis-check-dump
+sudo ln -s /usr/local/bin/redis-check-aof /usr/bin/redis-check-aof
+
+###redis-server &
+sudo /etc/init.d/redis_6379 start
+
+
+cd ~/downloads
+git clone ssh://talky@bitlash.net/~/notesoup-node.git
+cd notesoup-node
+node loadsoup.js
+# ^C to exit when done
+
+# run the server
+node soup.js
+
+# browse to http://localhost:3000 or http://yourserver:3000
+
+http://107.22.12.210:3000
+
+# care and feeding
+
+sudo yum --security update
+
+
+#forever: can't install?!
+
+sudo npm install -g forever
+can't find node-waf
+	sudo ln -s ~/downloads/node/tools/node-waf ~/downloads/node/tools/node-waf
+can't find module Scripting
+burps/dies
+
+
+

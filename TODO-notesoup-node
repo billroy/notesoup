@@ -1,24 +1,35 @@
 Notesoup/Node/Redis TODO list
-12/23/11 -br
+12/24/11 -br
 
-
-- redis
-	- how to run in background
-		- forever?
-		- logging?
-	- run at startup?
-
-- API buildout 
-	- big bug: ACL checks across the API
-	- api_anon_ vs. api_
+- test: sendreply() / res.updatelist.push fixes
+	- console.log only expands 2 levels deep via util.inspect()
+		- so this may be just a fart:
+		- BUG: return values from server are [Object]ionable
+	- check the return values from the server
+	- it would be useful to see 1 level deeper, to 3
 
 - BUG: savenote: accept note list
 	- note backup/restore depends on it and fails because it isn't accepted
+
+---
 
 - BUG: Fix The Blocking Widgets Bug
 	- bug: oops gen 1
 	- TypeError: 'null' is not an object (evaluating 'note.set')
 	- http:// imports fetch using /geturl!
+
+- feat: doCommand: allow paste/enter list of notes for restore
+	- make a way to copy
+	- /json/user/folder	
+	- send via email would be nice too
+
+- alpha server on http://alpha.notesoup.net:3000
+	- todo: run as a service
+	- todo: backup .db
+
+- API buildout 
+	- big bug: ACL checks across the API
+	- api_anon_ vs. api_
 
 - bug: note color change doesn't go on notify bus, waits for sync instead
 	- notify plumbing (tofolder...)
@@ -26,13 +37,14 @@ Notesoup/Node/Redis TODO list
 	- "undefined says: blah"
 	- username wiring in the message layer
 
-- q: where is connect saving the file session store?
-
 - startup: command line option for push server on/off
 	- npm install optimist
 
 - startup: auto load system and widgets if they aren't there
-- loadnotes: capture .files for acl
+- loadnotes: 
+	capture .files for acl
+- loaduser
+	capture .passwd file
 - dumpnotes
 - guest user: content in template/soupbase/guest
 	- folder permissions
