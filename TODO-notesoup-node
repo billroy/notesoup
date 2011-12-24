@@ -3,6 +3,8 @@ Notesoup/Node/Redis TODO list
 
 
 ---
+- BUG send all to trash doesn't clear all the notes from the source
+	- seems unpredictable. race?
 
 - don't pass req, res around
 	- this.req, this.res instead
@@ -14,13 +16,13 @@ Notesoup/Node/Redis TODO list
 	- TypeError: 'null' is not an object (evaluating 'note.set')
 	- http:// imports fetch using /geturl!
 
-- feat: doCommand: allow paste/enter list of notes for restore
+- feat: produce notelist for doCommand/paste restore
 	- make a way to copy
 	- /json/user/folder	
 	- send via email would be nice too
 
 - alpha server on http://alpha.notesoup.net:3000
-	- todo: run nodejs as a service
+	- todo: run nodejs at boot time
 	- todo: backup .db
 
 - API buildout 

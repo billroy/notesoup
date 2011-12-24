@@ -2,6 +2,14 @@
 #
 # full image list here: http://uec-images.ubuntu.com/releases/11.10/release/
 
+- TODO: update redis config
+	- where is the data?
+	- what changes
+
+- TODO: redis data file backup
+
+- TODO: make forever start soup.js at restart
+
 # launch the instance
 https://console.aws.amazon.com/ec2/home?region=us-east-1#launchAmi=ami-bf62a9d6
 
@@ -19,13 +27,10 @@ ssh -i ~/.ssh/notesoup.pem ubuntu@ec2-67-202-59-193.compute-1.amazonaws.com
 
 sudo apt-get update
 sudo apt-get upgrade
-sudo apt-get install git nodejs redis-server npm
+sudo apt-get install git nodejs redis-server g++
 
-- TODO: update redis config
-	- where is the data?
-	- what changes
-
-- TODO: redis data file backup
+# NPM via apt-get is too old - 0.2.19 - let's install clean 1.0.106
+curl http://npmjs.org/install.sh | sudo sh
 
 # install note soup
 cd ~
@@ -34,18 +39,27 @@ cd notesoup-node
 node loadsoup.js
 # ^C to exit when done
 
-# run the server
+# run the server for a quick test
 node soup.js
 
 # browse to http://localhost:3000 or http://yourserver:3000
+# ^C to exit or just let it babble
 
-- TODO: install forever to keep node running
+# install 'forever' to run the server ...needs C compiler, see above
+#apt-get install g++
+#apt-get install g++
+sudo npm install -g forever
+
+# run the server until reboot and dump logs to ~/.forever:
+forever start -o out.log -e err.log -l forever.log soup.js
+
 
 - Give the server a name like "alpha.notesoup.net"
 	- sign in to DNS provider
 	- set up CNAME record pointing to:
 		ec2-67-202-59-193.compute-1.amazonaws.com.
 		- don't forget the dot at the end
+
 
 
 
