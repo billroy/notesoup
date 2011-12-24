@@ -53,6 +53,8 @@ dispatch: function(req, res) {
 	this.log("api req: " + req.body.method);
 	this.dir(req.body.params);
 	res.updatelist = [];
+	this.req = req;
+	this.res = res;
 	this['api_'+req.body.method](req, res);
 	return 1;
 },
@@ -87,7 +89,7 @@ sendreply: function(req, res) {
 		result: '',
 		error: null,
 		id: req.body.id,
-		command: res.updatelist
+		command: this.res.updatelist
 	};
 
 	this.log('Reply:');
@@ -97,56 +99,89 @@ sendreply: function(req, res) {
 	res.send(reply);
 },
 
+
 api_savenote: function(req, res) {
 	var self = this;
 
+	// convert a single note to an array for the forEach construct
 	if (typeof(req.body.params.note[0]) == 'undefined') {	// a single note, not an array
-		if (!('id' in req.body.params.note)) {
-			self.redis.incr(self.key_nextid(req.body.params.tofolder), function(err, id) {
-				req.body.params.note.id = id.toString();
-				self.savenote(req, res, req.body.params.note, req.body.params.tofolder);
-				self.sendreply(req, res);
+		req.body.params.note = [req.body.params.note];
+	}
+	async.forEachSeries(req.body.params.note,
+		function(note, next) {
+			req.body.params.thenote = note;
+			async.series([self.checkid, self.savenote], function(err, reply) {
+				next(null);
 			});
-		}
-		else {
-			self.savenote(req, res, req.body.params.note, req.body.params.tofolder);
-			self.sendreply(req, res);
-		}
-	}
-	else {		// an array of notes
-		req.body.params.note.forEach(function(note) {
-			if (!('id' in note)) {
-				self.redis.incr(self.key_nextid(req.body.params.tofolder), function(err, id) {
-					note.id = id.toString();
-					self.savenote(req, res, note, req.body.params.tofolder);
-				});
-			}
+		},
+		function(err, reply) { 
+			if (err) self.log('Savenote error: ' + err); 
 			else {
-				self.savenote(req, res, req.body.params.note, req.body.params.tofolder);
+				self.log('Savenote complete');
+				self.dir(reply);
+				self.sendreply(req, res);
 			}
-		});
-		self.sendreply(req, res);
-	}
+		}
+	);
 },
 
-savenote: function(req, res, note, tofolder) {
-	var self = this;
-	var now = new Date().getTime();
-	var jsonnote = JSON.stringify(note);
+checkid: function(next) {
+	var self = this.NoteSoup;
 
-	var update = ['updatenote', note];
-	res.updatelist.push(update);
-	self.notifychange(tofolder, update);
+	//console.log('Checkid: this');
+	//console.dir(this);
+	
+	self.log('Checkid: params');
+	self.dir(self.req.body.params);	
+
+	if (!self.req.body.params.thenote.id) {
+		self.redis.incr(self.key_nextid(self.req.body.params.tofolder), function(err, id) {
+			self.req.body.params.thenote.id = id.toString();
+			next(null, 1);
+		});
+	}
+	else next(null, 2);
+	self.log('Leaving checkid');
+},
+
+addupdate: function(update) {
+	var self = this;
+	self.log("addupdate:");
+	self.dir(update);
+	self.res.updatelist.push(update);
+	//self.notifychange(self.req.body.params.tofolder, update);
+},
+
+savenote: function(next) {
+	var self = this.NoteSoup;
+	var now = new Date().getTime();
+	var jsonnote = JSON.stringify(self.req.body.params.thenote);
+
+	self.log('Savenote: params');
+	self.dir(self.req.body.params);	
+
+	if (!self.req.body.params.thenote.id) {
+		self.log('savenote without id');
+		next(null, 3);
+		return;
+	}
+
+	var update = ['updatenote', self.req.body.params.thenote];
+	self.addupdate(update);
+	self.notifychange(self.req.body.params.tofolder, update);
 
 	self.redis.multi()
-		.hset(self.key_note(tofolder), note.id, jsonnote)
-		.zadd(self.key_mtime(tofolder), now, note.id)
+		.hset(self.key_note(self.req.body.params.tofolder), self.req.body.params.thenote.id, jsonnote)
+		.zadd(self.key_mtime(self.req.body.params.tofolder), now, self.req.body.params.thenote.id)
 	 	.exec(function (err, replies) {
 			self.log("SaveNote got " + replies.length + " replies");
 			replies.forEach(function (reply, index) {
 				self.log("Reply " + index + ": " + reply.toString());
-	        });
-	});
+
+			});
+			next(null, 4);
+		});
+	self.log('Leaving savenote');
 },
 
 notifychange: function(tofolder, update) {
