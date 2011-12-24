@@ -2,6 +2,12 @@ Notesoup/Node/Redis TODO list
 12/23/11 -br
 
 
+- redis
+	- how to run in background
+		- forever?
+		- logging?
+	- run at startup?
+
 - API buildout 
 	- big bug: ACL checks across the API
 	- api_anon_ vs. api_
@@ -55,7 +61,8 @@ Ext v99?  Touch?  Mac?
 		- this is required to load widget .js on the fly
 
 	if method == 'gettemplatelist': return apigettemplatelist(params)
-		- needs 'requestor' - logged in user from session
+		- (have) needs 'requestor' - logged in user from session
+		- todo: rework the client to use getnotes and delete this api
 
 	if method == 'setfolderpassword': return apisetfolderpassword(params)
 		- use api_setfolderacl {password: password}
@@ -64,8 +71,6 @@ Ext v99?  Touch?  Mac?
 	if method == 'getfolderacl': return apigetfolderacl(params)
 
 	if method == 'copyfolder': return apicopyfolder(params)
-
-	# createuser is above in pre-login
 	if method == 'deleteuser': return apideleteuser(params)
 
 	if method == 'postevent': return apipostevent(params)

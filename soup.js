@@ -18,15 +18,14 @@ var app = module.exports = express.createServer();
 var soup = require('./notesoup.js');
 soup.connect(process.env.REDIS_URL);
 
-var io = require('socket.io').listen(app);
-
-io.sockets.on('connection', function(socket) {
+soup.io = require('socket.io').listen(app);
+soup.io.sockets.on('connection', function(socket) {
 	console.log('Socket connection accepted.');
 	socket.on('subscribe', function(request) {
 		console.log('Subscription request:');
 		console.dir(request);
 		socket.on(request.channel, function(msg) {
-			io.sockets.emit(request.channel, msg);
+			soup.io.sockets.emit(request.channel, msg);
 		});
 	});
 });
