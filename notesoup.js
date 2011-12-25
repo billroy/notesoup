@@ -489,6 +489,9 @@ api_logout: function() {
 	this.sendreply();
 },
 
+
+// File Import
+
 loadfile: function(filename, next) {
 	var self = NoteSoup;
 	if (filename.charAt(0) == '.') {
@@ -535,7 +538,7 @@ loadfolder: function(directory, tofolder) {
 	self.load.directory = directory;
 	self.load.tofolder = tofolder;
 	self.log('Loading directory ' + directory + ' to ' + tofolder);
-	async.forEach(files,
+	async.forEachSeries(files,
 		self.loadfile,
 		function(err) { 
 			if (err) self.log('Loadfolder: ' + err); 
@@ -565,7 +568,6 @@ loaduser: function(user) {
 		},
 		function(err, replies) {
 			self.log('Loaduser complete.');
-			self.sendreply();
 		}
 	);
 }
