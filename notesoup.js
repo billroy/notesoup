@@ -490,7 +490,7 @@ api_logout: function() {
 },
 
 loadfile: function(filename, next) {
-	var self = this;
+	var self = NoteSoup;
 	if (filename.charAt(0) == '.') {
 		self.log('Skipping system file ' + filename);
 		next();
