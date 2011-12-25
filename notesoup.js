@@ -557,7 +557,7 @@ loaduser: function(user) {
 			return;
 		}
 		self.log('Loading folder ' + user + '/' + foldername);
-		self.loadfiles(userpath + '/' + foldername, user + '/' + foldername);
+		self.loadfolder(userpath + '/' + foldername, user + '/' + foldername);
 	});
 }
 
