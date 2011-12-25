@@ -341,7 +341,9 @@ soupnote.prototype.show = function() {
 				//elt.update(this.rendernote(), true, function() {notesoup.say('rendered');});	// true to load scripts
 				//elt.update.defer(5, elt, [this.rendernote(), true]);	// true to load scripts
 
-				elt.update(this.rendernote(), true);	// true to load scripts
+				var script = 'var self=notesoup.notes["' + this.id + '"];';
+console.log(script);
+				elt.update(this.rendernote(), script);	// true to load scripts
 
 			}
 			else {

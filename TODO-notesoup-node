@@ -16,6 +16,9 @@ Notesoup/Node/Redis TODO list
 	- TypeError: 'null' is not an object (evaluating 'note.set')
 	- http:// imports fetch using /geturl!
 
+	var self = notesoup.notes[...];
+
+
 - feat: produce notelist for doCommand/paste restore
 	- make a way to copy
 	- /json/user/folder	

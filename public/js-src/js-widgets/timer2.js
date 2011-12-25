@@ -1,3 +1,4 @@
+<script>
 /**
 *	timer2.js - Note Soup timer widget
 *
@@ -5,9 +6,7 @@
 *	This file is licensed under the Note Soup Client License
 *	See http://notesoup.net/js/LICENSE
 */
-notesoup.say('This is timer2.', 'tell');
-var note = notesoup.ui.getEnclosingNote(this);
-note.set({
+self.set({
 
 	start: function() {
 		this.starttime = new Date().toString();
@@ -27,3 +26,7 @@ note.set({
 		].join(''));
 	}
 });
+</script>
+<center>
+<input type='submit' value='start' onclick = 'notesoup.ui.getEnclosingNote(this).start();'/>
+</center>
