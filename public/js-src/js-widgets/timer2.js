@@ -1,11 +1,11 @@
-<script type='text/javascript'>
 /**
-*	timer.js - Note Soup timer widget
+*	timer2.js - Note Soup timer widget
 *
 *	Copyright 2007-2011 Bill Roy
 *	This file is licensed under the Note Soup Client License
 *	See http://notesoup.net/js/LICENSE
 */
+notesoup.say('This is timer2.', 'tell');
 var note = notesoup.ui.getEnclosingNote(this);
 note.set({
 
@@ -27,7 +27,3 @@ note.set({
 		].join(''));
 	}
 });
-</script>
-<center>
-<input type='submit' value='start' onclick = 'notesoup.ui.getEnclosingNote(this).start();'/>
-</center>

@@ -1,0 +1,53 @@
+[
+  {
+	"bgcolor": "#0000FF", 
+	"from": "system in system/welcome", 
+	"height": 85, 
+	"notename": "set desktop color", 
+	"opacity": 0.5, 
+	"text": "<script type='text/javascript'>document.body.style.background='#0000FF';</script>This note sets the desktop background color.", 
+	"width": 140, 
+	"xPos": 277, 
+	"yPos": 63
+  }, 
+  {
+	"bgcolor": "#CCFFCC", 
+	"from": "system in system/welcome", 
+	"height": 92, 
+	"notename": "Welcome to Note Soup", 
+	"text": "<div style=\"text-align: center;\"><span style=\"\"><span style=\"color: rgb(51, 102, 255);\"><span style=\"font-weight: bold;\"><br class=\"webkit-block-placeholder\"></span></span></span></div><div style=\"text-align: center;\"><font face=\"verdana\" size=\"4\"><span style=\"\"><span style=\"\"><span style=\"color: rgb(51, 102, 255);\"><span style=\"font-weight: bold;\">This is the Note Soup Beta Test.</span></span></span></span></font><br>\n</div><br/>", 
+	"width": 500, 
+	"xPos": 212, 
+	"yPos": 63
+  }, 
+  {
+	"bgcolor": "#00FF00", 
+	"from": "system in system/welcome", 
+	"height": 88, 
+	"notename": "create an account", 
+	"text": "<center><br/><input type='submit' value='create a new account' onclick=\"notesoup.createUser();\"/><br/><center>\n<br/>\n", 
+	"width": 190, 
+	"xPos": 492, 
+	"yPos": 188
+  }, 
+  {
+	"bgcolor": "#00FF00", 
+	"from": "system in system/welcome", 
+	"height": 88, 
+	"notename": "poke around as 'guest'", 
+	"text": "<center><br/><input type='submit' value='log in as guest' onclick=\"notesoup.login('guest','kittylitter123');\"/><br/><center>\n<br/>\n", 
+	"width": 190, 
+	"xPos": 233, 
+	"yPos": 190
+  }, 
+  {
+	"bgcolor": "#00FF00", 
+	"from": "system in system/welcome", 
+	"height": 88, 
+	"notename": "log in", 
+	"text": "<center><br/><input type='submit' value='log in' onclick=\"notesoup.login();\"/><br/><center>\n<br/>\n", 
+	"width": 190, 
+	"xPos": 370, 
+	"yPos": 304
+  }
+]
