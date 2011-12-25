@@ -399,7 +399,7 @@ key_usermeta: function(user) {
 
 api_createuser: function() {
 	this.initsessiondata();
-	this.save_password_hash(self.req.body.params.username, self.req.body.params.password);
+	this.save_password_hash(this.req.body.params.username, this.req.body.params.password);
 	this.navigatehome();
 	this.sendreply();
 },
@@ -492,82 +492,96 @@ api_logout: function() {
 
 // File Import
 
-loadfile: function(filename, next) {
+loadfile: function(fromdirectory, filename, tofolder) {
 	var self = NoteSoup;
+	self.log('Loadfile: ' + filename);
 	if (filename.charAt(0) == '.') {
 		self.log('Skipping system file ' + filename);
-		next();
+		//nextfile(null, filename);
 		return;
 	}
-	self.log('Loading ' + self.load.directory + '/' + filename + ' ' + self.load.tofolder);
 
-	var filepath = self.load.directory + '/' + filename;
+	var filepath = fromdirectory + '/' + filename;
+
+	self.log('filepath: ' + filepath);
+
 	var filetext = fs.readFileSync(filepath, 'utf8');		// specifying 'utf8' to get a string result
+
+	//self.log('filetext: ' + filetext);
+	
 	var note = JSON.parse(filetext);
 
 	// Clean up the note a bit
 	if (note.bgcolor == '#FFFF99') delete note.bgcolor;
 	if (note.bgcolor == '#ffff99') delete note.bgcolor;
 	if ('syncme' in note) delete note.syncme;
+	if ('showme' in note) delete note.showme;
 	if (note.imports) note.imports = note.imports.replace('http://chowder.notesoup.net', '');
 	if (note.backImage) note.backImage = note.backImage.replace('http://notesoup.net', '');
 	delete note.feedstr;
 	delete note.feeddata;
 
-	self.redis.incr(self.key_nextid(self.load.tofolder), function(err, id) {
+	self.redis.incr(self.key_nextid(tofolder), function(err, id) {
 
 		note.id = id.toString();
 		note.mtime = new Date().getTime();
 		var jsonnote = JSON.stringify(note);
 
 		self.redis.multi() 
-			.hset(self.key_note(self.load.tofolder), note.id, jsonnote)
-			.zadd(self.key_mtime(self.load.tofolder), note.mtime, note.id)
+			.hset(self.key_note(tofolder), note.id, jsonnote)
+			.zadd(self.key_mtime(tofolder), note.mtime, note.id)
 			.exec(function (err, replies) {
-				next();
+				//nextfile(null, filename);
 			});
 	});
 },
 
-loadfolder: function(directory, tofolder) {
+loadfolder: function(foldername, nextfolder) {
+	var self = NoteSoup;
+	self.log('Loadfolder: fromdirectory: ' + self.load.fromdirectory);
+	self.log('Loadfolder: tofolder: ' + self.load.tofolder);
+	if (foldername.charAt(0) == '.') {
+		self.log('Skipping system folder/file ' + foldername);
+		nextfolder(null, foldername);
+		return;
+	}
 
-	var self = this;
-	var files = fs.readdirSync(directory);
-
-	self.load = {};
-	self.load.directory = directory;
-	self.load.tofolder = tofolder;
-	self.log('Loading directory ' + directory + ' to ' + tofolder);
+	var files = fs.readdirSync(self.load.fromdirectory);
+	self.dir(files);
 	async.forEachSeries(files,
-		self.loadfile,
-		function(err) { 
+		function(filename, nextfile) {
+			NoteSoup.loadfile(self.load.fromdirectory, filename, self.load.tofolder);
+			nextfile(null, filename);
+		},
+		function(err, reply) { 
 			if (err) self.log('Loadfolder: ' + err); 
+			else {
+				self.log('Loadfolder complete.');
+				self.dir(reply);
+				nextfolder(null, foldername);
+			}
 		}
 	);
-	self.log('Folder load complete.');
 },
 
-
 loaduser: function(user) {
-
+	var self = this;
 	var userpath = __dirname + '/templates/soupbase/' + user;
 	var folders = fs.readdirSync(userpath);
-	var responses_pending = 0;
-	var self = this;
-
+	self.log('Loading user: ' + user);
+	self.dir(folders);
 	async.forEachSeries(folders,
-		function(foldername, next) {
-			if (foldername.charAt(0) == '.') {
-				self.log('Skipping system file ' + foldername);
-				next();
-				return;
-			}
-			self.log('Loading folder ' + user + '/' + foldername);
-			self.loadfolder(userpath + '/' + foldername, user + '/' + foldername);
-			next();
+		function(foldername, nextfolder) {
+			if (!self.load) self.load = {};
+			self.load.fromdirectory = userpath + '/' + foldername;
+			self.load.tofolder = user + '/' + foldername;
+			NoteSoup.loadfolder(foldername, function(err, reply) {
+				nextfolder(null, foldername);
+			});
 		},
-		function(err, replies) {
+		function(err, reply) {
 			self.log('Loaduser complete.');
+			self.dir(reply);
 		}
 	);
 }
