@@ -553,7 +553,7 @@ loaduser: function(user) {
 
 	folders.forEach(function(foldername) {
 		if (foldername.charAt(0) == '.') {
-			this.log('Skipping system file ' + foldername);
+			self.log('Skipping system file ' + foldername);
 			return;
 		}
 		this.log('Loading folder ' + user + '/' + foldername);
