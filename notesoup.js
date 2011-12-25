@@ -554,6 +554,11 @@ loaduser: function(user) {
 
 	async.forEachSeries(folders,
 		function(foldername, next) {
+			if (foldername.charAt(0) == '.') {
+				self.log('Skipping system file ' + foldername);
+				next();
+				return;
+			}
 			self.log('Loading folder ' + user + '/' + foldername);
 			self.loadfolder(userpath + '/' + foldername, user + '/' + foldername);
 			next();
