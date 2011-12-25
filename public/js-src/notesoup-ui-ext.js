@@ -640,13 +640,6 @@ notesoup.ui = {
 
 	*/
 	getEnclosingNote: function(elt) {
-
-		//hangs, recursing: notesoup.say(notesoup.dump(elt));
-		//it's "DomWindow": 
-		console.log(elt);
-		//it's "DomWindow": console.dir(elt);
-
-
 		var e = Ext.get(elt);
 		if (!e) {
 			notesoup.say('oops gen 1');
@@ -1566,6 +1559,7 @@ notesoup.ui.createFolderBackup = function() {
 	for (var n in notesoup.notes) {
 		notelist.push(notesoup.notes[n].cleanNote());
 	}
+	notesoup.print(notesoup.dump(notelist));
 	var newnote = {
 		notename: 'backup of ' + notesoup.foldername,
 		text: '<center>' + new Date() + '<br/>' +

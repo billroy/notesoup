@@ -66,6 +66,15 @@ app.get('/folder/:user/:folder', function(req, res) {
 	render_folder(req, res, req.params.user, req.params.folder);
 });
 
+app.get('/json/:user/:folder', function(req, res) {
+	req.body.params = {};
+	req.body.params.fromfolder = req.params.user + '/' + req.params.folder;
+	soup.req = req;
+	soup.res = res;
+	soup.res.updatelist = [];
+	soup.api_getnotes();
+});
+
 function render_folder(req, res, user, folder) {
 	console.log('Render folder ' + user + ' ' + folder);
 	//res.send(req.params.user + '/' + req.params.folder);

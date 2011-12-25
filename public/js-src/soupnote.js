@@ -332,19 +332,18 @@ soupnote.prototype.show = function() {
 	
 		else {									// by default, this is how we do it
 			var elt = Ext.get(this.id);
-			console.log('.show id=' + this.id);
-			console.dir(this)
+			//console.log('.show id=' + this.id);
+			//console.dir(this)
 			if (elt) {
 				//var markup = this.rendernote();
 				//alert(markup.replace(/</g, '&lt;'));
 				//console.log('render: ' + (this.notename || this.id || '?'));
 				//elt.update(this.rendernote(), true, function() {notesoup.say('rendered');});	// true to load scripts
 				//elt.update.defer(5, elt, [this.rendernote(), true]);	// true to load scripts
+				//elt.update(this.rendernote(), notesoup.notes[this.id]);	// true to load scripts
 
-				var script = 'var self=notesoup.notes["' + this.id + '"];';
-console.log(script);
+				var script = 'var note=notesoup.notes["' + this.id + '"];';
 				elt.update(this.rendernote(), script);	// true to load scripts
-
 			}
 			else {
 				notesoup.say('oops elt update', 'error');

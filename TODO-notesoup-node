@@ -9,7 +9,9 @@ Notesoup/Node/Redis TODO list
 	- BUG: send race? send all to trash doesn't clear all the notes from the source
 		- seems unpredictable. race?
 
-- BUG: there is no error handling
+- BUG: Widgets / script loading
+	- edit widgets for new note scheme
+	- fails due to http: prefix check
 
 - BUG: Fix The Blocking Widgets Bug
 	- bug: oops gen 1
@@ -18,10 +20,17 @@ Notesoup/Node/Redis TODO list
 
 	var self = notesoup.notes[...];
 
+- roll the widgets
+	- decision: define "note"
+	- ink widget has lots of nice errors with aflax and sound
+	- graphics look awful, too
+
+- BUG: there is no error handling
+
 
 - feat: produce notelist for doCommand/paste restore
+	- (part done: backup note does this clumsily now by popping a window)
 	- make a way to copy
-	- /json/user/folder	
 	- send via email would be nice too
 
 - alpha server on http://alpha.notesoup.net:3000
