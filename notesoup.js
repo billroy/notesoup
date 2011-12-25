@@ -489,24 +489,6 @@ api_logout: function() {
 	this.sendreply();
 },
 
-loadfolder: function(directory, tofolder) {
-
-	var self = this;
-	var files = fs.readdirSync(directory);
-
-	self.load = {};
-	self.load.directory = directory;
-	self.load.tofolder = tofolder;
-	self.log('Loading directory ' + directory + ' to ' + tofolder);
-	async.forEach(files,
-		function(file, next) { self.loadfile(file, next); }, 
-		function(err) { 
-			if (err) self.log('Loadfolder: ' + err); 
-		}
-	);
-	self.log('Folder load complete.');
-},
-
 loadfile: function(filename, next) {
 	var self = this;
 	if (filename.charAt(0) == '.') {
@@ -544,6 +526,25 @@ loadfile: function(filename, next) {
 	});
 },
 
+loadfolder: function(directory, tofolder) {
+
+	var self = this;
+	var files = fs.readdirSync(directory);
+
+	self.load = {};
+	self.load.directory = directory;
+	self.load.tofolder = tofolder;
+	self.log('Loading directory ' + directory + ' to ' + tofolder);
+	async.forEach(files,
+		self.loadfile,
+		function(err) { 
+			if (err) self.log('Loadfolder: ' + err); 
+		}
+	);
+	self.log('Folder load complete.');
+},
+
+
 loaduser: function(user) {
 
 	var userpath = __dirname + '/templates/soupbase/' + user;
@@ -551,14 +552,17 @@ loaduser: function(user) {
 	var responses_pending = 0;
 	var self = this;
 
-	folders.forEach(function(foldername) {
-		if (foldername.charAt(0) == '.') {
-			self.log('Skipping system file ' + foldername);
-			return;
+	async.forEachSeries(folders,
+		function(foldername, next) {
+			self.log('Loading folder ' + user + '/' + foldername);
+			self.loadfolder(userpath + '/' + foldername, user + '/' + foldername);
+			next();
+		},
+		function(err, replies) {
+			self.log('Loaduser complete.');
+			self.sendreply();
 		}
-		self.log('Loading folder ' + user + '/' + foldername);
-		self.loadfolder(userpath + '/' + foldername, user + '/' + foldername);
-	});
+	);
 }
 
 };	// NoteSoup = {...};

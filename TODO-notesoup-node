@@ -2,12 +2,22 @@ Notesoup/Node/Redis TODO list
 12/24/11 -br
 
 
+- BUG: loadsoup.js is seriously broken
+
+- BUG: deleting large numbers of notes fails
+	- gets complaint about response headers
+	- needs two changes:
+		- accept a note list
+		- use the async pipeline
+
 ---
 - BUG: Send uses sendnote?!/!
 	- recode...
 
 	- BUG: send race? send all to trash doesn't clear all the notes from the source
 		- seems unpredictable. race?
+
+===
 
 - BUG: Widgets / script loading
 	- edit widgets for new note scheme
@@ -28,8 +38,14 @@ Notesoup/Node/Redis TODO list
 	- ink widget has lots of nice errors with aflax and sound
 	- graphics look awful, too
 
-- BUG: there is no error handling
+===
 
+- BUG: there is no error handling
+- BUG: there is no ACL checking
+
+- API buildout 
+	- big bug: ACL checks across the API
+	- api_anon_ vs. api_
 
 - feat: produce notelist for doCommand/paste restore
 	- (part done: backup note does this clumsily now by popping a window)
@@ -39,10 +55,6 @@ Notesoup/Node/Redis TODO list
 - alpha server on http://alpha.notesoup.net:3000
 	- todo: run nodejs at boot time
 	- todo: backup .db
-
-- API buildout 
-	- big bug: ACL checks across the API
-	- api_anon_ vs. api_
 
 - bug: note color change doesn't go on notify bus, waits for sync instead
 	- notify plumbing (tofolder...)
