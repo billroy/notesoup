@@ -1,0 +1,431 @@
+[
+  {
+    "bgcolor": "#ccffcc", 
+    "from": "system in system/widgets", 
+    "height": 55, 
+    "imports": "/js-src/js-widgets/avatar.js", 
+    "notename": "Avatar", 
+    "width": 250, 
+    "xPos": 12, 
+    "yPos": 396
+  }, 
+  {
+    "bgcolor": "#ccffcc", 
+    "from": "system in system/widgets", 
+    "height": 158, 
+    "imports": "/js-src/js-widgets/bizcard.js", 
+    "notename": "My Card", 
+    "width": 250, 
+    "xPos": 12, 
+    "yPos": 216
+  }, 
+  {
+    "bgcolor": "#ccffcc", 
+    "from": "system in system/widgets", 
+    "height": 88, 
+    "imports": "/js-src/js-widgets/createuser.js", 
+    "notename": "Create User", 
+    "width": 250, 
+    "xPos": 798, 
+    "yPos": 96
+  }, 
+  {
+    "bgcolor": "#ccffcc", 
+    "from": "system in system/widgets", 
+    "height": 58, 
+    "imports": "/js-src/js-widgets/button.js", 
+    "notename": "Button", 
+    "width": 250, 
+    "xPos": 16, 
+    "yPos": 426
+  }, 
+  {
+    "bgcolor": "#ccffcc", 
+    "bigtalker": false, 
+    "displaytimeout": 1, 
+    "displaytimer": 0, 
+    "from": "system in system/widgets", 
+    "height": 55, 
+    "imports": "/js-src/js-widgets/twitterizer.js", 
+    "nexttweet": -1, 
+    "notename": "Twitterizer", 
+    "refreshtimeout": 20, 
+    "refreshtimer": 0, 
+    "tweetttl": 30, 
+    "width": 250, 
+    "xPos": 536, 
+    "yPos": 156
+  }, 
+  {
+    "allowcreate": true, 
+    "bgcolor": "#ccffcc", 
+    "from": "system in system/widgets", 
+    "height": 40, 
+    "imports": "/js-src/js-widgets/loginform.js", 
+    "notename": "Log In Here", 
+    "width": 250, 
+    "xPos": 536, 
+    "yPos": 336
+  }, 
+  {
+    "bgcolor": "#ccffcc", 
+    "from": "system in system/widgets", 
+    "height": 55, 
+    "imports": "/js-src/js-widgets/helloworld.js", 
+    "notename": "Hello World", 
+    "width": 250, 
+    "xPos": 798, 
+    "yPos": 396
+  }, 
+  {
+    "bgcolor": "#ccffcc", 
+    "formfields": [], 
+    "from": "system in system/widgets", 
+    "height": 40, 
+    "imports": "/js-src/js-widgets/form.js", 
+    "notename": "Form", 
+    "width": 250, 
+    "xPos": 798, 
+    "yPos": 336
+  }, 
+  {
+    "bgcolor": "#ccffcc", 
+    "from": "system in system/widgets", 
+    "height": 40, 
+    "imports": "/js-src/js-widgets/periodicalreminder.js", 
+    "notename": "Periodical Reminder", 
+    "width": 250, 
+    "xPos": 274, 
+    "yPos": 336
+  }, 
+  {
+    "bgcolor": "#ccffcc", 
+    "destination": "system/widgets", 
+    "duration": "5 minutes", 
+    "from": "system in system/widgets", 
+    "height": 40, 
+    "imports": "/js-src/js-widgets/egress.js", 
+    "notename": "Egress", 
+    "width": 250, 
+    "xPos": 12, 
+    "yPos": 336
+  }, 
+  {
+    "bgcolor": "#ccffcc", 
+    "buttons": [
+      [
+        "attention", 
+        "lime", 
+        "/sound/32304__acclivity__ShipsBell.mp3"
+      ], 
+      [
+        "order", 
+        "black", 
+        "/sound/6164__NoiseCollector.mp3"
+      ], 
+      [
+        "warning", 
+        "yellow", 
+        "/sound/23512__liquidhot__De_1C637C.mp3"
+      ], 
+      [
+        "time is up", 
+        "red", 
+        "/sound/41344__ivanbailey__1.mp3"
+      ], 
+      [
+        "recess", 
+        "lightblue", 
+        "/sound/41345__ivanbailey__2.mp3"
+      ], 
+      [
+        "red alert", 
+        "red", 
+        "/sound/17468__cognito_perce_1C634D.mp3"
+      ], 
+      [
+        "out of order", 
+        "purple", 
+        "/sound/46062__reinsamba__gong.mp3"
+      ], 
+      [
+        "adjourned", 
+        "black", 
+        "/sound/43504__mkoenig__publ_1C660C.mp3"
+      ]
+    ], 
+    "from": "system in system/widgets", 
+    "height": 40, 
+    "imports": "/js-src/js-widgets/soundboard.js", 
+    "notename": "Sound Board", 
+    "width": 250, 
+    "xPos": 536, 
+    "yPos": 216
+  }, 
+  {
+    "bgcolor": "#ccffcc", 
+    "currentImage": 3, 
+    "from": "system in system/widgets", 
+    "height": 55, 
+    "imports": "/js-src/js-widgets/flickrjson.js", 
+    "keywords": "sunset", 
+    "notename": "sunset", 
+    "viewtimeout": 10, 
+    "viewtimer": 8, 
+    "width": 250, 
+    "xPos": 560, 
+    "yPos": 519
+  }, 
+  {
+    "bgcolor": "#ccffcc", 
+    "from": "system in system/widgets", 
+    "height": 55, 
+    "imports": "/js-src/js-widgets/polling.js", 
+    "notename": "Poll", 
+    "votespervoter": 1, 
+    "votexpos": 276, 
+    "voteyinc": 42, 
+    "voteypos": 36, 
+    "width": 250, 
+    "xPos": 12, 
+    "yPos": 36
+  }, 
+  {
+    "bgcolor": "#ccffcc", 
+    "from": "system in system/widgets", 
+    "height": 88, 
+    "imports": "/js-src/js-widgets/betasignup.js", 
+    "notename": "Beta Signup", 
+    "width": 250, 
+    "xPos": 950, 
+    "yPos": 36
+  }, 
+  {
+    "bgcolor": "#ccffcc", 
+    "from": "system in system/widgets", 
+    "height": 73, 
+    "imports": "/js-src/js-widgets/graphy.js", 
+    "notename": "Graphy", 
+    "width": 250, 
+    "xPos": 274, 
+    "yPos": 96
+  }, 
+  {
+    "bgcolor": "#ccffcc", 
+    "from": "system in system/widgets", 
+    "height": 40, 
+    "imports": "/js-src/js-widgets/calculator.js", 
+    "notename": "Calculator", 
+    "width": 250, 
+    "xPos": 798, 
+    "yPos": 276
+  }, 
+  {
+    "bgcolor": "#ccffcc", 
+    "from": "system in system/widgets", 
+    "height": 40, 
+    "imports": "/js-src/js-widgets/message.js", 
+    "notename": "Message", 
+    "width": 250, 
+    "xPos": 536, 
+    "yPos": 36
+  }, 
+  {
+    "bgcolor": "#ccffcc", 
+    "from": "system in system/widgets", 
+    "height": 40, 
+    "heightOffset": 70, 
+    "imagecountdown": 6, 
+    "imagedisplaytime": 6, 
+    "imageroot": "http://notesoup.net/images/UII_Icons/24x24/", 
+    "imports": "/js-src/js-widgets/porthole.js", 
+    "isPortableHole": true, 
+    "minHeight": 80, 
+    "minWidth": 250, 
+    "nextimage": "forward.png", 
+    "notename": "Portable Hole", 
+    "openfolderimage": "open.png", 
+    "pauseimage": "pause.png", 
+    "previmage": "backward.png", 
+    "random": false, 
+    "refreshimage": "refresh.png", 
+    "settingsimage": "configuration.png", 
+    "snapshotimage": "digital_camera.png", 
+    "startimage": "play.png", 
+    "width": 250, 
+    "widthOffset": 28, 
+    "xPos": 12, 
+    "xoffset": 14, 
+    "yPos": 156, 
+    "yoffset": 38
+  }, 
+  {
+    "bgcolor": "#ccffcc", 
+    "from": "system in system/widgets", 
+    "height": 40, 
+    "imports": "/js-src/js-widgets/clock.js", 
+    "notename": "Clock", 
+    "width": 250, 
+    "xPos": 274, 
+    "yPos": 216
+  }, 
+  {
+    "backZ": 0, 
+    "bgcolor": "#ccffcc", 
+    "canvasname": "backdrop", 
+    "chalky": false, 
+    "color": "black", 
+    "from": "system in system/widgets", 
+    "frontZ": 30000, 
+    "height": 103, 
+    "imports": "/js-src/js-widgets/ink.js", 
+    "linewidth": 3, 
+    "notename": "Ink", 
+    "width": 250, 
+    "xPos": 798, 
+    "yPos": 156, 
+    "yoffset": 45
+  }, 
+  {
+    "bgcolor": "#ccffcc", 
+    "from": "system in system/widgets", 
+    "height": 55, 
+    "imports": "/js-src/js-widgets/uploadForm.js", 
+    "notename": "File Upload", 
+    "width": 250, 
+    "xPos": 798, 
+    "yPos": 216
+  }, 
+  {
+    "allowAnonymous": false, 
+    "bgcolor": "#ccffcc", 
+    "from": "system in system/widgets", 
+    "height": 55, 
+    "imports": "/js-src/js-widgets/chat.js", 
+    "notename": "Chat", 
+    "width": 250, 
+    "xPos": 536, 
+    "yPos": 96
+  }, 
+  {
+    "backImage": "/images/cards_png/b1fv.png", 
+    "bgcolor": "#ccffcc", 
+    "buttons": [
+      [
+        "1 up", 
+        "deal(1);"
+      ], 
+      [
+        "5 up", 
+        "deal(5);"
+      ], 
+      [
+        "shuffle", 
+        "shuffle();"
+      ]
+    ], 
+    "cardcolumns": 7, 
+    "cardgutter": 12, 
+    "cardheight": 76, 
+    "cardwidth": 130, 
+    "cardxoffset": 150, 
+    "cardyoffset": 50, 
+    "from": "system in system/widgets", 
+    "height": 40, 
+    "imports": "/js-src/js-widgets/deck.js", 
+    "notename": "Deck", 
+    "ranks": [
+      2, 
+      3, 
+      4, 
+      5, 
+      6, 
+      7, 
+      8, 
+      9, 
+      10, 
+      "j", 
+      "q", 
+      "k", 
+      "1"
+    ], 
+    "suits": [
+      "s", 
+      "h", 
+      "d", 
+      "c"
+    ], 
+    "width": 140, 
+    "xPos": 798, 
+    "yPos": 36
+  }, 
+  {
+    "bgcolor": "#ccffcc", 
+    "from": "system in system/widgets", 
+    "height": 58, 
+    "imports": "/js-src/js-widgets/timer.js", 
+    "notename": "Timer", 
+    "width": 250, 
+    "xPos": 536, 
+    "yPos": 396
+  }, 
+  {
+    "bgcolor": "#ccffcc", 
+    "from": "system in system/widgets", 
+    "height": 55, 
+    "imports": "/js-src/js-widgets/folderacl.js", 
+    "notename": "Folder Access Control", 
+    "width": 250, 
+    "xPos": 12, 
+    "yPos": 96
+  }, 
+  {
+    "bgcolor": "#ccffcc", 
+    "from": "system in system/widgets", 
+    "height": 40, 
+    "imports": "/js-src/js-widgets/countdowntimer.js", 
+    "notename": "Countdown Timer", 
+    "width": 250, 
+    "xPos": 274, 
+    "yPos": 276
+  }, 
+  {
+    "bgcolor": "#ccffcc", 
+    "bidyinc": 42, 
+    "bidypos": 228, 
+    "closedACL": {
+      "senders": "-*"
+    }, 
+    "from": "system in system/widgets", 
+    "height": 40, 
+    "imports": "/js-src/js-widgets/auction.js", 
+    "notename": "Auction", 
+    "runningACL": {
+      "readers": "*", 
+      "senders": "*"
+    }, 
+    "width": 250, 
+    "xPos": 274, 
+    "yPos": 36
+  }, 
+  {
+    "bgcolor": "#ccffcc", 
+    "from": "system in system/widgets", 
+    "height": 40, 
+    "imports": "/js-src/js-widgets/ajaxrtt.js", 
+    "notename": "AjaxRTT", 
+    "width": 250, 
+    "xPos": 274, 
+    "yPos": 396
+  }, 
+  {
+    "bgcolor": "#ccffcc", 
+    "from": "system in system/widgets", 
+    "height": 40, 
+    "imports": "/js-src/js-widgets/chatty.js", 
+    "notename": "Send a Message", 
+    "width": 250, 
+    "xPos": 274, 
+    "yPos": 156
+  }
+]

@@ -1550,6 +1550,19 @@ notesoup.ui.getRandomColor = function() {
 };
 
 
+notesoup.getjson = function(striptext) {
+	var notelist = [];
+	for (var n in notesoup.notes) {
+		var note = notesoup.notes[n].cleanNote();
+		if (striptext) delete note.text;
+		delete note.feedstr;
+		delete note.feeddata;
+		notelist.push(note);
+	}
+	notesoup.print(notesoup.dump(notelist));
+	return notelist;
+};
+
 /**
 *	Return a portable hole containing the contents of the folder,
 *	with a nice index page.

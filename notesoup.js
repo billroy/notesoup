@@ -526,6 +526,8 @@ loadfile: function(filename, next) {
 	if ('syncme' in note) delete note.syncme;
 	if (note.imports) note.imports = note.imports.replace('http://chowder.notesoup.net', '');
 	if (note.backImage) note.backImage = note.backImage.replace('http://notesoup.net', '');
+	delete note.feedstr;
+	delete note.feeddata;
 
 	self.redis.incr(self.key_nextid(self.load.tofolder), function(err, id) {
 

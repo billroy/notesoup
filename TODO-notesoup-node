@@ -12,6 +12,9 @@ Notesoup/Node/Redis TODO list
 - BUG: Widgets / script loading
 	- edit widgets for new note scheme
 	- fails due to http: prefix check
+	
+	- how to relod the widgets?
+		- used to use paste-files somehow
 
 - BUG: Fix The Blocking Widgets Bug
 	- bug: oops gen 1
