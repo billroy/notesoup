@@ -1,21 +1,20 @@
 {
-	"name": "notesoup",
-	"version": "0.0.2",
-	"private": true,
-	
-	"scripts": {
-		"start": 	"forever start soup.js"
-		"stop":		"forever stop soup.js"
-	},
-
-	"dependencies": {
-		"express": "2.5.2"
-		, "jade": ">= 0.0.1"
-		, "redis": ">=0.7.1"
-		, "socket.io": ">=0.8.7"
-		, "hiredis": ">=0.1.13"
-		, "redis-url": "0.1.0"
-		, "async": "0.1.15"
-		, "forever": "0.7.5"
-	}
+  "name": "notesoup", 
+  "version": "0.0.2",
+  "private": true, 
+  "scripts": {
+    "start": "forever start soup.js", 
+    "stop": "forever stop soup.js",
+    "daemon": "forever start -o out.log -e err.log -l forever.log soup.js"
+  }, 
+  "dependencies": {
+    "async": "0.1.15", 
+    "express": "2.5.2", 
+    "forever": "0.7.5", 
+    "hiredis": ">=0.1.13", 
+    "jade": ">= 0.0.1", 
+    "redis": ">=0.7.1", 
+    "redis-url": "0.1.0", 
+    "socket.io": ">=0.8.7"
+  }
 }
