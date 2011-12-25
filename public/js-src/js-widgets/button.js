@@ -5,7 +5,6 @@
 *	This file is licensed under the Note Soup Client License
 *	See http://notesoup.net/js/LICENSE
 */
-var note = notesoup.ui.getEnclosingNote(this);
 note.set({
 	click: function() {
 		// your click code here

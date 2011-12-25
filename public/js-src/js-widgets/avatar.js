@@ -6,7 +6,6 @@
 *	This file is licensed under the Note Soup Client License
 *	See http://notesoup.net/js/LICENSE
 */
-try {var note = notesoup.ui.getEnclosingNote(this);
 note.set({
 
 	init: function() {
@@ -181,6 +180,6 @@ note.set({
 		avatarAwayMenu.showAt(e.getXY());
 	}
 });
-note.init();} catch(e) {notesoup.say('widget load error: ' + notesoup.dump(e), 'error');}
+note.init();
 </script>
 Avatar widget is go.

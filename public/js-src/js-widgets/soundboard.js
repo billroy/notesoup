@@ -12,7 +12,6 @@
 *	Transformed to mp3 and trimmed for use here.
 *	To extend this widget, provide the full url to your .mp3 audio file.
 */
-var note = notesoup.ui.getEnclosingNote(this);
 note.set({
 	buttons: [
 		['attention', 'lime', '/sound/32304__acclivity__ShipsBell.mp3',],

@@ -1,8 +1,6 @@
 Notesoup/Node/Redis TODO list
-12/24/11 -br
+12/25/11 -br
 
-
-- BUG: loadsoup.js is seriously broken
 
 - BUG: deleting large numbers of notes fails
 	- gets complaint about response headers
@@ -21,7 +19,7 @@ Notesoup/Node/Redis TODO list
 
 - BUG: Widgets / script loading
 	- edit widgets for new note scheme
-	- fails due to http: prefix check
+	- import fails due to http: prefix check
 	
 	- how to relod the widgets?
 		- used to use paste-files somehow

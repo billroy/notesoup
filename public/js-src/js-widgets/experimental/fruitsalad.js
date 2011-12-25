@@ -1,5 +1,4 @@
 <script type='text/javascript'>
-var note = notesoup.ui.getEnclosingNote(this);
 note.set({
 	ontick: function() {
 		notesoup.ui.arrangeNotes('random');

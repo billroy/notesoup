@@ -8,7 +8,6 @@
 */
 
 */
-var note = notesoup.ui.getEnclosingNote(this);
 note.set({
 
 	notename: 'Sorry, there was a problem...',
@@ -26,7 +25,7 @@ note.set({
 		if (notesoup.sound && notesoup.sound.play && notesoup.sound.soundObj) {
 			notesoup.sound.play('/sound/42704__K1m218__SHEEP.mp3');
 		}
-		else this.honk.defer(200, this);		
+		//else this.honk.defer(200, this);		
 	},
 
 	onrender: function() {

@@ -5,7 +5,6 @@
 *	Copyright 2008 [copyright holder]
 *	[licensing reference]
 */
-var note = notesoup.ui.getEnclosingNote(this);
 note.set({
 	init: function() {
 		notesoup.say('Hello, world!');

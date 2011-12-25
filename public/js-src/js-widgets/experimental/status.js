@@ -6,7 +6,6 @@
 *	This file is licensed under the Note Soup Client License
 *	See http://notesoup.net/js/LICENSE
 */
-var note = notesoup.ui.getEnclosingNote(this);
 note.set({
 	ontick: function() {
 		this.setContentDiv([
@@ -28,9 +27,7 @@ note.set({
 			'<br/>',
 			'Last ajax rtt: ', notesoup.rttlast, ' sent ', notesoup.bytesSentTotal, ' received: ', notesoup.bytesReceivedTotal, '<br/>',
 			'<br/>',
-			'Push server: ', notesoup.pushhost || '?', ':', notesoup.aflax.port, '<br/>',
-			'Connected: ', notesoup.aflax.connected, '<br/>',
-			'Next connection check: ', notesoup.aflax.conncheckcountdown, '<br/>',
+			'SocketIO Connected: ', notesoup.push.connected, '<br/>',
 			'<br/>'
 		].join(''));
 	}

@@ -6,7 +6,6 @@
 *	This file is licensed under the Note Soup Client License
 *	See http://notesoup.net/js/LICENSE
 */
-var note = notesoup.ui.getEnclosingNote(this);
 note.set({
 
 	chalky: false,
@@ -45,7 +44,8 @@ note.set({
 	},
 
 	play: function(sounduri) {
-		notesoup.sound.play(sounduri);
+		if (notesoup.sound)
+			notesoup.sound.play(sounduri);
 	},
 
 	startsegment: function(e) {

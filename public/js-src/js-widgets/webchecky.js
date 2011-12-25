@@ -6,9 +6,8 @@
 *	This file is licensed under the Note Soup Client License
 *	See http://notesoup.net/js/LICENSE
 */
-var note = notesoup.ui.getEnclosingNote(this);
 note.set({
-	url: 'http://splitpea.notesoup.net:5020/folder/system/welcome',
+	url: 'http://alpha.notesoup.net:3000/folder/system/welcome',
 	bgcolor: 'yellow',
 	status: 'unknown',
 	normaltimeout: 60,

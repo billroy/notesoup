@@ -6,7 +6,6 @@
 *	This file is licensed under the Note Soup Client License
 *	See http://notesoup.net/js/LICENSE
 */
-try {var note = notesoup.ui.getEnclosingNote(this);
 note.set({
 
 	canvaswidth: 50,
@@ -101,6 +100,6 @@ note.set({
 	
 
 });
-note.init.defer(50, note);} catch(e) {notesoup.say('widget load error: ' + notesoup.dump(e), 'error');}
+note.init();
 </script>
 

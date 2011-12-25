@@ -6,7 +6,6 @@
 *	This file is licensed under the Note Soup Client License
 *	See http://notesoup.net/js/LICENSE
 */
-var note = notesoup.ui.getEnclosingNote(this);
 note.set({
 	xPos: 12,
 	yPos: 36,

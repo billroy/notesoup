@@ -6,7 +6,6 @@
 *	This file is licensed under the Note Soup Client License
 *	See http://notesoup.net/js/LICENSE
 */
-var note = notesoup.ui.getEnclosingNote(this);
 note.set({
 
 	init: function() {
@@ -14,8 +13,8 @@ note.set({
 	},
 
 	subscribe: function() {
-		if (notesoup.aflax.connected) 
-			notesoup.aflax.subscribe('/sensor/' + notesoup.foldername, this.ondata, this);
+		if (notesoup.push.connected) 
+			notesoup.push.subscribe('/sensor/' + notesoup.foldername, this.ondata, this);
 		else this.subscribe.defer(1000, this);
 	},
 

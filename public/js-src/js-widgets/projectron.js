@@ -6,7 +6,6 @@
 *	This file is licensed under the Note Soup Client License
 *	See http://notesoup.net/js/LICENSE
 */
-try {var note = notesoup.ui.getEnclosingNote(this);
 note.set({
 	init: function() {
 		this.debug = false;
@@ -258,6 +257,6 @@ note.set({
 		this.setContentDiv(o.join(''));
 	}
 });
-note.init();} catch(e) {notesoup.say('widget load error: ' + notesoup.dump(e), 'error');}
+note.init();
 </script>
 Loading...
