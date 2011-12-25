@@ -44,17 +44,17 @@ connect: function(redis_url) {
 },
 
 dispatch: function(req, res) {
-	if (typeof(this['api_'+req.body.method]) != "function") {
+	res.updatelist = [];
+	this.req = req;
+	this.res = res;
+	if (typeof(this['api_' + req.body.method]) != "function") {
 		this.log("No method for request: ");
 		this.dir(req.body);
-		this.senderror(req, res, "The server does not know how to " + req.body.method);
+		this.senderror("The server does not know how to " + req.body.method);
 		return 0;
 	}
 	this.log("api req: " + req.body.method);
 	this.dir(req.body.params);
-	res.updatelist = [];
-	this.req = req;
-	this.res = res;
 	this['api_'+req.body.method](req, res);
 	return 1;
 },
@@ -73,44 +73,43 @@ dir: function(thing) {
 	console.log(util.inspect(thing, false, 3, true));
 },
 
-senderror: function(req, res, errormessage) {
+senderror: function(errormessage) {
 	var reply = {
 		result: '',
 		error: errormessage,
-		id: req.body.id,
+		id: this.req.body.id,
 		command: []		
-	}
-	res.send(reply);
+	};
+	this.res.send(reply);
 },
 
-sendreply: function(req, res) {
+sendreply: function() {
 
 	var reply = {
 		result: '',
 		error: null,
-		id: req.body.id,
+		id: this.req.body.id,
 		command: this.res.updatelist
 	};
 
 	this.log('Reply:');
-	this.dir(res.updatelist);
 	this.dir(reply);
 
-	res.send(reply);
+	this.res.send(reply);
 },
 
 
-api_savenote: function(req, res) {
+api_savenote: function() {
 	var self = this;
 
 	// convert a single note to an array for the forEach construct
-	if (typeof(req.body.params.note[0]) == 'undefined') {	// a single note, not an array
-		req.body.params.note = [req.body.params.note];
+	if (typeof(self.req.body.params.note[0]) == 'undefined') {	// a single note, not an array
+		self.req.body.params.note = [self.req.body.params.note];
 	}
 	// todo: test this without Series
-	async.forEachSeries(req.body.params.note,
+	async.forEachSeries(self.req.body.params.note,
 		function(note, next) {
-			req.body.params.thenote = note;
+			self.req.body.params.thenote = note;
 			async.series([self.checkid, self.savenote], function(err, reply) {
 				next(null);
 			});
@@ -120,7 +119,7 @@ api_savenote: function(req, res) {
 			else {
 				self.log('Savenote complete');
 				self.dir(reply);
-				self.sendreply(req, res);
+				self.sendreply();
 			}
 		}
 	);
@@ -189,52 +188,70 @@ notifychange: function(tofolder, update) {
 	var self = this;
 	self.log("Notify: ");
 	self.dir(update);
-	self.io.sockets.emit(tofolder, update);
+	if (self.io) self.io.sockets.emit(tofolder, update);
 },
 
-api_sync: function(req, res) {
-
-	res.newlastupdate = new Date().getTime();
+api_appendtonote: function() {
 	var self = this;
+	self.redis.hget(self.key_note(self.req.body.params.tofolder), 
+		self.req.body.params.noteid, function(err, notetext) {
 
-	// TODO: HGETALL would save a server roundtrip here
-	if (req.body.params.lastupdate == 0) {
-		self.redis.hkeys(self.key_note(req.body.params.fromfolder), function(err, noteids) {
-			self.sync_sendupdates(req, res, noteids);
-		});
-	}
-	else {
-		self.redis.zrangebyscore(self.key_mtime(req.body.params.fromfolder), 
-			req.body.params.lastupdate, res.newlastupdate, function(err, noteids) {
-			self.sync_sendupdates(req, res, noteids);
-		});
-	}
-},
+		if (notetext) {
+			var note = JSON.parse(notetext);
+			self.log('Append: note ' + typeof(note));
+			self.dir(note);
 
-sync_sendupdates: function(req, res, noteids) {
+			if (note.text) note.text = note.text + self.req.body.params.text;
+			else note.text = self.req.body.params.text;
 
-	var self = this;
-	self.redis.hmget(self.key_note(req.body.params.fromfolder), noteids, function(err, notes) {
-		if (notes) {
-			self.log("Syncing notes:");
-			self.dir(notes);
-			res.updatelist.push(['beginupdate','']);
-			for (var i=0; i<notes.length; i++) {
-				var note = JSON.parse(notes[i]);
-				res.updatelist.push(['updatenote', note]);
-			}
-			res.updatelist.push(['endupdate','']);
+			self.api_savenote();
 		}
-		res.updatelist.push(['setupdatetime', res.newlastupdate.toString()]);
-		self.sendreply(req, res);
 	});
 },
 
-api_sendnote: function(req, res) {
+api_sync: function() {
+
+	var self = this;
+	self.res.newlastupdate = new Date().getTime();
+
+	// TODO: HGETALL would save a server roundtrip here
+	if (self.req.body.params.lastupdate == 0) {
+		self.redis.hkeys(self.key_note(self.req.body.params.fromfolder), function(err, noteids) {
+			self.sync_sendupdates(noteids);
+		});
+	}
+	else {
+		self.redis.zrangebyscore(self.key_mtime(self.req.body.params.fromfolder), 
+			self.req.body.params.lastupdate, self.res.newlastupdate, function(err, noteids) {
+			self.sync_sendupdates(noteids);
+		});
+	}
+},
+
+sync_sendupdates: function(noteids) {
+
+	var self = this;
+	self.redis.hmget(self.key_note(self.req.body.params.fromfolder), noteids, function(err, notes) {
+		if (notes) {
+			self.log("Syncing notes:");
+			self.dir(notes);
+			self.addupdate(['beginupdate','']);
+			for (var i=0; i<notes.length; i++) {
+				var note = JSON.parse(notes[i]);
+				self.addupdate(['updatenote', note]);
+			}
+			self.addupdate(['endupdate','']);
+		}
+		self.addupdate(['setupdatetime', self.res.newlastupdate.toString()]);
+		self.sendreply();
+	});
+},
+
+api_sendnote: function() {
 	var self = this;
 	self.redis.multi()
-		.hget(self.key_note(req.body.params.fromfolder), req.body.params.noteid)
-		.incr(self.key_nextid(req.body.params.tofolder))
+		.hget(self.key_note(self.req.body.params.fromfolder), self.req.body.params.noteid)
+		.incr(self.key_nextid(self.req.body.params.tofolder))
 		.exec(function(err, reply) {
 
 			// Bug: crash here on Duplicate Note: note is null?!
@@ -249,56 +266,37 @@ api_sendnote: function(req, res) {
 			var now = new Date().getTime();
 
 			self.redis.multi()
-				.hset(self.key_note(req.body.params.tofolder), note.id, JSON.stringify(note))
-				.zadd(self.key_mtime(req.body.params.tofolder), now, note.id)
+				.hset(self.key_note(self.req.body.params.tofolder), note.id, JSON.stringify(note))
+				.zadd(self.key_mtime(self.req.body.params.tofolder), now, note.id)
 				.exec(function(err, reply) {
 
-					if (req.body.params.tofolder == req.body.params.notifyfolder)
-						res.updatelist.push(['updatenote', note]);
+					if (self.req.body.params.tofolder == self.req.body.params.notifyfolder)
+						self.addupdate(['updatenote', note]);
 
-					if (!('deleteoriginal' in req.body.params) || req.body.params.deleteoriginal) {
+					if (!('deleteoriginal' in self.req.body.params) || self.req.body.params.deleteoriginal) {
 						self.redis.multi()
-							.hdel(self.key_note(req.body.params.fromfolder), req.body.params.noteid)
-							.zrem(self.key_mtime(req.body.params.fromfolder), req.body.params.noteid)
+							.hdel(self.key_note(self.req.body.params.fromfolder), self.req.body.params.noteid)
+							.zrem(self.key_mtime(self.req.body.params.fromfolder), self.req.body.params.noteid)
 							.exec(function(err, reply) {
-								res.updatelist.push(['deletenote', req.body.params.noteid]);
-								self.sendreply(req, res);
+								self.addupdate(['deletenote', self.req.body.params.noteid]);
+								self.sendreply();
 							});
 					}
-					else self.sendreply(req, res);
+					else self.sendreply();
 				});
 		});
 },
 
-api_appendtonote: function(req, res) {
-	var self = this;
-	self.redis.hget(self.key_note(req.body.params.tofolder), 
-		req.body.params.noteid, function(err, notetext) {
-
-		if (notetext) {
-			var note = JSON.parse(notetext);
-			self.log('Append: note ' + typeof(note));
-			self.dir(note);
-
-			if (note.text) note.text = note.text + req.body.params.text;
-			else note.text = req.body.params.text;
-
-			self.savenote(req, res, note, req.body.params.tofolder);
-			self.sendreply(req, res);
-		}
-	});
-},
-
-api_postevent: function(req, res) {
+api_postevent: function() {
 	this.log('PostEvent via api:');
-	this.dir(req.body.params);
-	//io.socket.send(res.body.params.
-	return this.sendreply(req, res);
+	this.dir(this.req.body.params);
+	//io.socket.send(this.res.body.params.
+	return this.sendreply();
 },
 
-api_getnotes: function(req, res) {
+api_getnotes: function() {
 	var self = this;
-	self.redis.hgetall(self.key_note(req.body.params.fromfolder), function(err, jsonnotes) {
+	self.redis.hgetall(self.key_note(self.req.body.params.fromfolder), function(err, jsonnotes) {
 		if (!jsonnotes) return;
 		//self.log("Got notes from " + req.body.params.fromfolder);
 		//self.dir(json_notes);
@@ -308,8 +306,8 @@ api_getnotes: function(req, res) {
 			parsed_notes[note.id] = note;
 		}
 		
-		res.updatelist.push(['notes', parsed_notes]);
-		self.sendreply(req, res);
+		self.addupdate(['notes', parsed_notes]);
+		self.sendreply();
 	});
 },
 
@@ -317,46 +315,45 @@ key_folderquery: function(user) {
 	return this.key_note(user + '/*');
 },
 
-api_getfolderlist: function(req, res) {
+api_getfolderlist: function() {
 	var self = this;
 
 	// Todo: should use session username
-	self.redis.keys(self.key_folderquery(req.body.params.user), function(err, keylist) {
+	self.redis.keys(self.key_folderquery(self.req.body.params.user), function(err, keylist) {
 		var folderlist = [];
 		keylist.forEach(function(key) {
 			folderlist.push(key.substr(6));	// prune off 'notes/'
 		});
-		res.updatelist.push(['folderlist', folderlist]);
-		self.sendreply(req, res);
+		self.addupdate(['folderlist', folderlist]);
+		self.sendreply();
 	});
 },
 
-api_createfolder: function(req, res) {
-	this.api_openfolder(req, res);
+api_createfolder: function() {
+	this.api_openfolder();
 },
 
-api_openfolder: function(req, res) {
-	res.updatelist.push(['navigateto', '/folder/' + req.body.params.tofolder]);
-	this.sendreply(req, res);
+api_openfolder: function() {
+	this.res.updatelist.push(['navigateto', '/folder/' + this.req.body.params.tofolder]);
+	this.sendreply();
 },
 
-effectiveuser: function(req, res) {
-	return req.session.loggedin ? req.session.username : 'guest';
+effectiveuser: function() {
+	return this.req.session.loggedin ? this.req.session.username : 'guest';
 },
 
-navigatehome: function(req, res) {
+navigatehome: function() {
 	var self = this;
-	if (req.session.loggedin) {
-		res.updatelist.push([
+	if (self.req.session.loggedin) {
+		self.addupdate([
 			'navigateto', 
-			'/folder/' + self.effectiveuser(req, res) + '/' + self.inboxfolder
+			'/folder/' + self.effectiveuser() + '/' + self.inboxfolder
 		]);
 	}
-	else res.updatelist.push(['navigateto', '/']);
-	//self.sendreply(req, res);
+	else self.addupdate(['navigateto', '/']);
 },
 
-deletefolder: function(req, res, folder, execfunc) {
+deletefolder: function(folder, execfunc) {
 	var self = this;
 	// BUG: need that evil filename character check here!
 	self.redis.multi()
@@ -367,19 +364,19 @@ deletefolder: function(req, res, folder, execfunc) {
 		.exec(execfunc());
 },
 
-api_deletefolder: function(req, res) {
+api_deletefolder: function() {
 	var self = this;
-	self.deletefolder(req, res, req.body.params.fromfolder, function(err, replies) {
-		self.navigatehome(req, res);
-		self.sendreply(req, res);
+	self.deletefolder(self.req.body.params.fromfolder, function(err, replies) {
+		self.navigatehome();
+		self.sendreply();
 	});
 },
 
-api_emptytrash: function(req, res) {
+api_emptytrash: function() {
 	var self = this;
-	self.deletefolder(req, res, this.effectiveuser(req, res) + '/trash', function(err, replies) {
-		res.updatelist.push(['say', 'The trash is empty.']);
-		self.sendreply(req, res);
+	self.deletefolder(self.effectiveuser() + '/trash', function(err, replies) {
+		self.addupdate(['say', 'The trash is empty.']);
+		self.sendreply();
 	});
 },
 
@@ -400,19 +397,19 @@ key_usermeta: function(user) {
 	return 'user/' + user + '/.passwd';
 },
 
-api_createuser: function(req, res) {
-	this.initsessiondata(req, res);
-	this.save_password_hash(req, res, req.body.params.username, req.body.params.password);
-	this.navigatehome(req, res);
-	this.sendreply(req, res);
+api_createuser: function() {
+	this.initsessiondata();
+	this.save_password_hash(self.req.body.params.username, self.req.body.params.password);
+	this.navigatehome();
+	this.sendreply();
 },
 
 inboxfolder: 'inbox',
 
-save_password_hash: function(req, res, user, passwordhash) {
+save_password_hash: function(user, passwordhash) {
 	var self = this;
 	self.redis.set(self.key_usermeta(user), passwordhash, function(err, reply) {
-		res.updatelist.push(['say','Password saved.']);
+		self.addupdate(['say','Password saved.']);
 	});
 },
 
@@ -420,76 +417,76 @@ key_foldermeta: function(folder) {
 	return 'fldr/' + folder;
 },
 
-api_setfolderacl: function(req, res) {
+api_setfolderacl: function() {
 
 	var self = this;
 	var acl = {};
-	if (req.body.params.editors) acl.editors = req.body.params.editors;
-	if (req.body.params.readers) acl.readers = req.body.params.readers;
-	if (req.body.params.senders) acl.senders = req.body.params.senders;
-	if (req.body.params.password) acl.password = req.body.params.password;
+	if (self.req.body.params.editors) acl.editors = self.req.body.params.editors;
+	if (self.req.body.params.readers) acl.readers = self.req.body.params.readers;
+	if (self.req.body.params.senders) acl.senders = self.req.body.params.senders;
+	if (self.req.body.params.password) acl.password = self.req.body.params.password;
 
-	self.log("SetACL " + req.body.params.tofolder);
+	self.log("SetACL " + self.req.body.params.tofolder);
 	self.dir(acl);
 
-	self.redis.hmset(self.key_foldermeta(req.body.params.tofolder), acl, function(err, reply) {
-		res.updatelist.push(['say','Folder permissions updated.']);
-		self.sendreply(req, res);
+	self.redis.hmset(self.key_foldermeta(self.req.body.params.tofolder), acl, function(err, reply) {
+		self.addupdate(['say','Folder permissions updated.']);
+		self.sendreply();
 	});
 },
 
-api_knockknock: function(req, res) {
-	req.session.nonce = this.randomName(32);	// save login nonce
-	res.updatelist.push(['whosthere', req.session.nonce]);
-	this.sendreply(req, res);
+api_knockknock: function() {
+	this.req.session.nonce = this.randomName(32);	// save login nonce
+	this.res.updatelist.push(['whosthere', this.req.session.nonce]);
+	this.sendreply();
 },
 
-api_login: function(req, res) {
+api_login: function() {
 	// fetch username passwordhash
 	var self = this;
-	self.redis.get(self.key_usermeta(req.body.params.username), function(err, passwordhash) {
+	self.redis.get(self.key_usermeta(self.req.body.params.username), function(err, passwordhash) {
 
 		if (!passwordhash) {
-			self.clearsessiondata(req, res);
-			self.senderror(req, res, 'Invalid login.');
+			self.clearsessiondata();
+			self.senderror('Invalid login.');
 			return;
 		}
 
 		var salted_hash = crypto.createHash('sha1')
-							.update(passwordhash + req.session.nonce)
+							.update(passwordhash + self.req.session.nonce)
 							.digest('hex');
 		self.log('Login: saved  hash ' + passwordhash);
-		self.log('Login: saved nonce ' + req.session.nonce);
+		self.log('Login: saved nonce ' + self.req.session.nonce);
 		self.log('Login: salted hash ' + salted_hash);
-		self.log('Login: client hash ' + req.body.params.passwordhash);
-		if (salted_hash == req.body.params.passwordhash) {
-			self.initsessiondata(req, res);
-			self.navigatehome(req, res);
-			self.sendreply(req, res);
+		self.log('Login: client hash ' + self.req.body.params.passwordhash);
+		if (salted_hash == self.req.body.params.passwordhash) {
+			self.initsessiondata();
+			self.navigatehome();
+			self.sendreply();
 		}
 		else {
-			self.clearsessiondata(req, res);
-			self.senderror(req, res, 'Invalid login.');
+			self.clearsessiondata();
+			self.senderror('Invalid login.');
 		}
 	});
 },
 
-initsessiondata: function(req, res) {
-	req.session.loggedin = true;
-	req.session.username = req.body.params.username;
-	delete req.session.nonce;
+initsessiondata: function() {
+	this.req.session.loggedin = true;
+	this.req.session.username = this.req.body.params.username;
+	delete this.req.session.nonce;
 },
 
-clearsessiondata: function(req, res) {
-	delete req.session.loggedin;
-	delete req.session.username;
-	delete req.session.nonce;
+clearsessiondata: function() {
+	delete this.req.session.loggedin;
+	delete this.req.session.username;
+	delete this.req.session.nonce;
 },
 
-api_logout: function(req, res) {
-	this.clearsessiondata(req, res);
-	res.updatelist.push(['navigateto', '/']);
-	this.sendreply(req, res);
+api_logout: function() {
+	this.clearsessiondata();
+	this.addupdate(['navigateto', '/']);
+	this.sendreply();
 },
 
 loadfolder: function(directory, tofolder) {

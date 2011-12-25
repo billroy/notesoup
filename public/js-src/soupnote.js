@@ -1108,6 +1108,8 @@ soupnote.prototype.cleanNote = function() {
 	var cleanednote = {};
 	for (var k in this) {
 		if (k == 'id') continue;
+		if (k == 'zIndex') continue;
+		if (k == 'mtime') continue;
 		if (k.charAt(0) == '_') continue;
 		if (typeof(this[k]) == 'function') continue;
 		cleanednote[k] = this[k];

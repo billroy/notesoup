@@ -3,6 +3,9 @@ Notesoup/Node/Redis TODO list
 
 
 ---
+- BUG: Send uses sendnote?!/!
+	- recode...
+
 - BUG send all to trash doesn't clear all the notes from the source
 	- seems unpredictable. race?
 
