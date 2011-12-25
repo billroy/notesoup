@@ -556,7 +556,7 @@ loaduser: function(user) {
 			self.log('Skipping system file ' + foldername);
 			return;
 		}
-		this.log('Loading folder ' + user + '/' + foldername);
+		self.log('Loading folder ' + user + '/' + foldername);
 		self.loadfiles(userpath + '/' + foldername, user + '/' + foldername);
 	});
 }
