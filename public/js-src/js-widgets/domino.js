@@ -81,7 +81,8 @@ note.set({
 	},
 
 	snapdomino: function() {
-		notesoup.sound.play('/sound/45813__themfish__draw_card.mp3');
+		if (notesoup.sound)
+			notesoup.sound.play('/sound/45813__themfish__draw_card.mp3');
 		//		19244__deathpie__dominoDrop2.mp3');
 	},
 
@@ -99,7 +100,8 @@ note.set({
 	},
 
 	shuffle: function() {
-		notesoup.sound.play('/sound/19245__deathpie__shuffle.mp3');
+		if (notesoup.sound)
+			notesoup.sound.play('/sound/19245__deathpie__shuffle.mp3');
 		this.dominos = {};
 		for (var n in notesoup.notes) {
 			if (n == this.id) continue;

@@ -8,6 +8,9 @@ Notesoup/Node/Redis TODO list
 		- accept a note list
 		- use the async pipeline
 
+- CRASH: erase all notes crashes the server
+	deletes the same note over and over
+
 ---
 - BUG: Send uses sendnote?!/!
 	- recode...
@@ -32,9 +35,15 @@ Notesoup/Node/Redis TODO list
 	var self = notesoup.notes[...];
 
 - roll the widgets
-	- decision: define "note"
 	- ink widget has lots of nice errors with aflax and sound
-	- graphics look awful, too
+
+- sound is broken
+	SoundManager2
+		requires flash
+		http://www.schillmania.com/projects/soundmanager2/doc/download/
+	JPlayer
+		http://www.jplayer.org/
+		
 
 ===
 

@@ -1730,7 +1730,7 @@ var notesoup = {
 		// this leaves dangling swirlies
 		//else if (this.commandsPending > 0) elt.src = '/images/ajax-busy.gif';
 
-		else if (this.aflax && this.aflax.connection) elt.src =  this.imageHost + 'images/famfamfam.com/status_online.png';
+		else if (this.push && this.push.connected) elt.src =  this.imageHost + 'images/famfamfam.com/status_online.png';
 		else elt.src =  this.imageHost + 'images/famfamfam.com/status_offline.png';
 
 		// Debug display...

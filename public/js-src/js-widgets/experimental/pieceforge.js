@@ -67,8 +67,8 @@ note.set({
 		bubbles.init(this.getFieldID('canvas'));
 		bubbles.xoffset = 0;
 		bubbles.yoffset = 0;
-		//bubbles.drawPiece();
-		bubbles.drawAnt();
+		bubbles.drawPiece();
+		//bubbles.drawAnt();
 		
 		//this.snapshot();
 	},

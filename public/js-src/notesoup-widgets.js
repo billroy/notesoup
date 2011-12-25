@@ -177,7 +177,7 @@ soupnote.prototype.sendself = function() {
 	notesoup.postEvent('/folder/' + notesoup.foldername, 'sendself', data);
 
 	// if we're not on the bus, echo the call locally
-	if (!notesoup.aflax.connected) this.onsendself.apply(this, arguments);
+	if (!notesoup.push.connected) this.onsendself.apply(this, arguments);
 };
 
 

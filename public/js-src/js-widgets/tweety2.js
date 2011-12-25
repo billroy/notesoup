@@ -19,7 +19,7 @@ note.set({
 	},
 
 	subscribe: function() {
-		if (notesoup.aflax.connected) notesoup.aflax.subscribe('/radio/soup', this.ondata, this);
+		if (notesoup.push.connected) notesoup.push.subscribe('/radio/soup', this.ondata, this);
 		else this.subscribe.defer(1000, this);
 	},
 

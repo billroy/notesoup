@@ -22,7 +22,7 @@ note.set({
 			return;
 		}
 		notesoup.newNotePositionMode = 'random';
-		if (notesoup.aflax.connected) this.gettweets();
+		if (notesoup.push.connected) this.gettweets();
 		else this.init.defer(100, this);
 	},
 

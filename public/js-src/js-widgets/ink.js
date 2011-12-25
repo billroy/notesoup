@@ -58,7 +58,7 @@ note.set({
 
 	endsegment: function(e) {
 		delete this.pendown;
-		notesoup.sound.stop();
+		if (notesoup.sound) notesoup.sound.stop();
 		if (this.zIndex != this.backZ) this.sendself('canvasback');
 	},
 
@@ -81,7 +81,8 @@ note.set({
 		var y = e.getPageY() - this.yoffset;
 		if ((x == this.lastx) && (y == this.lasty)) return;
 		
-		var color = (notesoup.ui.defaultNoteColor == '#FFFF99') ? this.color : notesoup.ui.defaultNoteColor;
+		var color = ((notesoup.ui.defaultNoteColor == '#FFFF99') || (notesoup.ui.defaultNoteColor == '#FFFF30'))
+			? this.color : notesoup.ui.defaultNoteColor;
 
 		this.sendself('drawline', this.lastx, this.lasty, x, y, color, this.linewidth);
 
