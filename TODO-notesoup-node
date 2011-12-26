@@ -1,5 +1,5 @@
 Notesoup/Node/Redis TODO list
-12/25/11 -br
+12/26/11 -br
 
 
 - BUG: deleting large numbers of notes fails

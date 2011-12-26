@@ -59,6 +59,9 @@ dispatch: function(req, res) {
 	return 1;
 },
 
+systemuser: 'system',
+guestuser: 'guest',
+
 // Redis key mapping
 //
 key_note: function(folder) 		{ return 'notes/' + folder; },
@@ -294,6 +297,39 @@ api_postevent: function() {
 	return this.sendreply();
 },
 
+getTemplates: function(folder, next) {
+	var self = this;
+	self.redis.hgetall(self.key_note(folder), function(err, jsonnotes) {
+		self.log('getTemplates:');
+		self.dir(jsonnotes);
+		if (!jsonnotes) {
+			next('no notes');
+			return;
+		}
+		for (var n in jsonnotes) {
+			var note = JSON.parse(jsonnotes[n]);
+			self.res.templatelist.push([folder, note, note.notename || 'untitled']);
+		}
+		// todo: sort by item[2], the notename
+		next(null);
+	});
+},
+
+//autoIncludeSystemTemplates: false,
+
+templatefolder: 'templates',
+
+api_gettemplatelist: function() {
+	var self = this;
+	self.res.templatelist = [];
+	self.getTemplates(self.systemuser + '/' + self.templatefolder, function() {
+		self.getTemplates(self.effectiveuser() + '/' + self.templatefolder, function() {
+			self.addupdate(['templatelist', self.res.templatelist]);
+			self.sendreply();
+		});
+	});
+},
+
 api_getnotes: function() {
 	var self = this;
 	self.redis.hgetall(self.key_note(self.req.body.params.fromfolder), function(err, jsonnotes) {
@@ -339,7 +375,7 @@ api_openfolder: function() {
 },
 
 effectiveuser: function() {
-	return this.req.session.loggedin ? this.req.session.username : 'guest';
+	return this.req.session.loggedin ? this.req.session.username : this.guestuser;
 },
 
 navigatehome: function() {
