@@ -117,8 +117,11 @@ app.get('/geturl', function(req, res) {
 	var options = url.parse(req.query.url);
 	var httpreq = http.get(options, function(httpres) {
 		httpres.on('data', function (chunk) {
-			console.log('Geturl body: ' + chunk);
+			console.log('Geturl body: ' + chunk.length);
 			res.write(chunk);
+		});
+		httpres.on('end', function (chunk) {
+			console.log('Geturl done.');
 			res.end();
 		});
 		//console.log("Geturl response: " + httpres.statusCode);
