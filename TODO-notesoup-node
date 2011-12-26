@@ -28,14 +28,13 @@ Notesoup/Node/Redis TODO list
 ===
 
 - BUG: Widgets / script loading
-	- edit widgets for new note scheme
 	- import fails due to http: prefix check
 	
-	- how to reload the widgets? widgetbuilder.js!
+- BUILD: how to reload the widgets? widgetbuilder.js!
+===
 
-- BUG: Fix The Blocking Widgets Bug
-	- bug: oops gen 1
-	- TypeError: 'null' is not an object (evaluating 'note.set')
+- widget bugs
+	- rss: needs /getfeed service
 
 ===
 

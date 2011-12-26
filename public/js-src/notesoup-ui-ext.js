@@ -154,7 +154,7 @@ notesoup.ui = {
 					if (!link) return;
 					return notesoup.saveNote({
 						notename: link,
-						imports: 'system/widgets/@sunset'
+						imports: '/js-src/js-widgets/flickrjson.js'
 					});
 				}, icon: notesoup.imageHost + 'images/famfamfam.com/photo_add.png'},
 
@@ -1553,7 +1553,7 @@ notesoup.ui.getRandomColor = function() {
 notesoup.getjson = function(stripfields) {
 	var notelist = [];
 	for (var n in notesoup.notes) {
-		var note = notesoup.notes[n].cleanNote();
+		var note = notesoup.notes[n].cleanNote();	// removes id, zIndex, mtime
 		for (var f in stripfields) delete note[f];
 		//if (striptext) delete note.text;
 		delete note.feedstr;
