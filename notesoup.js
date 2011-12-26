@@ -461,6 +461,20 @@ key_foldermeta: function(folder) {
 	return 'fldr/' + folder;
 },
 
+api_getfolderacl: function() {
+	var self = this;
+	self.redis.hgetall(self.key_foldermeta(self.req.body.params.tofolder), function(err, acl) {
+		if (err) {
+			self.log('getfolderacl: error');
+			self.dir(err);
+			return;
+		}
+		acl.folder = self.req.body.params.tofolder;
+		self.addupdate(['folderacl', acl]);
+		self.sendreply();
+	});
+},
+
 api_setfolderacl: function() {
 
 	var self = this;
