@@ -104,15 +104,12 @@ Ext v99?  Touch?  Mac?
 
 
 - bug: # Only a few methods are allowed if we're not logged in
-- bug: Some methods are only legal for the 'system' user
+- bug: Some methods are only legal for the ˜˜'system' user
 
 	if method == 'getfeed': return apigetfeed(params)
 	if method == 'getnote': return apigetnote(params)
 
 	# Command below this point are only allowed for logged-in requestors
-
-	if method == 'geturl': return apigeturl(params)
-		- this is required to load widget .js on the fly
 
 	if method == 'gettemplatelist': return apigettemplatelist(params)
 		- (have) needs 'requestor' - logged in user from session

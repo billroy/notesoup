@@ -115,6 +115,15 @@ http = require('http');
 app.get('/geturl', function(req, res) {
 	console.log('Geturl: ' + req.query.url);
 	var options = url.parse(req.query.url);
+
+	// handle local '/path' fetches as static
+	if (!options.host) {
+		console.log('Geturl: static ' + options.pathname);
+		res.sendfile(__dirname + '/public' + options.pathname);
+		return;
+	}
+
+	// fetch a remote url
 	var httpreq = http.get(options, function(httpres) {
 		httpres.on('data', function (chunk) {
 			console.log('Geturl body: ' + chunk.length);
