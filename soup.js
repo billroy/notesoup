@@ -109,5 +109,27 @@ app.post('/api', function(req, res) {
 	soup.dispatch(req, res);	
 });
 
+url = require('url');
+http = require('http');
+
+app.get('/geturl', function(req, res) {
+	console.log('Geturl: ' + req.query.url);
+	var options = url.parse(req.query.url);
+	var httpreq = http.get(options, function(httpres) {
+		httpres.on('data', function (chunk) {
+			console.log('Geturl body: ' + chunk);
+			res.write(chunk);
+			res.end();
+		});
+		//console.log("Geturl response: " + httpres.statusCode);
+		//console.log("Geturl response: " + httpres.responseText);		
+		//console.dir(httpres);
+	}).on('error', function(e) {
+		console.log("Geturl error: " + e.message);
+	});
+	
+});
+
+
 app.listen(3000);
 console.log("NoteSoup listening on port %d in %s mode", app.address().port, app.settings.env);

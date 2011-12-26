@@ -39,7 +39,7 @@ connect: function(redis_url) {
 	}
 	
 	this.redis.on("error", function (err) {
-		this.log("Redis Error " + err);
+		console.log("Redis Error " + err);
 	});
 },
 

@@ -37,6 +37,8 @@ Notesoup/Node/Redis TODO list
 	- bug: oops gen 1
 	- TypeError: 'null' is not an object (evaluating 'note.set')
 
+===
+
 - sound is broken
 	SoundManager2
 		requires flash
@@ -44,8 +46,6 @@ Notesoup/Node/Redis TODO list
 	JPlayer
 		http://www.jplayer.org/
 	html5 div hack
-
-===
 
 - BUG: there is no error handling
 - BUG: there is no ACL checking
@@ -77,9 +77,8 @@ Notesoup/Node/Redis TODO list
 - notesoup time machine
 	- infinite undo/redo
 	- pushbutton backup/restore
-	
 
-- bug: node load.js doesn't terminate properly
+- bug: node load.js and loadsoup.js don't terminate properly
 
 - startup: auto load system and widgets if they aren't there
 - loadnotes: 
@@ -92,6 +91,7 @@ Notesoup/Node/Redis TODO list
 	- welcome/help
 	- auto-refresh every 15 minutes
 - new user: content in template/soupbase/newuser
+- improved system/ and widget/ content
 
 - bug: css for note titles is different from tiny soup?!
 
@@ -104,6 +104,7 @@ Ext v99?  Touch?  Mac?
 
 
 - bug: # Only a few methods are allowed if we're not logged in
+- bug: Some methods are only legal for the 'system' user
 
 	if method == 'getfeed': return apigetfeed(params)
 	if method == 'getnote': return apigetnote(params)
@@ -119,7 +120,7 @@ Ext v99?  Touch?  Mac?
 
 	if method == 'setfolderpassword': return apisetfolderpassword(params)
 		- use api_setfolderacl {password: password}
-		- checking the password requires http auth or equiv.
+		- checking the password requires http auth or equiv - how in node?
 
 	if method == 'getfolderacl': return apigetfolderacl(params)
 
