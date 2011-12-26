@@ -34,7 +34,7 @@ notesoup.ui.set({
 			requestMessage: 'Fetching new note templates...',
 			successProc:	notesoup.ui.getTemplateListHandler,
 			successProcScope: notesoup.ui,
-			successMessage: 'Fetch complete.',
+			//successMessage: 'Fetch complete.',
 			failureMessage: 'Failed.'
 		});
 	},

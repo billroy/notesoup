@@ -59,13 +59,16 @@ note.set({
 		}
 		var notelist = response.command[0][1];
 
+		console.log("notelist:");
+		console.dir(notelist);
+
 		this.noteidlist = [];
 		for (var i=0; i < notelist.length; i++) {
-			if (notelist[i][1].indexOf('.') < 0) {
+			//if (notelist[i][1].indexOf('.') < 0) {
 				this.noteidlist.push(notelist[i][1]);
-			}
+			//}
 		}
-		//notesoup.say('Note id list: ' + notesoup.dump(this.noteidlist));
+		notesoup.say('Note id list: ' + notesoup.dump(this.noteidlist));
 		if (this.random) this.randomNote();
 		else this.firstNote();
 		this.running = true;

@@ -300,8 +300,8 @@ api_postevent: function() {
 getTemplates: function(folder, next) {
 	var self = this;
 	self.redis.hgetall(self.key_note(folder), function(err, jsonnotes) {
-		self.log('getTemplates:');
-		self.dir(jsonnotes);
+		//self.log('getTemplates:');
+		//self.dir(jsonnotes);
 		if (!jsonnotes) {
 			next('no notes');
 			return;
@@ -322,7 +322,16 @@ templatefolder: 'templates',
 api_gettemplatelist: function() {
 	var self = this;
 	self.res.templatelist = [];
-	self.getTemplates(self.systemuser + '/' + self.templatefolder, function() {
+
+	// the portable hole uses the fromfolder form
+	if (self.req.body.params.fromfolder) {
+		self.getTemplates(self.req.body.params.fromfolder, function() {
+			self.addupdate(['templatelist', self.res.templatelist]);
+			self.sendreply();
+		});
+	}
+
+	else self.getTemplates(self.systemuser + '/' + self.templatefolder, function() {
 		self.getTemplates(self.effectiveuser() + '/' + self.templatefolder, function() {
 			self.addupdate(['templatelist', self.res.templatelist]);
 			self.sendreply();
@@ -340,8 +349,7 @@ api_getnotes: function() {
 		for (var n in jsonnotes) {
 			var note = JSON.parse(jsonnotes[n]);
 			parsed_notes[note.id] = note;
-		}
-		
+		}	
 		self.addupdate(['notes', parsed_notes]);
 		self.sendreply();
 	});

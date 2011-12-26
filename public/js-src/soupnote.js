@@ -904,7 +904,7 @@ soupnote.prototype.geturl = function(url) {
 */
 soupnote.prototype.getURLHandler = function(response, success, options) {
 	if (success) {
-		notesoup.say('Fetch complete.');
+		//notesoup.say('Fetch complete.');
 		this.text = response.responseText;
 	} else {
 		notesoup.say('Error fetching url.', 'error');

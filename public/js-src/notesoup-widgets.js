@@ -98,7 +98,7 @@ soupnote.prototype.applyImports = function() {
 		notesoup.say('Import already applied: ' + this.imports + ' ' + this.id);
 		return;
 	}
-	notesoup.say('Applying import ' + this.imports + ' to note ' + this.id);
+	//notesoup.say('Applying import ' + this.imports + ' to note ' + this.id);
 
 	// handle imports: url 
 	if ((this.imports.substring(0, 5) == 'http:') || (this.imports.substring(0, 6) == 'https:')
@@ -120,7 +120,7 @@ soupnote.prototype.applyImports = function() {
 		if (elt) {
 			this.addAppliedImport(this.imports);
 
-			notesoup.say("Merging widget DNA");
+			//notesoup.say("Merging widget DNA");
 			
 			// if the widget has an imports:, that's all we're interested in
 			if (importNote.imports) {
@@ -133,10 +133,10 @@ soupnote.prototype.applyImports = function() {
 			
 			// merge in widget attributes for un-set values only
 			for (var k in importNote) {
-				notesoup.say('Considering ' + k);
+				//notesoup.say('Considering ' + k);
 				if (k in ['id', 'text']) continue;
 				if (k in this) continue;
-				notesoup.say('Merging ' + k);
+				//notesoup.say('Merging ' + k);
 				this[k] = importNote[k];
 			}
 			elt.update(importNote.text, true);	// true to load scripts
