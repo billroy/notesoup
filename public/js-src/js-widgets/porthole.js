@@ -360,7 +360,7 @@ note.set({
 		var portHoleCover = {
 			notename: this.renderControls(),		//'Portable Hole',
 			text:[ '<br/><center>',
-				'<img src="http://notesoup.net/images/UII_Icons/80x80/smiley.png" align="center" />',
+				'<img src="/images/UII_Icons/80x80/smiley.png" align="center" />',
 				'</center><br/>'].join(''),
 			bgcolor: '#ffffff'
 		};

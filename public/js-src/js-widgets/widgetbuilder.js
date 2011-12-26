@@ -36,9 +36,7 @@ note.set({
 		{notename: 'Form', imports: '/js-src/js-widgets/form.js'},
 		{notename: 'Graphy', imports: '/js-src/js-widgets/graphy.js'},
 		{notename: 'Hello World', imports: '/js-src/js-widgets/helloworld.js'},
-*/
 		{notename: 'Ink', imports: '/js-src/js-widgets/ink.js'}
-/*
 		{notename: 'Log In Here', imports: '/js-src/js-widgets/loginform.js'},
 		{notename: 'Message', imports: '/js-src/js-widgets/message.js'},
 		{notename: 'My Card', imports: '/js-src/js-widgets/bizcard.js'},

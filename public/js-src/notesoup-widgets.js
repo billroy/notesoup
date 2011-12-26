@@ -122,6 +122,15 @@ soupnote.prototype.applyImports = function() {
 
 			notesoup.say("Merging widget DNA");
 			
+			// if the widget has an imports:, that's all we're interested in
+			if (importNote.imports) {
+				notesoup.say("Merging imports: " + importNote.imports);
+				this.imports = importNote.imports;
+				this.reapplyImports(20);	// now apply what we got
+				this.save();
+				return;
+			}
+			
 			// merge in widget attributes for un-set values only
 			for (var k in importNote) {
 				notesoup.say('Considering ' + k);

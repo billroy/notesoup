@@ -26,7 +26,8 @@ note.set({
 
 	fire: function(i) {
 		var b = this.buttons[i];
-		notesoup.sound.play(b[2]);
+		if (notesoup.sound)
+			notesoup.sound.play(b[2]);
 		notesoup.frontstage.flash(b[0], b[1]);
 	},
 	
