@@ -2,6 +2,13 @@ Notesoup/Node/Redis TODO list
 12/25/11 -br
 
 
+- import /js-src/js-widgets/clock fails
+	- /geturl not implemented
+		- used in: getimports
+		- used in: flickrfeed widget
+		- used in: twitter widget
+
+
 - BUG: deleting large numbers of notes fails
 	- gets complaint about response headers
 	- needs two changes:
@@ -24,18 +31,11 @@ Notesoup/Node/Redis TODO list
 	- edit widgets for new note scheme
 	- import fails due to http: prefix check
 	
-	- how to relod the widgets?
-		- used to use paste-files somehow
+	- how to reload the widgets? widgetbuilder.js!
 
 - BUG: Fix The Blocking Widgets Bug
 	- bug: oops gen 1
 	- TypeError: 'null' is not an object (evaluating 'note.set')
-	- http:// imports fetch using /geturl!
-
-	var self = notesoup.notes[...];
-
-- roll the widgets
-	- ink widget has lots of nice errors with aflax and sound
 
 - sound is broken
 	SoundManager2
@@ -43,7 +43,7 @@ Notesoup/Node/Redis TODO list
 		http://www.schillmania.com/projects/soundmanager2/doc/download/
 	JPlayer
 		http://www.jplayer.org/
-		
+	html5 div hack
 
 ===
 
@@ -71,6 +71,13 @@ Notesoup/Node/Redis TODO list
 
 - startup: command line option for push server on/off
 	- npm install optimist
+
+- multi-tenancy via Host: header / database index map
+
+- notesoup time machine
+	- infinite undo/redo
+	- pushbutton backup/restore
+	
 
 - bug: node load.js doesn't terminate properly
 

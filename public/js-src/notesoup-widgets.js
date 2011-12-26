@@ -101,7 +101,8 @@ soupnote.prototype.applyImports = function() {
 	notesoup.say('Applying import ' + this.imports + ' to note ' + this.id);
 
 	// handle imports: url 
-	if ((this.imports.substring(0, 5) == 'http:') || (this.imports.substring(0, 6) == 'https:')) {
+	if ((this.imports.substring(0, 5) == 'http:') || (this.imports.substring(0, 6) == 'https:')
+			|| (this.imports.charAt(0) == '/')) {
 		this.addAppliedImport(this.imports);
 		this.geturl(this.imports);
 		return;

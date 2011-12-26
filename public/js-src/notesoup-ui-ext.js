@@ -1550,11 +1550,12 @@ notesoup.ui.getRandomColor = function() {
 };
 
 
-notesoup.getjson = function(striptext) {
+notesoup.getjson = function(stripfields) {
 	var notelist = [];
 	for (var n in notesoup.notes) {
 		var note = notesoup.notes[n].cleanNote();
-		if (striptext) delete note.text;
+		for (var f in stripfields) delete note[f];
+		//if (striptext) delete note.text;
 		delete note.feedstr;
 		delete note.feeddata;
 		notelist.push(note);

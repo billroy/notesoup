@@ -5,41 +5,51 @@
 *	Copyright 2007, 2008 Bill Roy
 *	This file is licensed under the Note Soup Client License
 *	See http://notesoup.net/js/LICENSE
+* 
+
+{notename:'Widget Builder', imports:'/js-src/js-widgets/widgetbuilder.js'}
+
 */
 note.set({
 
 	color: '#ccffcc',
 
 	widgetlist: [
-		{notename: 'AjaxRTT', imports: 'http://chowder.notesoup.net/js-src/js-widgets/ajaxrtt.js'},
-		{notename: 'Auction', imports: 'http://chowder.notesoup.net/js-src/js-widgets/auction.js'},
-		{notename: 'Avatar', imports: 'http://chowder.notesoup.net/js-src/js-widgets/avatar.js'},
-		{notename: 'Beta Signup', imports: 'http://chowder.notesoup.net/js-src/js-widgets/betasignup.js'},
-		{notename: 'Button', imports: 'http://chowder.notesoup.net/js-src/js-widgets/button.js'},
-		{notename: 'Calculator', imports: 'http://chowder.notesoup.net/js-src/js-widgets/calculator.js'},
-		{notename: 'Chat', imports: 'http://chowder.notesoup.net/js-src/js-widgets/chat.js'},
-		{notename: 'Clock', imports: 'http://chowder.notesoup.net/js-src/js-widgets/clock.js'},
-		{notename: 'Countdown Timer', imports: 'http://chowder.notesoup.net/js-src/js-widgets/countdowntimer.js'},
-		{notename: 'Create User', imports: 'http://chowder.notesoup.net/js-src/js-widgets/createuser.js'},
-		{notename: 'Deck', imports: 'http://chowder.notesoup.net/js-src/js-widgets/deck.js'},
-		{notename: 'Egress', imports: 'http://chowder.notesoup.net/js-src/js-widgets/egress.js'},
-		{notename: 'File Upload', imports: 'http://chowder.notesoup.net/js-src/js-widgets/uploadForm.js'},
-		{notename: 'Flickr Images', imports: 'http://chowder.notesoup.net/js-src/js-widgets/flickrjson.js'},
-		{notename: 'Folder Access Control', imports: 'http://chowder.notesoup.net/js-src/js-widgets/folderacl.js'},
-		{notename: 'Form', imports: 'http://chowder.notesoup.net/js-src/js-widgets/form.js'},
-		{notename: 'Graphy', imports: 'http://chowder.notesoup.net/js-src/js-widgets/graphy.js'},
-		{notename: 'Hello World', imports: 'http://chowder.notesoup.net/js-src/js-widgets/helloworld.js'},
-		{notename: 'Ink', imports: 'http://chowder.notesoup.net/js-src/js-widgets/ink.js'},
-		{notename: 'Log In Here', imports: 'http://chowder.notesoup.net/js-src/js-widgets/loginform.js'},
-		{notename: 'Message', imports: 'http://chowder.notesoup.net/js-src/js-widgets/message.js'},
-		{notename: 'My Card', imports: 'http://chowder.notesoup.net/js-src/js-widgets/bizcard.js'},
-		{notename: 'Periodical Reminder', imports: 'http://chowder.notesoup.net/js-src/js-widgets/periodicalreminder.js'},
-		{notename: 'Poll', imports: 'http://chowder.notesoup.net/js-src/js-widgets/polling.js'},
-		{notename: 'Portable Hole', imports: 'http://chowder.notesoup.net/js-src/js-widgets/porthole.js'},
-		{notename: 'Send a Message', imports: 'http://chowder.notesoup.net/js-src/js-widgets/chatty.js'},
-		{notename: 'Sound Board', imports: 'http://chowder.notesoup.net/js-src/js-widgets/soundboard.js'},
-		{notename: 'Timer', imports: 'http://chowder.notesoup.net/js-src/js-widgets/timer.js'},
-		{notename: 'Twitterizer', imports: 'http://chowder.notesoup.net/js-src/js-widgets/twitterizer.js'}
+/*
+		{notename: 'AjaxRTT', imports: '/js-src/js-widgets/ajaxrtt.js'},
+		{notename: 'Auction', imports: '/js-src/js-widgets/auction.js'},
+		{notename: 'Avatar', imports: '/js-src/js-widgets/avatar.js'},
+		{notename: 'Beta Signup', imports: '/js-src/js-widgets/betasignup.js'},
+		{notename: 'Button', imports: '/js-src/js-widgets/button.js'},
+		{notename: 'Calculator', imports: '/js-src/js-widgets/calculator.js'},
+		{notename: 'Chat', imports: '/js-src/js-widgets/chat.js'},
+*/
+		{notename: 'Clock', imports: '/js-src/js-widgets/clock.js'},
+/*
+		{notename: 'Countdown Timer', imports: '/js-src/js-widgets/countdowntimer.js'},
+		{notename: 'Create User', imports: '/js-src/js-widgets/createuser.js'},
+		{notename: 'Deck', imports: '/js-src/js-widgets/deck.js'},
+		{notename: 'Egress', imports: '/js-src/js-widgets/egress.js'},
+		{notename: 'File Upload', imports: '/js-src/js-widgets/uploadForm.js'},
+		{notename: 'Flickr Images', imports: '/js-src/js-widgets/flickrjson.js'},
+		{notename: 'Folder Access Control', imports: '/js-src/js-widgets/folderacl.js'},
+		{notename: 'Form', imports: '/js-src/js-widgets/form.js'},
+		{notename: 'Graphy', imports: '/js-src/js-widgets/graphy.js'},
+		{notename: 'Hello World', imports: '/js-src/js-widgets/helloworld.js'},
+*/
+		{notename: 'Ink', imports: '/js-src/js-widgets/ink.js'}
+/*
+		{notename: 'Log In Here', imports: '/js-src/js-widgets/loginform.js'},
+		{notename: 'Message', imports: '/js-src/js-widgets/message.js'},
+		{notename: 'My Card', imports: '/js-src/js-widgets/bizcard.js'},
+		{notename: 'Periodical Reminder', imports: '/js-src/js-widgets/periodicalreminder.js'},
+		{notename: 'Poll', imports: '/js-src/js-widgets/polling.js'},
+		{notename: 'Portable Hole', imports: '/js-src/js-widgets/porthole.js'},
+		{notename: 'Send a Message', imports: '/js-src/js-widgets/chatty.js'},
+		{notename: 'Sound Board', imports: '/js-src/js-widgets/soundboard.js'},
+		{notename: 'Timer', imports: '/js-src/js-widgets/timer.js'},
+		{notename: 'Twitterizer', imports: '/js-src/js-widgets/twitterizer.js'}
+*/
 	],
 
 	clean: function() {
