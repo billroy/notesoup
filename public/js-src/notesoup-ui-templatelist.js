@@ -64,7 +64,9 @@ notesoup.ui.set({
 				templatefolder: templateitem[0],
 				templatenote: templateitem[1],
 				handler: function(menuitem) {
-					notesoup.sendNote(menuitem.templatenote, menuitem.templatefolder, notesoup.foldername, false);
+					//notesoup.sendNote(menuitem.templatenote, menuitem.templatefolder, notesoup.foldername, false);
+					delete menuitem.templatenote.id;
+					notesoup.saveNote(menuitem.templatenote, notesoup.foldername);
 				},
 				icon: notesoup.imageHost + (templateitem[0] == 'system/templates' ? 
 					'images/famfamfam.com/page_white_star.png' : 'images/famfamfam.com/page_white_add.png')

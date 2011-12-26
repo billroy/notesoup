@@ -73,7 +73,7 @@ log: function(text) {
 },
 
 dir: function(thing) {
-	console.log(util.inspect(thing, false, 3, true));
+	console.log(util.inspect(thing, false, 5, true));
 },
 
 senderror: function(errormessage) {
