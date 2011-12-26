@@ -514,12 +514,14 @@ loadfile: function(fromdirectory, filename, tofolder) {
 	// Clean up the note a bit
 	if (note.bgcolor == '#FFFF99') delete note.bgcolor;
 	if (note.bgcolor == '#ffff99') delete note.bgcolor;
-	if ('syncme' in note) delete note.syncme;
-	if ('showme' in note) delete note.showme;
 	if (note.imports) note.imports = note.imports.replace('http://chowder.notesoup.net', '');
 	if (note.backImage) note.backImage = note.backImage.replace('http://notesoup.net', '');
-	delete note.feedstr;
-	delete note.feeddata;
+
+	// Nuke some fields entirely
+	killfields = ['syncme','showme','feedstr','feeddata','from'];
+	for (var k in killfields) delete note[k];
+
+	// Map fields to new squeezenote format
 
 	self.redis.incr(self.key_nextid(tofolder), function(err, id) {
 

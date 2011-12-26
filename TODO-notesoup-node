@@ -2,13 +2,6 @@ Notesoup/Node/Redis TODO list
 12/25/11 -br
 
 
-- import /js-src/js-widgets/clock fails
-	- /geturl not implemented
-		- used in: getimports
-		- used in: flickrfeed widget
-		- used in: twitter widget
-
-
 - BUG: deleting large numbers of notes fails
 	- gets complaint about response headers
 	- needs two changes:
@@ -29,6 +22,11 @@ Notesoup/Node/Redis TODO list
 
 - BUG: Widgets / script loading
 	- import fails due to http: prefix check
+	- import /js-src/js-widgets/clock fails
+		- /geturl not implemented
+			- used in: getimports
+			- used in: flickrfeed widget
+			- used in: twitter widget
 	
 - BUILD: how to reload the widgets? widgetbuilder.js!
 ===
@@ -54,6 +52,7 @@ Notesoup/Node/Redis TODO list
 	- api_anon_ vs. api_
 
 - feat: produce notelist for doCommand/paste restore
+	.getjson() does it
 	- (part done: backup note does this clumsily now by popping a window)
 	- make a way to copy
 	- send via email would be nice too
@@ -61,12 +60,20 @@ Notesoup/Node/Redis TODO list
 - alpha server on http://alpha.notesoup.net:3000
 	- todo: run nodejs at boot time
 	- todo: backup .db
+		- script to copy db to dbbackups/db-date
+		- cron to run it
 
 - bug: note color change doesn't go on notify bus, waits for sync instead
 	- notify plumbing (tofolder...)
 - bug: /say blah
 	- "undefined says: blah"
 	- username wiring in the message layer
+
+- bug: need better handling for expired sessions
+	- server restart kills sessions 
+	- they can time out anyway
+	- client thinks it's logged in
+	- ...
 
 - startup: command line option for push server on/off
 	- npm install optimist
@@ -94,10 +101,20 @@ Notesoup/Node/Redis TODO list
 
 - bug: css for note titles is different from tiny soup?!
 
-- bugs:
-	- bug: mtimes in the note, or not?
-		- savenote, sendnote, loadfiles
-	- bug: same for id?
+- project: SQUEEZENOTE
+	- make the baseline note attributes as small as possible
+	- right now they dominate the payload
+	- fixup every place that uses the attributes
+	- hack loadfile to map attributes
+	c, x, y, w, h, t, n, z, i,
+	free: abdefgjklmopqrsuv
+	
+	meta: id, mtime, folder, permissions
+
+	RESOLVES:
+		- bug: mtimes in the note, or not?
+			- savenote, sendnote, loadfiles
+		- bug: same for id?
 
 Ext v99?  Touch?  Mac?
 
