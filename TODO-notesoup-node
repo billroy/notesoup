@@ -21,29 +21,19 @@ Notesoup/Node/Redis TODO list
 ===
 
 - BUG: Widgets / script loading
-	- import fails due to http: prefix check
-	- import /js-src/js-widgets/clock fails
-		- /geturl not implemented
-			- used in: getimports
-			- used in: flickrfeed widget
-			- used in: twitter widget
-	
+
 - BUILD: how to reload the widgets? widgetbuilder.js!
-	- erase the user/templates folder
-	- go to the user/widgets folder
-	- erase it too
+	- go to the user/templates folder
+	- erase it
 	- enter this command:
+
 {notename:'build',imports:'/js-src/js-widgets/widgetbuilder.js'}
 	
-	- if the target import note has an import field,
-		force-import _only_ that field.
-		- otherwise do the field-merge.
-		this maps /system/templates/@Clock
-			to /js-src/js-widgets/clock.js
-	
+
 ===
 
 - widget bugs
+	- porthole needs gettemplatelist
 	- rss: needs /getfeed service
 	- polling: generates Ext.get() error
 ===
