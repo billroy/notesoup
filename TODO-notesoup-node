@@ -122,24 +122,19 @@ Notesoup/Node/Redis TODO list
 
 Ext v99?  Touch?  Mac?
 
-
 - bug: # Only a few methods are allowed if we're not logged in
 - bug: Some methods are only legal for the ˜˜'system' user
 
 	if method == 'getfeed': return apigetfeed(params)
 	if method == 'getnote': return apigetnote(params)
+		- needed for portable hole
+		- can't it check the cache first?
 
 	# Command below this point are only allowed for logged-in requestors
-
-	if method == 'gettemplatelist': return apigettemplatelist(params)
-		- (have) needs 'requestor' - logged in user from session
-		- todo: rework the client to use getnotes and delete this api
 
 	if method == 'setfolderpassword': return apisetfolderpassword(params)
 		- use api_setfolderacl {password: password}
 		- checking the password requires http auth or equiv - how in node?
-
-	if method == 'getfolderacl': return apigetfolderacl(params)
 
 	if method == 'copyfolder': return apicopyfolder(params)
 	if method == 'deleteuser': return apideleteuser(params)

@@ -310,7 +310,12 @@ getTemplates: function(folder, next) {
 			var note = JSON.parse(jsonnotes[n]);
 			self.res.templatelist.push([folder, note, note.notename || 'untitled']);
 		}
-		// todo: sort by item[2], the notename
+		// sort by item[2], the notename
+		self.res.templatelist.sort(function(a,b) {
+			if (a[2] > b[2]) return 1;
+			if (a[2] == b[2]) return 0;
+			if (a[2] < b[2]) return -1;
+		});
 		next(null);
 	});
 },
