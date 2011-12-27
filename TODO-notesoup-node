@@ -3,7 +3,6 @@ Notesoup/Node/Redis TODO list
 
 
 - bug: /refresh crashes the server
-- bug: widgetbuilder crashes the server
 	- race condx / headers complaint
 
  grep -rl "\"id\":" . | more
@@ -18,6 +17,8 @@ Notesoup/Node/Redis TODO list
 - BUG:
 	- CRASH: erase all notes crashes the server
 		deletes the same note over and over
+		this looks like an ajax api flood
+		first 4 go ok
 
 	- Send uses sendnote?!/! recode...
 
@@ -48,27 +49,6 @@ ACL support
 
 - python acl parser: review and redo
 
-===
-
-Database rebuild procedure:
-
-!!! CAUTION THIS "FLUSHDB" IS THROWS AWAY ALL EXISTING CONTENT !!!
-!!! CAUTION THIS "FLUSHDB" IS THROWS AWAY ALL EXISTING CONTENT !!!
-!!! CAUTION THIS "FLUSHDB" IS THROWS AWAY ALL EXISTING CONTENT !!!
-
-redis-cli flushdb
-node loadsoup.js
-(^C when it's done)
-
-In the notesoup web client:
-	.createUser("guest","kittylitter123")
-	.createUser("system")
-	.createUser("widgets")
-
-Log in as system, go to Templates, and Make Templates
-Log out
-Log in as Guest
-Make a Clock
 
 ===
 - widget bugs
@@ -122,8 +102,6 @@ API buildout
 	if method == 'postevent': return apipostevent(params)
 
 ===
-
-===
 Production 
 
 - alpha server on http://alpha.notesoup.net:3000
@@ -135,8 +113,6 @@ Production
 
 - Redis 32 bit vs 64 bit
 	- next server rebuild use 32 bit
-
-===
 
 ===
 Notification plumbing issues
@@ -169,9 +145,10 @@ Feature candidates
 - bug: css for note titles is different from tiny soup?!
 
 ===
+
 Note Content and Import/Export
 
-- bug: node load.js and loadsoup.js don't terminate properly
+- BUG: node load.js and loadsoup.js don't terminate properly
 
 - startup: auto load system and widgets if they aren't there
 - loadnotes: 
@@ -179,6 +156,8 @@ Note Content and Import/Export
 - loaduser
 	capture .passwd file
 - dumpnotes
+	- the redis-dump script is a nice temporary solution
+
 - guest user: content in template/soupbase/guest
 	- folder permissions
 	- welcome/help

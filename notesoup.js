@@ -206,7 +206,8 @@ api_appendtonote: function() {
 
 			if (note.text) note.text = note.text + self.req.body.params.text;
 			else note.text = self.req.body.params.text;
-
+			
+			self.req.body.params.note = note;
 			self.api_savenote();
 		}
 	});
@@ -252,6 +253,20 @@ sync_sendupdates: function(noteids) {
 
 api_sendnote: function() {
 	var self = this;
+/****
+	// assumptions:	
+	// get rid of deleteoriginal
+	// make it 'sendcopy' (cp)
+	// default is send original without noteid change (mv)
+	
+	// all notes are allocated off a master note key
+
+	// move a note from one folder to another
+	if (!self.req.body.params.sendcopy) {
+	}
+
+*****/	
+
 	self.redis.multi()
 		.hget(self.key_note(self.req.body.params.fromfolder), self.req.body.params.noteid)
 		.incr(self.key_nextid(self.req.body.params.tofolder))
@@ -281,7 +296,8 @@ api_sendnote: function() {
 							.hdel(self.key_note(self.req.body.params.fromfolder), self.req.body.params.noteid)
 							.zrem(self.key_mtime(self.req.body.params.fromfolder), self.req.body.params.noteid)
 							.exec(function(err, reply) {
-								self.addupdate(['deletenote', self.req.body.params.noteid]);
+								if (self.req.body.params.fromfolder == self.req.body.params.notifyfolder)
+									self.addupdate(['deletenote', self.req.body.params.noteid]);
 								self.sendreply();
 							});
 					}

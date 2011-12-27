@@ -1,7 +1,9 @@
 # HOWTO: Simple Note Soup Deployment on Ubuntu 11.10 64bit t1.micro from Canonical
 #
 # full image list here: http://uec-images.ubuntu.com/releases/11.10/release/
-
+#
+# (note that 32-bit instances may have better Redis memory performance)
+#
 - TODO: update redis config
 	- where is the data?
 	- what changes
@@ -10,7 +12,11 @@
 
 - TODO: make forever start soup.js at restart
 
-# launch the instance
+=====
+
+INSTALL
+
+# launch an EC2 instance
 https://console.aws.amazon.com/ec2/home?region=us-east-1#launchAmi=ami-bf62a9d6
 
 SECURITY: Ensure port 3000 inbound is open in the Security Group you launch with
@@ -56,11 +62,41 @@ forever start -o out.log -e err.log -l forever.log soup.js
 
 - Give the server a name like "alpha.notesoup.net"
 	- sign in to DNS provider
-	- set up CNAME record pointing to:
+	- set up CNAME record pointing to the server:
 		ec2-67-202-59-193.compute-1.amazonaws.com.
 		- don't forget the dot at the end
 
 
+################################################################################
+
+Database build procedure:
+
+!!! CAUTION THIS "FLUSHDB" IS THROWS AWAY ALL EXISTING CONTENT !!!
+!!! CAUTION THIS "FLUSHDB" IS THROWS AWAY ALL EXISTING CONTENT !!!
+!!! CAUTION THIS "FLUSHDB" IS THROWS AWAY ALL EXISTING CONTENT !!!
+
+# DELETE ALL THE DATA IN THE REDIS STORE
+redis-cli flushdb
+
+# Load the baseline soup into the database
+node loadsoup.js
+(^C when it's done)
+
+Browse to the app, and in the notesoup web client,
+execute these lines one by one:
+
+.createUser("guest","kittylitter123")
+.createUser("system")
+.createUser("widgets")
+
+
+Log in as system, go to Templates, and Make Templates
+Log out
+Log in as Guest
+Make a Clock
+	Add Menu -> Add From My Templates -> Clock
+
+This is the Initial Soup.
 
 
 ################################################################################

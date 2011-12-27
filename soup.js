@@ -62,6 +62,10 @@ app.get('/', function(req, res) {
 	else res.redirect('/folder/system/welcome');
 });
 
+app.get('/status', function(req, res) {
+	res.send("OK");
+});
+
 app.get('/folder/:user/:folder', function(req, res) {
 	render_folder(req, res, req.params.user, req.params.folder);
 });

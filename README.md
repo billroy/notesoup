@@ -1,6 +1,8 @@
 Note Soup 
 ===
 
+See also INSTALL-EC2 for a bare Ubuntu machine buildout.
+
 ### Requirements
 
 - Node.js 0.6.6 ish
