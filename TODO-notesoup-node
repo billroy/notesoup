@@ -6,6 +6,8 @@ Notesoup/Node/Redis TODO list
 - bug: widgetbuilder crashes the server
 	- race condx / headers complaint
 
+ grep -rl "\"id\":" . | more
+ grep -rl "\"syncme\":" . | xargs edit
 ===
 
 - consider a single noteid counter

@@ -1,5 +1,4 @@
 {
-  "bgcolor": "#FFFF99", 
   "height": 152, 
   "notename": "Chat Widget", 
   "imports": "/js-src/js-widgets/chat.js",

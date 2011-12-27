@@ -1,0 +1,9 @@
+{
+  "bgcolor": "#eeeeee", 
+  "height": 40, 
+  "notename": "Portable Hole", 
+  "imports": "/js-src/js-widgets/porthole.js",
+  "width": "250", 
+  "xPos": 200, 
+  "yPos": 50 
+}

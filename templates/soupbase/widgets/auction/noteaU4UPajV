@@ -1,1 +1,9 @@
-{"xPos":16,"bgcolor":"#CCFFCC","text":"Note Menu -&gt; Send a Copy of the Auction Widget to the folder where you want to conduct the auction.  You may want to grab a copy of the File Upload Widget while you're here.<br>\n<div><br class=\"webkit-block-placeholder\"></div><div>Go to your polling folder and set up your auction item presentation: photographs, terms and conditions, desktop background, all that.</div><div><br class=\"webkit-block-placeholder\"></div><div>Click \"start\" to start the auction.  The widget sets permissions to allow anyone to see the auction, but you must be logged in to bid.</div><div><br class=\"webkit-block-placeholder\"></div><div>Enter the duration of the auction and off you go.</div>","yPos":185,"height":310,"zIndex":16,"width":"250","notename":"How to Set Up an Auction","mtime":1196183152.853520,"id":"noteaU4UPajV"}
+{
+  "bgcolor": "#CCFFCC", 
+  "height": 310, 
+  "notename": "How to Set Up an Auction", 
+  "text": "Note Menu -&gt; Send a Copy of the Auction Widget to the folder where you want to conduct the auction. \u00a0You may want to grab a copy of the File Upload Widget while you're here.<br>\n<div><br class=\"webkit-block-placeholder\"></div><div>Go to your polling folder and set up your auction item presentation: photographs, terms and conditions, desktop background, all that.</div><div><br class=\"webkit-block-placeholder\"></div><div>Click \"start\" to start the auction. \u00a0The widget sets permissions to allow anyone to see the auction, but you must be logged in to bid.</div><div><br class=\"webkit-block-placeholder\"></div><div>Enter the duration of the auction and off you go.</div>", 
+  "width": "250", 
+  "xPos": 16, 
+  "yPos": 185 
+}

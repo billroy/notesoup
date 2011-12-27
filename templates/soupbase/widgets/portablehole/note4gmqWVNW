@@ -1,4 +1,3 @@
 {
-  "bgcolor": "#FFFF99", 
   "imports": "/js-src/js-widgets/polling.js"
 }

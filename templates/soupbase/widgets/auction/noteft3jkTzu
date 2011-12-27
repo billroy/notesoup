@@ -1,1 +1,9 @@
-{"xPos":272,"width":360,"text":"The widget uses the separation of Send and Edit privileges.  When you bid, the widget creates a note containing the bid and causes it to be sent to the folder containing the auction on your behalf.  Everyone can see the bids, but only the folder owner has rights to change them.  The trust model is simple and transparent: participate if you trust the folder owner.\n<div><br class=\"webkit-block-placeholder\"></div><div>The widget totals the bids and operates the countdown clock to shut down the auction. Malformed bids are destroyed.  Bids are marked in such a way that multiple auctions can be running independently in the same folder.</div>","yPos":258,"height":231,"zIndex":31,"bgcolor":"#99CCFF","notename":"How Does It Work?","mtime":1196190867.631057,"sentby":"widgets from widgets/poll","id":"noteft3jkTzu"}
+{
+  "bgcolor": "#99CCFF", 
+  "height": 231, 
+  "notename": "How Does It Work?", 
+  "text": "The widget uses the separation of Send and Edit privileges. \u00a0When you bid, the widget creates a note containing the bid and causes it to be sent to the folder containing the auction on your behalf. \u00a0Everyone can see the bids, but only the folder owner has rights to change them. \u00a0The trust model is simple and transparent: participate if you trust the folder owner.\n<div><br class=\"webkit-block-placeholder\"></div><div>The widget totals the bids and operates the countdown clock to shut down the auction. Malformed bids are destroyed. \u00a0Bids are marked in such a way that multiple auctions can be running independently in the same folder.</div>", 
+  "width": 360, 
+  "xPos": 272, 
+  "yPos": 258 
+}

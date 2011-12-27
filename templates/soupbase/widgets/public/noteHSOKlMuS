@@ -2,7 +2,6 @@
   "bgcolor": "#00ccff", 
   "height": 250, 
   "notename": "link to widgets/controls", 
-  "syncme": true, 
   "text": "<p><a href=\"/folder/widgets/controls\"><center><img src=\"/images/souplink-large.png\"/></center></a><br/>Widget Controls and the Folder Access Control", 
   "width": 240, 
   "xPos": 12, 

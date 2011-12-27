@@ -1,5 +1,4 @@
 {
-  "bgcolor": "#FFFF99", 
   "notename": "fish",
   "imports": "/js-src/js-widgets/flickrjson.js"
 }

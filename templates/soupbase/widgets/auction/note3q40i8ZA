@@ -1,1 +1,9 @@
-{"xPos":271,"width":360,"text":"While anyone may watch the auction, you must be logged in to bid.<br><div><br class=\"webkit-block-placeholder\"></div><div>You can bid as many times as you like while the auction is open.<br>\n</div>","yPos":139,"height":110,"zIndex":32,"bgcolor":"#CCFFFF","notename":"Notes on Bidding","mtime":1196192919.098397,"sentby":"widgets from widgets/poll","id":"note3q40i8ZA"}
+{
+  "bgcolor": "#CCFFFF", 
+  "height": 110, 
+  "notename": "Notes on Bidding", 
+  "text": "While anyone may watch the auction, you must be logged in to bid.<br><div><br class=\"webkit-block-placeholder\"></div><div>You can bid as many times as you like while the auction is open.<br>\n</div>", 
+  "width": 360, 
+  "xPos": 271, 
+  "yPos": 139 
+}

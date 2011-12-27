@@ -1,1 +1,8 @@
-{"xPos":39,"from":"widgets in widgets/soundlab","bgcolor":"#FFFF99","text":"Examine the code for the soundboard widget and you will discover this API call as the key:<div><br class=\"webkit-block-placeholder\"></div><div>    notesoup.folderPlay(mp3uri);</div><div><br class=\"webkit-block-placeholder\"></div><div>This function causes all browsers looking at the current folder to play the mp3 file located at the specified location.</div><div><br class=\"webkit-block-placeholder\"></div><div>At this writing, Note Soup can play .mp3 audio.</div><div><br class=\"webkit-block-placeholder\"></div><div>If you upload an .mp3 file, Note Soup will make a player widget for that file for you automatically.  You can share the widget, of course.</div>","yPos":413,"height":220,"zIndex":23,"width":470,"notename":"How To","mtime":1199815900,"id":"notegDClrGZ8"}
+{
+  "height": 220, 
+  "notename": "How To", 
+  "text": "Examine the code for the soundboard widget and you will discover this API call as the key:<div><br class=\"webkit-block-placeholder\"></div><div>\u00a0\u00a0 \u00a0notesoup.folderPlay(mp3uri);</div><div><br class=\"webkit-block-placeholder\"></div><div>This function causes all browsers looking at the current folder to play the mp3 file located at the specified location.</div><div><br class=\"webkit-block-placeholder\"></div><div>At this writing, Note Soup can play .mp3 audio.</div><div><br class=\"webkit-block-placeholder\"></div><div>If you upload an .mp3 file, Note Soup will make a player widget for that file for you automatically. \u00a0You can share the widget, of course.</div>", 
+  "width": 470, 
+  "xPos": 39, 
+  "yPos": 413 
+}

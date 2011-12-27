@@ -2,7 +2,6 @@
   "bgcolor": "#00ccff", 
   "height": 250, 
   "notename": "link to widgets/access", 
-  "syncme": true, 
   "text": "<p><a href=\"/folder/widgets/access\"><center><img src=\"/images/souplink-large.png\"/></center></a><br/>Learn how to control who does what to your Soup.", 
   "width": 240, 
   "xPos": 12, 

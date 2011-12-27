@@ -1,5 +1,4 @@
 {
-  "bgcolor": "#FFFF99", 
   "height": 55, 
   "notename": "random background", 
   "text": "<script type='text/javascript'>\ndocument.body.style.background = '#' + notesoup.ui.getRandomColor();\n</script>", 
