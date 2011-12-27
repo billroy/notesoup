@@ -1,1 +1,10 @@
-{"syncme":true,"xPos":55,"from":"system in system/welcome","bgcolor":"#3366FF","text":"<center><br/><input type='submit' value='contact us' onclick=\"window.open('mailto:beta@notesoup.net');\"/><br/><center><br/>\n\n","noframe":true,"yPos":352,"height":73,"zIndex":311,"width":110,"notename":"","mtime":1204636877.610000,"id":"noteZ7L4rT5w","noframes":true}
+{
+  "bgcolor": "#3366FF", 
+  "height": 73, 
+  "noframe": true, 
+  "notename": "", 
+  "text": "<center><br/><input type='submit' value='contact us' onclick=\"window.open('mailto:beta@notesoup.net');\"/><br/><center><br/>\n\n", 
+  "width": 110, 
+  "xPos": 55, 
+  "yPos": 352 
+}

@@ -1,1 +1,9 @@
-{"xPos":213,"from":"system in system/welcome","bgcolor":"#CCFFCC","text":"<div style=\"text-align: center;\"><span style=\"\"><span style=\"color: rgb(51, 102, 255);\"><span style=\"font-weight: bold;\"><br class=\"webkit-block-placeholder\"></span></span></span></div><div style=\"text-align: center;\"><font face=\"verdana\" size=\"4\"><span style=\"\"><span style=\"\"><span style=\"color: rgb(51, 102, 255);\"><span style=\"font-weight: bold;\">This is the Note Soup Beta Test.</span></span></span></span></font><br>\n</div><br/>","yPos":68,"height":77,"zIndex":313,"width":500,"notename":"Welcome to Note Soup","mtime":1203372468,"id":"notezfHaycbI"}
+{
+  "bgcolor": "#CCFFCC", 
+  "height": 77, 
+  "notename": "Welcome to Note Soup", 
+  "text": "<div style=\"text-align: center;\"><span style=\"\"><span style=\"color: rgb(51, 102, 255);\"><span style=\"font-weight: bold;\"><br class=\"webkit-block-placeholder\"></span></span></span></div><div style=\"text-align: center;\"><font face=\"verdana\" size=\"4\"><span style=\"\"><span style=\"\"><span style=\"color: rgb(51, 102, 255);\"><span style=\"font-weight: bold;\">This is the Note Soup Beta Test.</span></span></span></span></font><br>\n</div><br/>", 
+  "width": 500, 
+  "xPos": 213, 
+  "yPos": 68 
+}

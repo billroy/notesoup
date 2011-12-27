@@ -1,1 +1,9 @@
-{"xPos":843,"width":"250","text":"When you make a folder Public, anyone on the internet can see it.<br>\n<br>\nTo make a folder Public, select Folder Menu &gt; Sharing &gt; Make Folder Public.<br>\n<br>\nTo make it private again, so that only you can see it, select Folder Menu &gt; Sharing &gt; Make Folder Private.<br>\n","yPos":197,"height":184,"zIndex":28,"bgcolor":"#FFFF30","notename":"How do I make a folder Public?","id":"noteGKaPisse"}
+{
+  "bgcolor": "#FFFF30", 
+  "height": 184, 
+  "notename": "How do I make a folder Public?", 
+  "text": "When you make a folder Public, anyone on the internet can see it.<br>\n<br>\nTo make a folder Public, select Folder Menu &gt; Sharing &gt; Make Folder Public.<br>\n<br>\nTo make it private again, so that only you can see it, select Folder Menu &gt; Sharing &gt; Make Folder Private.<br>\n", 
+  "width": "250", 
+  "xPos": 843, 
+  "yPos": 197 
+}

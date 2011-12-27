@@ -1,1 +1,9 @@
-{"xPos":841,"width":"250","text":"<br/>\nSelect Folder Menu > New Folder and provide a name.<br/>\n<br/>\nBy default, new folders are private and empty.<br/>\n","yPos":395,"height":129,"zIndex":32,"bgcolor":"#FFFF30","notename":"How do I create a new Folder?","id":"note7EN8MT3M"}
+{
+  "bgcolor": "#FFFF30", 
+  "height": 129, 
+  "notename": "How do I create a new Folder?", 
+  "text": "<br/>\nSelect Folder Menu > New Folder and provide a name.<br/>\n<br/>\nBy default, new folders are private and empty.<br/>\n", 
+  "width": "250", 
+  "xPos": 841, 
+  "yPos": 395 
+}

@@ -1,1 +1,9 @@
-{"xPos":15,"width":"250","text":"Right click to bring up the Note Menu, and select Send to Trash<br>\n<br>\nYou can Empty the Trash from the Folder Menu.<br>\n<div><br class=\"webkit-block-placeholder\"></div><div>You can also delete all the notes from a folder using Folder Menu &gt; Erase All Notes.</div>","yPos":175,"height":174,"zIndex":38,"bgcolor":"#FF99CC","notename":"How do I delete a note?","id":"noteIsm07TQ4"}
+{
+  "bgcolor": "#FF99CC", 
+  "height": 174, 
+  "notename": "How do I delete a note?", 
+  "text": "Right click to bring up the Note Menu, and select Send to Trash<br>\n<br>\nYou can Empty the Trash from the Folder Menu.<br>\n<div><br class=\"webkit-block-placeholder\"></div><div>You can also delete all the notes from a folder using Folder Menu &gt; Erase All Notes.</div>", 
+  "width": "250", 
+  "xPos": 15, 
+  "yPos": 175 
+}

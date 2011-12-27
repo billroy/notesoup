@@ -1,1 +1,9 @@
-{"syncme":true,"xPos":49,"from":"system in system/sharing","bgcolor":"#CCFFCC","text":"You can password-protect a public folder so that only people who know the password can see it:<div><br class=\"webkit-block-placeholder\"></div><div><span style=\"font-weight: bold;\"><span class=\"Apple-tab-span\" style=\"white-space:pre\">\t</span>Folder Menu -&gt; Sharing -&gt; Set Folder Password</span></div><div><br class=\"webkit-block-placeholder\"></div><div>One must enter a proper Note Soup username or \"guest\" when prompted for the password.</div><div><br class=\"webkit-block-placeholder\"></div>","yPos":328,"height":160,"zIndex":35,"width":460,"notename":"Folder Passwords","mtime":1203360863.822000,"id":"noteAtj3HRqk"}
+{
+  "bgcolor": "#CCFFCC", 
+  "height": 160, 
+  "notename": "Folder Passwords", 
+  "text": "You can password-protect a public folder so that only people who know the password can see it:<div><br class=\"webkit-block-placeholder\"></div><div><span style=\"font-weight: bold;\"><span class=\"Apple-tab-span\" style=\"white-space:pre\">\t</span>Folder Menu -&gt; Sharing -&gt; Set Folder Password</span></div><div><br class=\"webkit-block-placeholder\"></div><div>One must enter a proper Note Soup username or \"guest\" when prompted for the password.</div><div><br class=\"webkit-block-placeholder\"></div>", 
+  "width": 460, 
+  "xPos": 49, 
+  "yPos": 328
+}

@@ -1,1 +1,9 @@
-{"xPos":17,"from":"system in system/accesserror","bgcolor":"#00FF00","text":"<center><br/><input type='submit' value='log in as guest' onclick=\"notesoup.login('guest','kittylitter23');\"/><br/><center>\n\n","yPos":225,"height":88,"zIndex":65,"width":150,"notename":"Just Let Me In!","mtime":1203775495.063000,"id":"noteFlAEgEY2"}
+{
+  "bgcolor": "#00FF00", 
+  "height": 88, 
+  "notename": "Just Let Me In!", 
+  "text": "<center><br/><input type='submit' value='log in as guest' onclick=\"notesoup.login('guest','kittylitter123');\"/><br/><center>\n\n", 
+  "width": 150, 
+  "xPos": 17, 
+  "yPos": 225
+}

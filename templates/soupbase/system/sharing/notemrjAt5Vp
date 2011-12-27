@@ -1,1 +1,10 @@
-{"opacity":0.500000,"syncme":true,"xPos":108,"from":"system in system/sharing","width":250,"text":"<script type='text/javascript'>document.body.style.background='#CCFFCC';</script>This note sets the desktop background color.","yPos":379,"height":70,"zIndex":34,"bgcolor":"#CCFFCC","notename":"set desktop color","mtime":1203360862.151000,"id":"notemrjAt5Vp"}
+{
+  "bgcolor": "#CCFFCC", 
+  "height": 70, 
+  "notename": "set desktop color", 
+  "opacity": 0.5, 
+  "text": "<script type='text/javascript'>document.body.style.background='#CCFFCC';</script>This note sets the desktop background color.", 
+  "width": 250, 
+  "xPos": 108, 
+  "yPos": 379 
+}

@@ -1,43 +1,53 @@
 Notesoup/Node/Redis TODO list
-12/26/11 -br
+12/27/11 -br
 
 
-- BUG: deleting large numbers of notes fails
-	- gets complaint about response headers
-	- needs two changes:
-		- accept a note list
-		- use the async pipeline
+- bug: /refresh crashes the server
+- bug: widgetbuilder crashes the server
+	- race condx / headers complaint
 
-- CRASH: erase all notes crashes the server
-	deletes the same note over and over
+===
 
----
-- BUG: Send uses sendnote?!/!
-	- recode...
+- consider a single noteid counter
+	- guaranteed unique throughout the soup
+	- send-original moves the same id to the new space
+	- send-copy assigns a new id to the sent copy in the new space
+
+- BUG:
+	- CRASH: erase all notes crashes the server
+		deletes the same note over and over
+
+	- Send uses sendnote?!/! recode...
 
 	- BUG: send race? send all to trash doesn't clear all the notes from the source
 		- seems unpredictable. race?
 
+	- BUG: deleting large numbers of notes fails
+		- gets complaint about response headers
+		- needs two changes:
+			- accept a note list?
+			- use the async pipeline?
 ===
+- Widget Rebuild: 
+	- Paste:
+		- the contents of widgetbuilder.json 
+		- into the command bar of 
+		- an empty system/templates folder
+		- and press Enter
 
-- BUG: Widgets / script loading
-
-- BUILD: how to reload the widgets? widgetbuilder.js!
-	- go to the user/templates folder
-	- erase it
-	- enter this command:
-
-{notename:'build',imports:'/js-src/js-widgets/widgetbuilder.js'}
-	
+	- (DEPRECATED) how to reload the widgets? widgetbuilder.js!
+		- go to the user/templates folder
+		- erase it
+		- enter this command in the templates directory
+		{notename:'build',imports:'/js-src/js-widgets/widgetbuilder.js'}
 
 ===
-
 - widget bugs
-	- porthole needs gettemplatelist
+	- porthole needs getnote
 	- rss: needs /getfeed service
 	- polling: generates Ext.get() error
-===
 
+===
 - sound is broken
 	SoundManager2
 		requires flash
@@ -46,26 +56,79 @@ Notesoup/Node/Redis TODO list
 		http://www.jplayer.org/
 	html5 div hack
 
-- BUG: there is no error handling
-- BUG: there is no ACL checking
+===
+ACL support
 
-- API buildout 
-	- big bug: ACL checks across the API
+- user info storage rework
+	hash: user/guest {
+		hash: passwordhash,
+		for later: email: email, ...
+	}
+
+- load user passwd and folder attributes in loaduser/loadfolder
+
+- acl modes
+	- strict: like old soup: respect ACL
+	- loose: anyone goes anywhere except system
+		- effectively no login required
+
+- python acl parser: review and redo
+===
+===
+
+- createFolder: add "created" to folder hash on create
+	- getfolderlist should use fldr/ attribute
+	- deletefolder should delete fldr/attribute
+	(problem? or feature? this allows for hidden folders... in other words, lost folders.)
+
+===
+
+API buildout 
+
+- BIG BUG: ACL and error checks across the API
 	- api_anon_ vs. api_
+	- BUG: there is no error handling
+	- BUG: there is no ACL checking
 
-- feat: produce notelist for doCommand/paste restore
-	.getjson() does it
-	- (part done: backup note does this clumsily now by popping a window)
-	- make a way to copy
-	- send via email would be nice too
+- bug: # Only a few methods should allowed if we're not logged in
+- bug: Some methods should only be allowed for the 'system' user
+
+- bug: unimplemented API:
+	if method == 'getfeed': return apigetfeed(params)
+	if method == 'getnote': return apigetnote(params)
+		- needed for portable hole
+		- can't it check the cache first?
+
+	# Command below this point are only allowed for logged-in requestors
+
+	if method == 'setfolderpassword': return apisetfolderpassword(params)
+		- use api_setfolderacl {password: password}
+		- checking the password requires http auth or equiv - how in node?
+
+	if method == 'copyfolder': return apicopyfolder(params)
+	if method == 'deleteuser': return apideleteuser(params)
+
+	if method == 'postevent': return apipostevent(params)
+
+===
+
+===
+Production 
 
 - alpha server on http://alpha.notesoup.net:3000
 	- todo: run nodejs at boot time
+	- todo: server logs???
 	- todo: backup .db
 		- script to copy db to dbbackups/db-date
 		- cron to run it
 
-- bug: folderlist, templatelist are not sorted properly
+- Redis 32 bit vs 64 bit
+	- next server rebuild use 32 bit
+
+===
+
+===
+Notification plumbing issues
 
 - bug: note color change doesn't go on notify bus, waits for sync instead
 	- notify plumbing (tofolder...)
@@ -78,6 +141,9 @@ Notesoup/Node/Redis TODO list
 	- they can time out anyway
 	- client thinks it's logged in
 	- ...
+	
+====
+Feature candidates
 
 - startup: command line option for push server on/off
 	- npm install optimist
@@ -87,6 +153,12 @@ Notesoup/Node/Redis TODO list
 - notesoup time machine
 	- infinite undo/redo
 	- pushbutton backup/restore
+===
+
+- bug: css for note titles is different from tiny soup?!
+
+===
+Note Content and Import/Export
 
 - bug: node load.js and loadsoup.js don't terminate properly
 
@@ -102,8 +174,13 @@ Notesoup/Node/Redis TODO list
 	- auto-refresh every 15 minutes
 - new user: content in template/soupbase/newuser
 - improved system/ and widget/ content
+- feat: produce notelist for doCommand/paste restore
+	.getjson() does it
+	- (part done: backup note does this clumsily now by popping a window)
+	- make a way to copy
+	- send via email would be nice too
 
-- bug: css for note titles is different from tiny soup?!
+===
 
 - project: SQUEEZENOTE
 	- make the baseline note attributes as small as possible
@@ -122,21 +199,3 @@ Notesoup/Node/Redis TODO list
 
 Ext v99?  Touch?  Mac?
 
-- bug: # Only a few methods are allowed if we're not logged in
-- bug: Some methods are only legal for the ˜˜'system' user
-
-	if method == 'getfeed': return apigetfeed(params)
-	if method == 'getnote': return apigetnote(params)
-		- needed for portable hole
-		- can't it check the cache first?
-
-	# Command below this point are only allowed for logged-in requestors
-
-	if method == 'setfolderpassword': return apisetfolderpassword(params)
-		- use api_setfolderacl {password: password}
-		- checking the password requires http auth or equiv - how in node?
-
-	if method == 'copyfolder': return apicopyfolder(params)
-	if method == 'deleteuser': return apideleteuser(params)
-
-	if method == 'postevent': return apipostevent(params)

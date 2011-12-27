@@ -1,1 +1,9 @@
-{"xPos":279,"width":"250","text":"This is a Beta service.  Only users authorized in writing may use this service.  All use is at the user's risk.<BR>","yPos":60,"height":84,"zIndex":10,"bgcolor":"#FFFF30","notename":"Terms of Usage","id":"notehjgLd1ak"}
+{
+  "bgcolor": "#FFFF30", 
+  "height": 84, 
+  "notename": "Terms of Usage", 
+  "text": "This is a Beta service.  Only users authorized in writing may use this service.  All use is at the user's risk.<BR>", 
+  "width": "250", 
+  "xPos": 279, 
+  "yPos": 60 
+}

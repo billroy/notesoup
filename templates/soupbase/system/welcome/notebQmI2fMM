@@ -1,1 +1,10 @@
-{"opacity":0.500000,"xPos":222,"from":"system in system/welcome","width":140,"text":"<script type='text/javascript'>document.body.style.background='#0000FF';</script>This note sets the desktop background color.","yPos":190,"height":85,"zIndex":283,"bgcolor":"#0000FF","notename":"set desktop color","mtime":1203372406.655000,"id":"notebQmI2fMM"}
+{
+  "bgcolor": "#0000FF", 
+  "height": 85, 
+  "notename": "set desktop color", 
+  "opacity": 0.5, 
+  "text": "<script type='text/javascript'>document.body.style.background='#0000FF';</script>This note sets the desktop background color.", 
+  "width": 140, 
+  "xPos": 222, 
+  "yPos": 190 
+}

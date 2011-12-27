@@ -1,1 +1,0 @@
-{"syncme":true,"xPos":798,"from":"system in system/widgets","width":250,"imports":"http://chowder.notesoup.net/js-src/js-widgets/helloworld.js","yPos":396,"height":55,"zIndex":29,"bgcolor":"#ccffcc","text":"<script type='text/javascript'>\nnotesoup.say(\"Hello, world!\");\n</script>\nThis is the Hello World note.\n","notename":"Hello World","mtime":1203791184,"id":"notevPT95SZT"}

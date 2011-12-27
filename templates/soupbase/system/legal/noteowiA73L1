@@ -1,1 +1,9 @@
-{"xPos":22,"width":"250","text":"Note Soup is Copyright 2007 by Bill Roy.  All rights reserved.<BR>\n<BR>\nSee CREDITS for third party software licensing information.<BR>","yPos":58,"height":114,"zIndex":11,"bgcolor":"#FFFF30","notename":"Copyright Statement","id":"noteowiA73L1"}
+{
+  "bgcolor": "#FFFF30", 
+  "height": 114, 
+  "notename": "Copyright Statement", 
+  "text": "Note Soup is Copyright 2007-2011 by Bill Roy.<BR>\n<BR>\nSee CREDITS for third party software licensing information.<BR>", 
+  "width": "250", 
+  "xPos": 22, 
+  "yPos": 58 
+}

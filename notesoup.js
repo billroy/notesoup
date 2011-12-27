@@ -373,6 +373,7 @@ api_getfolderlist: function() {
 		keylist.forEach(function(key) {
 			folderlist.push(key.substr(6));	// prune off 'notes/'
 		});
+		folderlist.sort();
 		self.addupdate(['folderlist', folderlist]);
 		self.sendreply();
 	});

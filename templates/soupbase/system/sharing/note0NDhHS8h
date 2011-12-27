@@ -1,1 +1,9 @@
-{"xPos":518,"from":"system in system/sharing","bgcolor":"#00FF00","text":"For more complicated sharing situations, you can specify in detail who may read, write, and add to a folder using the Folder Access Control widget, which you can summon by:<div><br><div>Folder Menu -&gt; Sharing -&gt; Folder Access Control</div><div><br></div><div>Click the 'link to widgets/access' for a somewhat technical description of how to use access control.</div><div><br class=\"webkit-block-placeholder\"></div></div>","yPos":324,"height":250,"zIndex":26,"width":"250","notename":"Folder Access Control","mtime":1203360707.923000,"id":"note0NDhHS8h"}
+{
+  "bgcolor": "#00FF00", 
+  "height": 250, 
+  "notename": "Folder Access Control", 
+  "text": "For more complicated sharing situations, you can specify in detail who may read, write, and add to a folder using the Folder Access Control widget, which you can summon by:<div><br><div>Folder Menu -&gt; Sharing -&gt; Folder Access Control</div><div><br></div><div>Click the 'link to widgets/access' for a somewhat technical description of how to use access control.</div><div><br class=\"webkit-block-placeholder\"></div></div>", 
+  "width": "250", 
+  "xPos": 518, 
+  "yPos": 324 
+}
