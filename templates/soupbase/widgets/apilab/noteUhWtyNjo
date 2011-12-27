@@ -1,1 +1,10 @@
-{"xPos":66,"bgcolor":"#99CCFF","text":"<script type='text/javascript'>\nvar note = notesoup.ui.getEnclosingNote(this);\nnote.set({\n\tonrender: function() {\n\t\tvar textInputForm = new Ext.form.Form({\n\t\t\thideLabels: true\n\t\t});\n\t\ttextInputForm.add(\n\t\t\tnew Ext.form.TextField({\n\t\t\t\t//fieldLabel: '',\n\t\t\t\tid: 'textinput-' + this.id,\n\t\t\t\tname: 'value',\n\t\t\t\tvalue: this.value,\n\t\t\t\twidth: this.width - 36,\t\t//175,\n\t\t\t})\n\t\t);\n\t\tthis.setContentDiv('');\n\t\ttextInputForm.render(this.getContentDiv());\n\t\tthis.setEphemeral('textInputForm', textInputForm);\n\t},\n\n\tgetvalue: function() {\n\t\tvar theForm = this.getEphemeral('textInputForm');\n\t\tthis.value = theForm.getValues()['value'];\n\t\treturn this.value;\n\t},\n\n\tsetvalue: function(newvalue) {\n\t\tthis.value = newvalue;\n\t\tthis.show();\n\t}\n});\nnote.show();\n</script>","yPos":84,"value":"","height":68,"zIndex":206,"width":200,"notename":"username","mtime":1196201717.381293,"id":"noteUhWtyNjo"}
+{
+  "bgcolor": "#99CCFF", 
+  "height": 68, 
+  "notename": "username", 
+  "text": "<script type='text/javascript'>note.set({\n\tonrender: function() {\n\t\tvar textInputForm = new Ext.form.Form({\n\t\t\thideLabels: true\n\t\t});\n\t\ttextInputForm.add(\n\t\t\tnew Ext.form.TextField({\n\t\t\t\t//fieldLabel: '',\n\t\t\t\tid: 'textinput-' + this.id,\n\t\t\t\tname: 'value',\n\t\t\t\tvalue: this.value,\n\t\t\t\twidth: this.width - 36,\t\t//175,\n\t\t\t})\n\t\t);\n\t\tthis.setContentDiv('');\n\t\ttextInputForm.render(this.getContentDiv());\n\t\tthis.setEphemeral('textInputForm', textInputForm);\n\t},\n\n\tgetvalue: function() {\n\t\tvar theForm = this.getEphemeral('textInputForm');\n\t\tthis.value = theForm.getValues()['value'];\n\t\treturn this.value;\n\t},\n\n\tsetvalue: function(newvalue) {\n\t\tthis.value = newvalue;\n\t\tthis.show();\n\t}\n});\nnote.show();\n</script>", 
+  "value": "", 
+  "width": 200, 
+  "xPos": 66, 
+  "yPos": 84 
+}

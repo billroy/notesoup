@@ -1,1 +1,9 @@
-{"xPos":974,"from":"widgets in widgets/access","bgcolor":"#CCFFFF","text":"While SPAM is a fine ingredient, spam in your inbox is not.  You can ban a bad guy from your inbox like this:<br>\n<div><br class=\"webkit-block-placeholder\"></div><div>Old inbox Append ACL: </div><div>*</div><div><br class=\"webkit-block-placeholder\"></div><div>Change it to:</div><div>-spammer1,-evil2,*</div><div><br class=\"webkit-block-placeholder\"></div><div>Which means 'deny spammer1 and evil2 but allow everyone else to send to me'.</div>","yPos":47,"height":250,"zIndex":90,"width":"250","notename":"Spam and Soup","mtime":1196346567.255902,"id":"noterJduzKdr"}
+{
+  "bgcolor": "#CCFFFF", 
+  "height": 250, 
+  "notename": "Spam and Soup", 
+  "text": "While SPAM is a fine ingredient, spam in your inbox is not.  You can ban a bad guy from your inbox like this:<br>\n<div><br class=\"webkit-block-placeholder\"></div><div>Old inbox Append ACL:\u00a0</div><div>*</div><div><br class=\"webkit-block-placeholder\"></div><div>Change it to:</div><div>-spammer1,-evil2,*</div><div><br class=\"webkit-block-placeholder\"></div><div>Which means 'deny spammer1 and evil2 but allow everyone else to send to me'.</div>", 
+  "width": "250", 
+  "xPos": 974, 
+  "yPos": 47 
+}

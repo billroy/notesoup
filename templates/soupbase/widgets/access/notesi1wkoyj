@@ -1,1 +1,9 @@
-{"xPos":802,"from":"widgets in widgets/access","width":150,"text":"","yPos":86,"height":55,"zIndex":73,"bgcolor":"#FF00FF","notename":"Host","mtime":1196345838.390878,"id":"notesi1wkoyj"}
+{
+  "bgcolor": "#FF00FF", 
+  "height": 55, 
+  "notename": "Host", 
+  "text": "", 
+  "width": 150, 
+  "xPos": 802, 
+  "yPos": 86 
+}

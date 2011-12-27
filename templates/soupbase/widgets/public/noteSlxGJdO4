@@ -1,1 +1,9 @@
-{"syncme":true,"xPos":516,"from":"widgets in widgets/public","bgcolor":"#00ccff","text":"&nbsp;<p><a href=\"/folder/widgets/rsszoo\"><center><img src=\"/images/souplink-large.png\"/></center></a><br/>A Bestiary of Info Soups","yPos":543,"height":235,"zIndex":7,"width":240,"notename":"link to widgets/rsszoo","mtime":1196598021,"id":"noteSlxGJdO4"}
+{
+  "bgcolor": "#00ccff", 
+  "height": 235, 
+  "notename": "link to widgets/rsszoo", 
+  "text": "&nbsp;<p><a href=\"/folder/widgets/rsszoo\"><center><img src=\"/images/souplink-large.png\"/></center></a><br/>A Bestiary of Info Soups", 
+  "width": 240, 
+  "xPos": 516, 
+  "yPos": 543 
+}

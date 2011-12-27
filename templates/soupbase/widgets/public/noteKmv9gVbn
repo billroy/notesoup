@@ -1,1 +1,10 @@
-{"syncme":true,"xPos":12,"from":"widgets in widgets/public","bgcolor":"#00ccff","text":"&nbsp;<p><a href=\"/folder/widgets/access\"><center><img src=\"/images/souplink-large.png\"/></center></a><br/>Learn how to control who does what to your Soup.","yPos":543,"height":250,"zIndex":5,"width":240,"notename":"link to widgets/access","mtime":1196598021,"id":"noteKmv9gVbn"}
+{
+  "bgcolor": "#00ccff", 
+  "height": 250, 
+  "notename": "link to widgets/access", 
+  "syncme": true, 
+  "text": "<p><a href=\"/folder/widgets/access\"><center><img src=\"/images/souplink-large.png\"/></center></a><br/>Learn how to control who does what to your Soup.", 
+  "width": 240, 
+  "xPos": 12, 
+  "yPos": 543 
+}

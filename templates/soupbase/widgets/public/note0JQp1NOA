@@ -1,1 +1,9 @@
-{"syncme":true,"xPos":523,"from":"widgets in widgets/public","bgcolor":"#00ccff","text":"&nbsp;<p><a href=\"/folder/widgets/forms\"><center><img src=\"/images/souplink-large.png\"/></center></a><br/>The Form, complete","yPos":248,"height":235,"zIndex":15,"width":240,"notename":"link to widgets/forms","mtime":1202766761.127000,"id":"note0JQp1NOA"}
+{
+  "bgcolor": "#00ccff", 
+  "height": 235, 
+  "notename": "link to widgets/forms", 
+  "text": "&nbsp;<p><a href=\"/folder/widgets/forms\"><center><img src=\"/images/souplink-large.png\"/></center></a><br/>The Form, complete", 
+  "width": 240, 
+  "xPos": 523, 
+  "yPos": 248 
+}

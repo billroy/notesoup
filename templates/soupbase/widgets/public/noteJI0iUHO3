@@ -1,1 +1,9 @@
-{"syncme":true,"xPos":516,"from":"widgets in widgets/public","bgcolor":"#00ccff","text":"&nbsp;<p><a href=\"/folder/widgets/auction\"><center><img src=\"/images/souplink-large.png\"/></center></a><br/>Learn how to run an auction in Note Soup.","yPos":853,"height":250,"zIndex":10,"width":240,"notename":"link to widgets/auction","mtime":1196598021,"id":"noteJI0iUHO3"}
+{
+  "bgcolor": "#00ccff", 
+  "height": 250, 
+  "notename": "link to widgets/auction", 
+  "text": "&nbsp;<p><a href=\"/folder/widgets/auction\"><center><img src=\"/images/souplink-large.png\"/></center></a><br/>Learn how to run an auction in Note Soup.", 
+  "width": 240, 
+  "xPos": 516, 
+  "yPos": 853 
+}

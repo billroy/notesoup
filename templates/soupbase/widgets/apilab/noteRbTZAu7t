@@ -1,1 +1,10 @@
-{"xPos":178,"bgcolor":"#00CCFF","text":"<script type='text/javascript'>\nvar note = notesoup.ui.getEnclosingNote(this);\nnote.set({\n\tonclick: function() {\n\t\t// your click code here\n                notesoup.logout();\n\t}\n});\n</script>\n<center><input type='submit' value='go' onclick='notesoup.ui.getEnclosingNote(this).onclick();'/></center>","yPos":242,"height":58,"zIndex":267,"width":90,"notename":"log out","mtime":1196201718.983699,"sentby":"soupmaster from soupmaster/@lab","id":"noteRbTZAu7t"}
+{
+  "bgcolor": "#00CCFF", 
+  "height": 58, 
+  "notename": "log out", 
+  "sentby": "soupmaster from soupmaster/@lab", 
+  "text": "<script>note.set({\n\tonclick: function() {\n\t\t// your click code here\n                notesoup.logout();\n\t}\n});\n</script>\n<center><input type='submit' value='go' onclick='notesoup.ui.getEnclosingNote(this).onclick();'/></center>", 
+  "width": 90, 
+  "xPos": 178, 
+  "yPos": 242 
+}

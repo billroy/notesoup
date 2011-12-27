@@ -1,1 +1,9 @@
-{"xPos":644,"bgcolor":"#FFFF00","text":"show percentage of vote<br>\nshow winner by majority or supermajority ('majority adjudicator')<br>\nsort winners by rank<br>\nbetter vote placement<br>\nallow anonymous voting<div>- use IP addy to prevent overvoting<br>\n<div>comments with votes</div></div>","yPos":439,"height":181,"zIndex":80,"width":"250","notename":"Possible Enhancements","mtime":1196192215.187847,"id":"notenHWaZ7VS"}
+{
+  "bgcolor": "#FFFF00", 
+  "height": 181, 
+  "notename": "Possible Enhancements", 
+  "text": "show percentage of vote<br>\nshow winner by majority or supermajority ('majority adjudicator')<br>\nsort winners by rank<br>\nbetter vote placement<br>\nallow anonymous voting<div>- use IP addy to prevent overvoting<br>\n<div>comments with votes</div></div>", 
+  "width": "250", 
+  "xPos": 644, 
+  "yPos": 439 
+}

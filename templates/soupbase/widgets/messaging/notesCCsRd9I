@@ -1,1 +1,10 @@
-{"xPos":31,"from":"widgets in widgets/messaging","bgcolor":"#99CCFF","text":"Use Note Menu -&gt; Send a Copy to send a copy of the Message Widget to one of your folders, perhaps your inbox (since the permissions on the inbox are already set up for message sending and receiving).<div><br class=\"webkit-block-placeholder\"></div><div>Go to that folder, enter a message and click Send.<br>\n<br>\nWhen prompted, enter the destination address, which can be either a username ('charlie') or a folder (like 'charlie/inbox').<div><br class=\"webkit-block-placeholder\"></div><div>The recipient can, likewise, type a message and click Send to send a reply.  And so on.<br class=\"webkit-block-placeholder\"></div><div><br class=\"webkit-block-placeholder\"></div><div>You must have Sender permission on the destination folder.  And the recipient must have Sender permission on the folder you send from in order to reply.</div></div>","yPos":190,"height":295,"zIndex":21,"width":380,"notename":"How to Use the Message Widget","mtime":1196284132.322292,"id":"notesCCsRd9I"}
+{
+  "bgcolor": "#99CCFF", 
+  "height": 295, 
+  "notename": "How to Use the Message Widget", 
+  "text": "Use Note Menu -&gt; Send a Copy to send a copy of the Message Widget to one of your folders, perhaps your inbox (since the permissions on the inbox are already set up for message sending and receiving).<div><br class=\"webkit-block-placeholder\"></div><div>Go to that folder, enter a message and click Send.<br>\n<br>\nWhen prompted, enter the destination address, which can be either a username ('charlie') or a folder (like 'charlie/inbox').<div><br class=\"webkit-block-placeholder\"></div><div>The recipient can, likewise, type a message and click Send to send a reply. \u00a0And so on.<br class=\"webkit-block-placeholder\"></div><div><br class=\"webkit-block-placeholder\"></div><div>You must have Sender permission on the destination folder. \u00a0And the recipient must have Sender permission on the folder you send from in order to reply.</div></div>", 
+  "width": 380, 
+  "xPos": 31, 
+  "yPos": 190 
+  "zIndex": 21
+}

@@ -1,1 +1,9 @@
-{"xPos":771,"from":"widgets in widgets/messaging","width":"250","text":"widgets: g'day<br/>","yPos":375,"height":55,"zIndex":48,"bgcolor":"#CCFFCC","notename":"chat log","mtime":1196983393.190920,"id":"note0oGVe2UD"}
+{
+  "bgcolor": "#CCFFCC", 
+  "height": 55, 
+  "notename": "chat log", 
+  "text": "widgets: g'day<br/>", 
+  "width": "250", 
+  "xPos": 771, 
+  "yPos": 375 
+}

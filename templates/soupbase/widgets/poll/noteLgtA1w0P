@@ -1,1 +1,9 @@
-{"xPos":304,"bgcolor":"#CCFFFF","text":"While anyone may watch the poll, you must be logged in to vote.<br><div><br class=\"webkit-block-placeholder\"></div><div>You can change your vote as many times as you like while the poll is open; only your last vote is counted.<br>\n</div>","yPos":160,"height":181,"zIndex":73,"width":300,"notename":"Notes on Voting","mtime":1196182500.686089,"id":"noteLgtA1w0P"}
+{
+  "bgcolor": "#CCFFFF", 
+  "height": 181, 
+  "notename": "Notes on Voting", 
+  "text": "While anyone may watch the poll, you must be logged in to vote.<br><div><br class=\"webkit-block-placeholder\"></div><div>You can change your vote as many times as you like while the poll is open; only your last vote is counted.<br>\n</div>", 
+  "width": 300, 
+  "xPos": 304, 
+  "yPos": 160 
+}

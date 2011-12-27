@@ -61,18 +61,6 @@ note.set({
 
 	makewidgets: function() {
 		notesoup.saveNote(this.widgetlist, notesoup.foldername);
-	},
-
-	old_makewidgets: function() {
-		for (var i=0; i < this.widgetlist.length; i++) {
-			var w = this.widgetlist[i];
-			notesoup.doCommand(Ext.util.JSON.encode({
-				notename: w.notename,
-				imports: w.imports,
-				bgcolor: this.color
-			}));
-		}
-		this.saveall.defer(2000);
 	}
 });
 </script>

@@ -1,1 +1,9 @@
-{"xPos":549,"from":"widgets in widgets/access","bgcolor":"#99CCFF","text":"If you are the Owner of a folder, you automatically have Read, Write, and Append permission.<br>\n<br>\nAdditionally, you may create and delete folders, and edit the ACL for a folder to control who does what to it.<br>\n","yPos":46,"height":181,"zIndex":93,"width":"250","notename":"Owner Permission","mtime":1196346781.545307,"id":"noteNZUsxUV2"}
+{
+  "bgcolor": "#99CCFF", 
+  "height": 181, 
+  "notename": "Owner Permission", 
+  "text": "If you are the Owner of a folder, you automatically have Read, Write, and Append permission.<br>\n<br>\nAdditionally, you may create and delete folders, and edit the ACL for a folder to control who does what to it.<br>\n", 
+  "width": "250", 
+  "xPos": 549, 
+  "yPos": 46 
+}

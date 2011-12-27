@@ -1,1 +1,9 @@
-{"xPos":319,"bgcolor":"#00CCFF","text":"<script type='text/javascript'>\nvar note = notesoup.ui.getEnclosingNote(this);\nnote.set({\n\tonclick: function() {\n\t\t// your click code here\n                notesoup.saveNote({notename: $n('title').getvalue(), text:$n('text').getvalue()});\n\t}\n});\n</script>\n<center><input type='submit' value='go' onclick='notesoup.ui.getEnclosingNote(this).onclick();'/></center>","yPos":288,"height":58,"zIndex":276,"width":160,"notename":"save note","mtime":1196201720.422466,"sentby":"soupmaster from soupmaster/@lab","id":"noteXG5WPN5h"}
+{
+  "bgcolor": "#00CCFF", 
+  "height": 58, 
+  "notename": "save note", 
+  "text": "<script>note.set({\n\tonclick: function() {\n\t\t// your click code here\n                notesoup.saveNote({notename: $n('title').getvalue(), text:$n('text').getvalue()});\n\t}\n});\n</script>\n<center><input type='submit' value='go' onclick='notesoup.ui.getEnclosingNote(this).onclick();'/></center>", 
+  "width": 160, 
+  "xPos": 319, 
+  "yPos": 288 
+}

@@ -1,1 +1,9 @@
-{"syncme":true,"xPos":264,"from":"widgets in widgets/public","bgcolor":"#00ccff","text":"&nbsp;<p><a href=\"/folder/widgets/flickrlab\"><center><img src=\"/images/souplink-large.png\"/></center></a><br/>Fun With Flickr","yPos":248,"height":235,"zIndex":3,"width":240,"notename":"link to widgets/flickrlab","mtime":1196598021,"id":"note2k50VehP"}
+{
+  "bgcolor": "#00ccff", 
+  "height": 235, 
+  "notename": "link to widgets/flickrlab", 
+  "text": "&nbsp;<p><a href=\"/folder/widgets/flickrlab\"><center><img src=\"/images/souplink-large.png\"/></center></a><br/>Fun With Flickr", 
+  "width": 240, 
+  "xPos": 264, 
+  "yPos": 248 
+}

@@ -1,1 +1,9 @@
-{"syncme":true,"xPos":12,"from":"widgets in widgets/public","bgcolor":"#00ccff","text":"&nbsp;<p><a href=\"/folder/widgets/poll\"><center><img src=\"/images/souplink-large.png\"/></center></a><br/>The Polling Widget Factory","yPos":1163,"height":235,"zIndex":11,"width":240,"notename":"link to widgets/poll","mtime":1196598021,"id":"notexprf4wK0"}
+{
+  "bgcolor": "#00ccff", 
+  "height": 235, 
+  "notename": "link to widgets/poll", 
+  "text": "&nbsp;<p><a href=\"/folder/widgets/poll\"><center><img src=\"/images/souplink-large.png\"/></center></a><br/>The Polling Widget Factory", 
+  "width": 240, 
+  "xPos": 12, 
+  "yPos": 1163 
+}

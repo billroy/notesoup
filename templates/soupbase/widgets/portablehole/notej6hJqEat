@@ -1,1 +1,9 @@
-{"xPos":344,"from":"widgets in widgets/portablehole","bgcolor":"#FFFF99","text":"The Portable Hole is a folder viewer; it displays as a slide show the contents of a Note Soup folder you specify. <br/>\n","yPos":145,"height":100,"zIndex":37,"width":"250","notename":"What is the Portable Hole?","mtime":1196514519.808712,"id":"notej6hJqEat"}
+{
+  "bgcolor": "#FFFF99", 
+  "height": 100, 
+  "notename": "What is the Portable Hole?", 
+  "text": "The Portable Hole is a folder viewer; it displays as a slide show the contents of a Note Soup folder you specify. <br/>\n", 
+  "width": "250", 
+  "xPos": 344, 
+  "yPos": 145 
+}

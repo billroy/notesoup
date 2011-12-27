@@ -1,1 +1,9 @@
-{"xPos":645,"bgcolor":"#FF99CC","text":"<div>Certain advanced options are available by editing the widget's source code via Note Menu -&gt; Show Source.</div><div><br class=\"webkit-block-placeholder\"></div>You can allow more than one vote per user (multi-voting) by changing the value of 'votesperuser', which defaults to 1.<br>\n<div><br class=\"webkit-block-placeholder\"></div><div>By default, anyone can see the auction, and any logged-in user can vote.  You can change these access policies by modifying the access control lists in lockFolder and unlockFolder.</div>","yPos":148,"height":280,"zIndex":59,"width":"250","notename":"Advanced Options","mtime":1196181997.174744,"id":"notegdJ4FVUM"}
+{
+  "bgcolor": "#FF99CC", 
+  "height": 280, 
+  "notename": "Advanced Options", 
+  "text": "<div>Certain advanced options are available by editing the widget's source code via Note Menu -&gt; Show Source.</div><div><br class=\"webkit-block-placeholder\"></div>You can allow more than one vote per user (multi-voting) by changing the value of 'votesperuser', which defaults to 1.<br>\n<div><br class=\"webkit-block-placeholder\"></div><div>By default, anyone can see the auction, and any logged-in user can vote. \u00a0You can change these access policies by modifying the access control lists in lockFolder and unlockFolder.</div>", 
+  "width": "250", 
+  "xPos": 645, 
+  "yPos": 148 
+}

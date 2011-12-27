@@ -1,1 +1,9 @@
-{"xPos":805,"from":"widgets in widgets/access","width":140,"text":"","yPos":462,"height":55,"zIndex":76,"bgcolor":"#FF00FF","notename":"Voyeur","mtime":1196345842.599930,"id":"notec7TQPJTk"}
+{
+  "bgcolor": "#FF00FF", 
+  "height": 55, 
+  "notename": "Voyeur", 
+  "text": "", 
+  "width": 140, 
+  "xPos": 805, 
+  "yPos": 462 
+}

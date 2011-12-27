@@ -1,1 +1,9 @@
-{"syncme":true,"xPos":782,"from":"widgets in widgets/public","bgcolor":"#00ccff","text":"&nbsp;<p><a href=\"/folder/widgets/soupvine\"><center><img src=\"/images/souplink-large.png\"/></center></a><br/>The Soupvine","yPos":249,"height":235,"zIndex":17,"width":240,"notename":"link to widgets/soupvine","mtime":1202766853.363000,"id":"notejEdeExYK"}
+{
+  "bgcolor": "#00ccff", 
+  "height": 235, 
+  "notename": "link to widgets/soupvine", 
+  "text": "&nbsp;<p><a href=\"/folder/widgets/soupvine\"><center><img src=\"/images/souplink-large.png\"/></center></a><br/>The Soupvine", 
+  "width": 240, 
+  "xPos": 782, 
+  "yPos": 249 
+}

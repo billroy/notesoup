@@ -1,1 +1,4 @@
-{"viewfolder":"widgets/portablehole","widthOffset":28,"random":false,"height":60,"imageroot":"http://notesoup.net/images/UII_Icons/32x32/","mtime":1198192414.874000,"nextimage":"forward.png","isPortableHole":true,"previmage":"backward.png","from":"widgets in widgets/portablehole","width":250,"id":"noteydw3YCEC","minWidth":100,"bgcolor":"#FFFF99","heightOffset":100,"widgetid":"porthole","imagecountdown":6,"refreshimage":"refresh.png","openfolderimage":"open.png","zIndex":78,"minHeight":100,"xPos":43,"startimage":"play.png","settingsimage":"configuration.png","yPos":282,"imagedisplaytime":6,"pauseimage":"pause.png","snapshotimage":"digital_camera.png"}
+{
+  "bgcolor": "#FFFF99", 
+  "imports": "/js-src/js-widgets/porthole.js"
+}

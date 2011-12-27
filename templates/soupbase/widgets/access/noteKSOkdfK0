@@ -1,1 +1,9 @@
-{"xPos":556,"from":"widgets in widgets/access","width":"250","text":"A user with Read permission can open the folder and do anything to the notes there except save changes to them.<br/>\n","yPos":441,"height":100,"zIndex":40,"bgcolor":"#99CCFF","notename":"Read Permission","mtime":1196345842.052804,"id":"noteKSOkdfK0"}
+{
+  "bgcolor": "#99CCFF", 
+  "height": 100, 
+  "notename": "Read Permission", 
+  "text": "A user with Read permission can open the folder and do anything to the notes there except save changes to them.<br/>\n", 
+  "width": "250", 
+  "xPos": 556, 
+  "yPos": 441 
+}
