@@ -1,1 +1,9 @@
-{"xPos":20,"width":570,"text":"<div align=\"center\"><font size=\"7\">The Time Lab</font><br>\n</div>","yPos":33,"height":96,"zIndex":20,"bgcolor":"#99CCFF","notename":"Welcome","mtime":1196202571.298163,"id":"noter7vCbUWc"}
+{
+  "bgcolor": "#99CCFF", 
+  "height": 96, 
+  "notename": "Welcome", 
+  "text": "<div align=\"center\"><font size=\"7\">The Time Lab</font><br>\n</div>", 
+  "width": 570, 
+  "xPos": 20, 
+  "yPos": 33 
+}

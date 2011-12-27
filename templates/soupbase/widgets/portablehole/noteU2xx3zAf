@@ -1,10 +1,8 @@
 {
-  "bgcolor": "#FFFF99", 
   "height": 190, 
   "notename": "How to Use the Portable Hole", 
   "text": "Use Note Menu -> Send a Copy to send a portable hole to the folder of your choice.<br/>\n<br/>\nGo to that folder and click the Open Folder icon.<br/>\n<br/>\nYou may aim the Portable Hole at any folder on which you have Read permission.<br/>\n", 
   "width": "250", 
   "xPos": 608, 
   "yPos": 146 
-  "zIndex": 36
 }

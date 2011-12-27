@@ -1,1 +1,9 @@
-{"xPos":279,"from":"widgets in widgets/soupvine","bgcolor":"#CCFFCC","text":"<div align=\"center\"><font size=\"4\"><br>Welcome to the Soupvine Lab.<br></font>\n</div>","yPos":40,"height":100,"zIndex":41,"width":490,"notename":"Soupvine Lab","mtime":1202766323.049000,"id":"noteKHzPJktY"}
+{
+  "bgcolor": "#CCFFCC", 
+  "height": 100, 
+  "notename": "Soupvine Lab", 
+  "text": "<div align=\"center\"><font size=\"4\"><br>Welcome to the Soupvine Lab.<br></font>\n</div>", 
+  "width": 490, 
+  "xPos": 279, 
+  "yPos": 40 
+}

@@ -2,7 +2,7 @@
   "bgcolor": "#99CCFF", 
   "height": 222, 
   "notename": "Message Widget", 
-  "imports": "/js-src/js-widgets/message.js"
+  "imports": "/js-src/js-widgets/message.js",
   "width": "250", 
   "xPos": 30, 
   "yPos": 47 

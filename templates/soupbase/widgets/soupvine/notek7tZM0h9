@@ -1,1 +1,9 @@
-{"xPos":274,"from":"widgets in widgets/soupvine","bgcolor":"#FFFF00","text":"Soupvine is a prototype microblogging system similar in spirit to Twitter.&nbsp; The basic idea is simple: <br><br>1.<b> YOU POST</b>: From time to time, you post 'status updates' about your life -- short\nmessages to let the world know you're eating lunch or whatever.&nbsp; <br><br>2.\n<b>SUBSCRIBERS GET THE MESSAGE</b>: People who have subscribed to your soupvine updates will receive your\nupdates as Note Soup notifications in near-real-time, like instant messaging -- if they are signed\ninto Note Soup.&nbsp; If not, the message is delivered to their inbox and\noptionally forwarded to the email address of their choice.<br><br>3. <b>PUBLIC and PRIVATE STREAMS</b>: Just as Twitter offers a popular public stream where anyone can see what you say, Soupvine can broadcast updates over a named public or private channel of your choice. <br><br>","yPos":141,"height":295,"zIndex":39,"width":490,"notename":"What is the Soupvine?","mtime":1202766325.175000,"id":"notek7tZM0h9"}
+{
+  "bgcolor": "#FFFF00", 
+  "height": 295, 
+  "notename": "What is the Soupvine?", 
+  "text": "Soupvine is a prototype microblogging system similar in spirit to Twitter.&nbsp; The basic idea is simple: <br><br>1.<b> YOU POST</b>: From time to time, you post 'status updates' about your life -- short\nmessages to let the world know you're eating lunch or whatever.&nbsp; <br><br>2.\n<b>SUBSCRIBERS GET THE MESSAGE</b>: People who have subscribed to your soupvine updates will receive your\nupdates as Note Soup notifications in near-real-time, like instant messaging -- if they are signed\ninto Note Soup.&nbsp; If not, the message is delivered to their inbox and\noptionally forwarded to the email address of their choice.<br><br>3. <b>PUBLIC and PRIVATE STREAMS</b>: Just as Twitter offers a popular public stream where anyone can see what you say, Soupvine can broadcast updates over a named public or private channel of your choice. <br><br>", 
+  "width": 490, 
+  "xPos": 274, 
+  "yPos": 141 
+}

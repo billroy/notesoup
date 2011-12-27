@@ -9,7 +9,7 @@
   ], 
   "height": 135, 
   "notename": "Form", 
-  "imports": "/js-src/js-widgets/form.js"
+  "imports": "/js-src/js-widgets/form.js",
   "width": "250", 
   "xPos": 22, 
   "yPos": 125 

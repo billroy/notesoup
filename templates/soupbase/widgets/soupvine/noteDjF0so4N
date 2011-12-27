@@ -1,1 +1,9 @@
-{"xPos":784,"from":"widgets in widgets/soupvine","bgcolor":"#99CCFF","text":"You can embed the Soupvine widget in any folder to soupvine-enable that folder.<br><br>\n<br>Anyone who has Read access to the folder can subscribe.&nbsp; To see who has read access, look under Folder Menu -&gt; Sharing -&gt; Folder Access Control.<br><br>","yPos":38,"height":205,"zIndex":42,"width":"250","notename":"Soupvine Anywhere","mtime":1202766331.090000,"id":"noteDjF0so4N"}
+{
+  "bgcolor": "#99CCFF", 
+  "height": 205, 
+  "notename": "Soupvine Anywhere", 
+  "text": "You can embed the Soupvine widget in any folder to soupvine-enable that folder.<br><br>\n<br>Anyone who has Read access to the folder can subscribe.&nbsp; To see who has read access, look under Folder Menu -&gt; Sharing -&gt; Folder Access Control.<br><br>", 
+  "width": "250", 
+  "xPos": 784, 
+  "yPos": 38 
+}
