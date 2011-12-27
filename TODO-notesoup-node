@@ -30,18 +30,25 @@ Notesoup/Node/Redis TODO list
 			- accept a note list?
 			- use the async pipeline?
 ===
-- Widget Rebuild: 
-	- Paste:
-		- the contents of widgetbuilder.json 
-		- into the command bar of 
-		- an empty system/templates folder
-		- and press Enter
+Database rebuild:
 
-	- (DEPRECATED) how to reload the widgets? widgetbuilder.js!
-		- go to the user/templates folder
-		- erase it
-		- enter this command in the templates directory
-		{notename:'build',imports:'/js-src/js-widgets/widgetbuilder.js'}
+!!! CAUTION THIS "FLUSHDB" IS THROWS AWAY ALL EXISTING CONTENT !!!
+!!! CAUTION THIS "FLUSHDB" IS THROWS AWAY ALL EXISTING CONTENT !!!
+!!! CAUTION THIS "FLUSHDB" IS THROWS AWAY ALL EXISTING CONTENT !!!
+
+redis-cli flushdb
+node loadsoup.js
+(^C when it's done)
+
+In the notesoup web client:
+	.createUser("guest","kittylitter123")
+	.createUser("system")
+	.createUser("widgets")
+
+Log in as system, go to Templates, and Make Templates
+Log out
+Log in as Guest
+Make a Clock
 
 ===
 - widget bugs
