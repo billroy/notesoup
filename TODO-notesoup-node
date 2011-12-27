@@ -29,8 +29,28 @@ Notesoup/Node/Redis TODO list
 		- needs two changes:
 			- accept a note list?
 			- use the async pipeline?
+
 ===
-Database rebuild:
+ACL support
+
+- user info storage rework
+	hash: user/guest {
+		hash: passwordhash,
+		for later: email: email, ...
+	}
+
+- load user passwd and folder attributes in loaduser/loadfolder
+
+- acl modes
+	- strict: like old soup: respect ACL
+	- loose: anyone goes anywhere except system
+		- effectively no login required
+
+- python acl parser: review and redo
+
+===
+
+Database rebuild procedure:
 
 !!! CAUTION THIS "FLUSHDB" IS THROWS AWAY ALL EXISTING CONTENT !!!
 !!! CAUTION THIS "FLUSHDB" IS THROWS AWAY ALL EXISTING CONTENT !!!
@@ -65,24 +85,6 @@ Make a Clock
 		http://www.jplayer.org/
 	html5 div hack
 
-===
-ACL support
-
-- user info storage rework
-	hash: user/guest {
-		hash: passwordhash,
-		for later: email: email, ...
-	}
-
-- load user passwd and folder attributes in loaduser/loadfolder
-
-- acl modes
-	- strict: like old soup: respect ACL
-	- loose: anyone goes anywhere except system
-		- effectively no login required
-
-- python acl parser: review and redo
-===
 ===
 
 - createFolder: add "created" to folder hash on create

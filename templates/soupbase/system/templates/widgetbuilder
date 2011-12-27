@@ -1,4 +1,4 @@
 {
   "notename": "Make Widgets",
-  imports: "/js-src/js-widgets/experimental/widgetbuilder.js"
+  "imports": "/js-src/js-widgets/experimental/widgetbuilder.js"
 }
