@@ -254,7 +254,10 @@ sync_sendupdates: function(noteids) {
 api_sendnote: function() {
 	var self = this;
 /****
-	// assumptions:	
+	There is a race condition here triggered by "Send all to trash"
+	Ii crashes the server.
+
+	// possible new approach:	
 	// get rid of deleteoriginal
 	// make it 'sendcopy' (cp)
 	// default is send original without noteid change (mv)
@@ -335,8 +338,6 @@ getTemplates: function(folder, next) {
 		next(null);
 	});
 },
-
-//autoIncludeSystemTemplates: false,
 
 templatefolder: 'templates',
 

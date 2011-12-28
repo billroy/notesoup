@@ -2,6 +2,8 @@
   "name": "notesoup", 
   "version": "0.0.2",
   "private": true, 
+  "author": "bill.roy@palmeta.com",
+  "description": "note soup for node",
   "scripts": {
     "start": "forever start soup.js", 
     "stop": "forever stop soup.js",

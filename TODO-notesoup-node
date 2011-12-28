@@ -15,13 +15,14 @@ Notesoup/Node/Redis TODO list
 	- send-copy assigns a new id to the sent copy in the new space
 
 - BUG:
+
+	this looks like an ajax api flood (deleting large number of notes one by one)
+	- add an api? deleteall?  clearfolder?
+	
+
 	- CRASH: erase all notes crashes the server
 		deletes the same note over and over
-		this looks like an ajax api flood
 		first 4 go ok
-
-	- Send uses sendnote?!/! recode...
-
 	- BUG: send race? send all to trash doesn't clear all the notes from the source
 		- seems unpredictable. race?
 
@@ -30,6 +31,16 @@ Notesoup/Node/Redis TODO list
 		- needs two changes:
 			- accept a note list?
 			- use the async pipeline?
+===
+- bug: flickrjson widget fails on alpha box but works here
+	- alpha box can't nc to bitlash.net
+	- firewall problem?
+	
+	- problem is, it's sending back a wierd reply (bad url??)
+	
+	- why is it different on the EC2 host?
+	- curl from the ec2 host seems to fetch it ok
+	
 
 ===
 ACL support
