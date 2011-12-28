@@ -1,9 +1,11 @@
 Notesoup/Node/Redis TODO list
 12/28/11 -br
 
+===
 
 - bug: /refresh crashes the server
 	- race condx / headers complaint
+--
 
  grep -rl "\"id\":" . | more
  grep -rl "\"syncme\":" . | xargs edit
@@ -11,13 +13,7 @@ Notesoup/Node/Redis TODO list
 ===
 ACL support
 
-- user info storage rework
-	hash: user/guest {
-		hash: passwordhash,
-		for later: email: email, ...
-	}
-
-- load user passwd and folder attributes in loaduser/loadfolder
+- load folder attributes in loadfolder
 
 - acl modes
 	- strict: like old soup: respect ACL

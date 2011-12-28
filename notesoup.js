@@ -468,8 +468,9 @@ randomName: function(namelen) {
 },
 
 key_usermeta: function(user) {
-	return 'user/' + user + '/.passwd';
+	return 'user/' + user;
 },
+passwordattr: 'password',
 
 api_createuser: function() {
 	this.initsessiondata();
@@ -482,7 +483,7 @@ inboxfolder: 'inbox',
 
 save_password_hash: function(user, passwordhash) {
 	var self = this;
-	self.redis.set(self.key_usermeta(user), passwordhash, function(err, reply) {
+	self.redis.hset(self.key_usermeta(user), self.passwdattr, passwordhash, function(err, reply) {
 		self.addupdate(['say','Password saved.']);
 	});
 },
@@ -532,7 +533,11 @@ api_knockknock: function() {
 api_login: function() {
 	// fetch username passwordhash
 	var self = this;
-	self.redis.get(self.key_usermeta(self.req.body.params.username), function(err, passwordhash) {
+	self.redis.hget(self.key_usermeta(self.req.body.params.username), 
+		self.passwordattr, function(err, passwordhash) {
+
+		self.log('login: ' + self.req.body.params.username);
+		self.dir(passwordhash);
 
 		if (!passwordhash) {
 			self.clearsessiondata();
@@ -631,10 +636,28 @@ loadfolder: function(foldername, nextfolder) {
 	var self = NoteSoup;
 	self.log('Loadfolder: fromdirectory: ' + self.load.fromdirectory);
 	self.log('Loadfolder: tofolder: ' + self.load.tofolder);
+
 	if (foldername.charAt(0) == '.') {
-		self.log('Skipping system folder/file ' + foldername);
-		nextfolder(null, foldername);
-		return;
+		self.log('handling system folder/file ' + foldername);
+		if (foldername == '.userinfo') {
+			self.log('converting password file');
+			var filepath = self.load.fromdirectory;		// misnomer, it's the full file path
+			self.log('filepath: ' + filepath);
+			var filetext = fs.readFileSync(filepath, 'utf8');		// specifying 'utf8' to get a string result
+
+			self.redis.hset(self.key_usermeta(self.load.fromuser), self.passwordattr, filetext, 
+				function(err, reply) {
+					self.log('password set');
+					nextfolder(null, foldername);
+				}
+			);
+			return;
+		}
+		else {	// not .password, we're done
+			self.log('Skipping unhandled .file: ' + foldername);
+			nextfolder(null, foldername);
+			return;
+		}
 	}
 
 	var files = fs.readdirSync(self.load.fromdirectory);
@@ -657,13 +680,15 @@ loadfolder: function(foldername, nextfolder) {
 
 loaduser: function(user) {
 	var self = this;
+	self.load = {};
 	var userpath = __dirname + '/templates/soupbase/' + user;
 	var folders = fs.readdirSync(userpath);
 	self.log('Loading user: ' + user);
+	self.load.fromuser = user;
 	self.dir(folders);
 	async.forEachSeries(folders,
 		function(foldername, nextfolder) {
-			if (!self.load) self.load = {};
+			//if (!self.load) self.load = {};
 			self.load.fromdirectory = userpath + '/' + foldername;
 			self.load.tofolder = user + '/' + foldername;
 			NoteSoup.loadfolder(foldername, function(err, reply) {
