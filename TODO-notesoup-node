@@ -142,8 +142,11 @@ Feature candidates
 - multi-tenancy via Host: header / database index map
 
 - notesoup time machine
+	- move deleted notes somewhere 'magic'
 	- infinite undo/redo
 	- pushbutton backup/restore
+	- privacy nightmare
+
 ===
 
 - bug: css for note titles is different from tiny soup?!
@@ -157,17 +160,18 @@ Note Content and Import/Export
 - startup: auto load system and widgets if they aren't there
 - loadnotes: 
 	capture .files for acl
-- loaduser
-	capture .passwd file
-- dumpnotes
-	- the redis-dump script is a nice temporary solution
 
 - guest user: content in template/soupbase/guest
 	- folder permissions
 	- welcome/help
 	- auto-refresh every 15 minutes
-- new user: content in template/soupbase/newuser
-- improved system/ and widget/ content
+- new user: content to copy in template/soupbase/newuser
+	- folder permissions
+===
+note slinging
+
+- dumpnotes
+	- the redis-dump script is a nice temporary solution
 - feat: produce notelist for doCommand/paste restore
 	.getjson() does it
 	- (part done: backup note does this clumsily now by popping a window)
@@ -185,11 +189,6 @@ Note Content and Import/Export
 	free: abdefgjklmopqrsuv
 	
 	meta: id, mtime, folder, permissions
-
-	RESOLVES:
-		- bug: mtimes in the note, or not?
-			- savenote, sendnote, loadfiles
-		- bug: same for id?
 
 Ext v99?  Touch?  Mac?
 

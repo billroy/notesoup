@@ -588,8 +588,27 @@ api_logout: function() {
 loadfile: function(fromdirectory, filename, tofolder) {
 	var self = NoteSoup;
 	self.log('Loadfile: ' + filename);
-	if (filename.charAt(0) == '.') {
-		self.log('Skipping system file ' + filename);
+
+	var aclfiles = ['.readers','.editors','.senders'];
+	var aclattrs = ['readers','editors','senders'];
+	var aclindex = aclfiles.indexOf(filename);
+	if (aclindex >= 0) {
+		self.log('handling folder attribute file: ' + filename);
+		
+		var filepath = self.load.fromdirectory + '/' + filename;
+		self.log('filepath: ' + filepath);
+		var filetext = fs.readFileSync(filepath, 'utf8');		// specifying 'utf8' to get a string result
+
+		self.redis.hset(self.key_foldermeta(tofolder), aclattrs[aclindex], filetext, 
+			function(err, reply) {
+				self.log('folder attribute set: ' + tofolder + ' ' + aclattrs[aclindex] + ' ' + filetext);
+				//nextfolder(null, foldername);
+			}
+		);
+		return;
+	}
+	else if (filename.charAt(0) == '.') {
+		self.log('Skipping unhandled system file ' + filename);
 		//nextfile(null, filename);
 		return;
 	}

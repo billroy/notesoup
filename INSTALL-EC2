@@ -84,13 +84,8 @@ redis-cli flushdb
 node loadsoup.js
 (^C when it's done)
 
-Browse to the app, and in the notesoup web client,
-execute these lines one by one:
-
-.createUser("guest","kittylitter123")
-.createUser("system")
-.createUser("widgets")
-
+The default system password is: frobozz88
+- todo: setpass.js
 
 Log in as system, go to Templates, and Make Templates
 Log out
