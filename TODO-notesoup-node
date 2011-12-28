@@ -26,7 +26,6 @@ ACL support
 
 - python acl parser: review and redo
 
-
 ===
 widget issues
 
@@ -138,6 +137,8 @@ Notification plumbing issues
 
 ====
 Feature candidates
+
+- auto-expire the trash
 
 - startup: command line option for push server on/off
 	- npm install optimist

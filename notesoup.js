@@ -259,7 +259,7 @@ api_sendnote: function() {
 	self.dir(self.req.body.params);
 
 	// if a single id was passed in, coerce it to a list
-	if (typeof(self.req.body.params.noteid[0]) == 'undefined')
+	if (typeof(self.req.body.params.noteid) == 'string')
 		self.req.body.params.noteid = [self.req.body.params.noteid];
 
 	//self.dir(self.req.body.params);
@@ -614,12 +614,13 @@ loadfile: function(fromdirectory, filename, tofolder) {
 	self.redis.incr(self.key_nextid(tofolder), function(err, id) {
 
 		note.id = id.toString();
-		note.mtime = new Date().getTime();
+		//note.mtime = new Date().getTime();
+		mtime = new Date().getTime();
 		var jsonnote = JSON.stringify(note);
 
 		self.redis.multi() 
 			.hset(self.key_note(tofolder), note.id, jsonnote)
-			.zadd(self.key_mtime(tofolder), note.mtime, note.id)
+			.zadd(self.key_mtime(tofolder), mtime, note.id)
 			.exec(function (err, replies) {
 				//nextfile(null, filename);
 			});

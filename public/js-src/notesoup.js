@@ -107,7 +107,7 @@ var notesoup = {
 				//alert('DECODED NOTE DUMPED: ' + this.dump(thenote));
 
 				this.updateNote(thenote);
-				if (thenote.mtime > this.lastupdate) this.lastupdate = thenote.mtime;
+				//if (thenote.mtime > this.lastupdate) this.lastupdate = thenote.mtime;
 			}
 		}
 
