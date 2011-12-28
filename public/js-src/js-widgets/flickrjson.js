@@ -70,7 +70,7 @@ note.set({
 
 	getflickr: function(str) {
 		notesoup.say('Fetching Flickr images for keyword: ' + str);
-		this.geturl('http://api.flickr.com/services/feeds/photos_public.gne?tags=' + escape(str) + '&format=json');
+		this.geturl('http://api.flickr.com/services/feeds/photos_public.gne?format=json&tags=' + escape(str));
 	}
 });
 Ext.get(note.id+'_content').on('click', note.click, note);
