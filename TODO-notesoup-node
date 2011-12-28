@@ -1,5 +1,5 @@
 Notesoup/Node/Redis TODO list
-12/27/11 -br
+12/28/11 -br
 
 
 - bug: /refresh crashes the server
@@ -7,64 +7,6 @@ Notesoup/Node/Redis TODO list
 
  grep -rl "\"id\":" . | more
  grep -rl "\"syncme\":" . | xargs edit
-===
-
-- consider a single noteid counter
-	- guaranteed unique throughout the soup
-	- send-original moves the same id to the new space
-	- send-copy assigns a new id to the sent copy in the new space
-
-- count deleted notes in erasetrash
-
-===
-
-- BUG:
-
-	this looks like an ajax api flood (deleting large number of notes one by one)
-	- add an api? deleteall?  clearfolder?
-
-	- clearFolder api
-		server
-			- nukes the folder
-				(sends all to trash)
-			- sends back clearfolder fromfolder
-	
-		client::onclearfolder
-			- remove notes for current folder
-			- invalidate cache
-
-	- CRASH: erase all notes crashes the server
-		deletes the same note over and over
-		first 4 go ok
-	- BUG: send race? send all to trash doesn't clear all the notes from the source
-		- seems unpredictable. race?
-
-	- BUG: deleting large numbers of notes fails
-		- gets complaint about response headers
-		- needs two changes:
-			- accept a note list?
-			- use the async pipeline?
-
-
-
-===
-- bug: flickrjson widget fails on alpha box but works here
-	- alpha box can't nc to bitlash.net
-	- firewall problem?
-	
-	- problem is, it's sending back a wierd reply (bad url??)
-	
-	- why is it different on the EC2 host?
-	- curl from the ec2 host seems to fetch it ok
-
-http://api.flickr.com/services/feeds/photos_public.gne?tags=sunset&format=json
-
-bug: geturl from server at ec2 gets error page
-
-curl from comman line here, dreamhost, ec2 all XML redirection content
-geturl from server on laptop gets json and it all works
-fetching the url in the browser works
-
 
 ===
 ACL support
@@ -86,7 +28,27 @@ ACL support
 
 
 ===
-- widget bugs
+widget issues
+
+- bug: flickrjson widget fails on alpha box but works here
+	- alpha box can't nc to bitlash.net
+	- firewall problem?
+	
+	- problem is, it's sending back a wierd reply (bad url??)
+	
+	- why is it different on the EC2 host?
+	- curl from the ec2 host seems to fetch it ok
+
+http://api.flickr.com/services/feeds/photos_public.gne?tags=sunset&format=json
+
+	bug: geturl from server at ec2 gets error page
+
+	curl from command line here, dreamhost, ec2 all XML redirection content
+	geturl from server on laptop gets json and it all works
+	fetching the url in the browser works
+
+
+- broken widgets
 	- porthole needs getnote
 	- rss: needs /getfeed service
 	- polling: generates Ext.get() error
@@ -170,7 +132,10 @@ Notification plumbing issues
 	- they can time out anyway
 	- client thinks it's logged in
 	- ...
-	
+
+- count/log deleted notes in erasetrash
+	incr stats/notes_deleted
+
 ====
 Feature candidates
 

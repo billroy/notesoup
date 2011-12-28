@@ -66,7 +66,8 @@ guestuser: 'guest',
 //
 key_note: function(folder) 		{ return 'notes/' + folder; },
 key_mtime: function(folder) 	{ return 'mtime/' + folder; },
-key_nextid:  function(folder)	{ return 'next/'  + folder; },
+//key_nextid:  function(folder)	{ return 'next/'  + folder; },
+key_nextid:  function(folder)	{ return 'stats/notes_created'; },
 
 log: function(text) {
 	console.log(text);
@@ -253,25 +254,31 @@ sync_sendupdates: function(noteids) {
 
 api_sendnote: function() {
 	var self = this;
-/****
-	There is a race condition here triggered by "Send all to trash"
-	Ii crashes the server.
 
-	// possible new approach:	
-	// get rid of deleteoriginal
-	// make it 'sendcopy' (cp)
-	// default is send original without noteid change (mv)
+	self.log("apisendnote:");
+	self.dir(self.req.body.params);
+
+	// if a single id was passed in, coerce it to a list
+	if (typeof(self.req.body.params.noteid[0]) == 'undefined')
+		self.req.body.params.noteid = [self.req.body.params.noteid];
+
+	//self.dir(self.req.body.params);
 	
-	// all notes are allocated off a master note key
+	async.forEachSeries(self.req.body.params.noteid,
+		function(noteid, next) {
+			self.sendnote(noteid, function(err, reply) {
+				next(null, noteid);
+			});
+		},
+		function(err, reply) {
+			self.sendreply();
+		});
+},
 
-	// move a note from one folder to another
-	if (!self.req.body.params.sendcopy) {
-	}
-
-*****/	
-
+sendnote: function(noteid, next) {
+	var self = NoteSoup;
 	self.redis.multi()
-		.hget(self.key_note(self.req.body.params.fromfolder), self.req.body.params.noteid)
+		.hget(self.key_note(self.req.body.params.fromfolder), noteid)
 		.incr(self.key_nextid(self.req.body.params.tofolder))
 		.exec(function(err, reply) {
 
@@ -296,15 +303,15 @@ api_sendnote: function() {
 
 					if (!('deleteoriginal' in self.req.body.params) || self.req.body.params.deleteoriginal) {
 						self.redis.multi()
-							.hdel(self.key_note(self.req.body.params.fromfolder), self.req.body.params.noteid)
-							.zrem(self.key_mtime(self.req.body.params.fromfolder), self.req.body.params.noteid)
+							.hdel(self.key_note(self.req.body.params.fromfolder), noteid)
+							.zrem(self.key_mtime(self.req.body.params.fromfolder), noteid)
 							.exec(function(err, reply) {
 								if (self.req.body.params.fromfolder == self.req.body.params.notifyfolder)
-									self.addupdate(['deletenote', self.req.body.params.noteid]);
-								self.sendreply();
+									self.addupdate(['deletenote', noteid]);
+								next(null, noteid);
 							});
 					}
-					else self.sendreply();
+					else next(null, noteid);
 				});
 		});
 },

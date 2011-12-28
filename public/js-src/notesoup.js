@@ -739,9 +739,10 @@ var notesoup = {
 
 		if (deleteoriginal === undefined) deleteoriginal = true;
 
-		var thename = thenoteid;
-		if ((fromfolder == this.foldername) && ('notename' in notesoup.notes[thenoteid]))
-			thename = notesoup.notes[thenoteid].notename;
+		var thename = "note";
+		//var thename = thenoteid;
+		//if ((fromfolder == this.foldername) && ('notename' in notesoup.notes[thenoteid]))
+		//	thename = notesoup.notes[thenoteid].notename;
 
 		this.postRequest({
 			method:"sendnote",
@@ -814,7 +815,7 @@ var notesoup = {
 	deleteNote: function(thenoteid) {
 
 		// Forestall a lot of bugs: if the note itself is passed in, instead of the id, make the substitution
-		if (typeof(thenoteid) == 'object') thenoteid = thenoteid.id;
+		//if (typeof(thenoteid) == 'object') thenoteid = thenoteid.id;
 
 		if (this.readonly) return;
 		this.sendNote(thenoteid, this.foldername, this.getUserFromFolderPath(this.foldername) + '/trash');
@@ -825,8 +826,11 @@ var notesoup = {
 	*	erase all the notes in this folder by sending them to the trash (after user confirmation)
 	*/
 	erase: function() {
-		if (this.prompt("Really, really send everything to the trash?", 'no') == 'yes')
-			for (var n in this.notes) this.deleteNote(this.notes[n].id);
+		if (this.prompt("Really, really send everything to the trash?", 'no') == 'yes') {
+			var notelist = [];
+			for (var n in this.notes) notelist.push(this.notes[n].id);
+			this.deleteNote(notelist);
+		}
 	},
 
 
