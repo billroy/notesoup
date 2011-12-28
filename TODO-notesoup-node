@@ -14,11 +14,24 @@ Notesoup/Node/Redis TODO list
 	- send-original moves the same id to the new space
 	- send-copy assigns a new id to the sent copy in the new space
 
+- count deleted notes in erasetrash
+
+===
+
 - BUG:
 
 	this looks like an ajax api flood (deleting large number of notes one by one)
 	- add an api? deleteall?  clearfolder?
+
+	- clearFolder api
+		server
+			- nukes the folder
+				(sends all to trash)
+			- sends back clearfolder fromfolder
 	
+		client::onclearfolder
+			- remove notes for current folder
+			- invalidate cache
 
 	- CRASH: erase all notes crashes the server
 		deletes the same note over and over
@@ -31,6 +44,9 @@ Notesoup/Node/Redis TODO list
 		- needs two changes:
 			- accept a note list?
 			- use the async pipeline?
+
+
+
 ===
 - bug: flickrjson widget fails on alpha box but works here
 	- alpha box can't nc to bitlash.net
@@ -40,7 +56,15 @@ Notesoup/Node/Redis TODO list
 	
 	- why is it different on the EC2 host?
 	- curl from the ec2 host seems to fetch it ok
-	
+
+http://api.flickr.com/services/feeds/photos_public.gne?tags=sunset&format=json
+
+bug: geturl from server at ec2 gets error page
+
+curl from comman line here, dreamhost, ec2 all XML redirection content
+geturl from server on laptop gets json and it all works
+fetching the url in the browser works
+
 
 ===
 ACL support
@@ -67,6 +91,10 @@ ACL support
 	- rss: needs /getfeed service
 	- polling: generates Ext.get() error
 
+- new widgets
+	- server check widget
+	- sensor widget (bitlash/arduino integration)
+
 ===
 - sound is broken
 	SoundManager2
@@ -77,11 +105,14 @@ ACL support
 	html5 div hack
 
 ===
+Folder management
 
 - createFolder: add "created" to folder hash on create
 	- getfolderlist should use fldr/ attribute
 	- deletefolder should delete fldr/attribute
 	(problem? or feature? this allows for hidden folders... in other words, lost folders.)
+
+- folder.defaultcolor should be in the attributes too?
 
 ===
 

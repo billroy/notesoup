@@ -128,6 +128,11 @@ app.get('/geturl', function(req, res) {
 	}
 
 	// fetch a remote url
+	options.headers = {
+//		'Accept': '*/*'
+		'Accept': 'application/x-javascript; charset=utf-8'
+	};
+	options.agent = false;	// prevent Connection-Keepalive in the framework
 	var httpreq = http.get(options, function(httpres) {
 		httpres.on('data', function (chunk) {
 			console.log('Geturl body: ' + chunk.length);
@@ -140,6 +145,7 @@ app.get('/geturl', function(req, res) {
 		//console.log("Geturl response: " + httpres.statusCode);
 		//console.log("Geturl response: " + httpres.responseText);		
 		//console.dir(httpres);
+		console.dir(httpres.headers);
 	}).on('error', function(e) {
 		console.log("Geturl error: " + e.message);
 	});
