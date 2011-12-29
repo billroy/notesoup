@@ -99,7 +99,10 @@ validateaccess: function(next) {
 	var accessmode;
 	var folder;
 	var aclcheck = self.acl_checklist[self.req.body.method];
-	if (!aclcheck) next('No acl check string?!');
+	if (!aclcheck) {
+		next(null);		// 'No acl check string?!');
+		return;
+	}
 
 	while (aclcheck.length) {
 
@@ -197,6 +200,7 @@ getaccess: function(requestor, tofolder, accessmode, next) {
 	self.redis.hget(self.key_foldermeta(tofolder), accessmode, function(err, accessstring) {
 
 		if (self.err) next('Key error.');
+		if (!accessstring) accessstring = '';	// act like -*, deny below
 		accessstring = accessstring.trim();
 		self.log('getaccess: ' + accessmode + ' [' + accessstring + ']');
 

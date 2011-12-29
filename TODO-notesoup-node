@@ -19,6 +19,7 @@ Notesoup/Node/Redis TODO list
 ===
 ACL support
 
+- CRASH: logging in as guest crashes
 
 
 ===
