@@ -43,7 +43,7 @@ connect: function(redis_url) {
 	});
 },
 
-dispatch: function(req, res) {
+dispatch_old: function(req, res) {
 	res.updatelist = [];
 	this.req = req;
 	this.res = res;
@@ -57,6 +57,76 @@ dispatch: function(req, res) {
 	this.dir(req.body.params);
 	this['api_'+req.body.method](req, res);
 	return 1;
+},
+
+dispatch: function(req, res) {
+	var self = this;
+	this.req = req;
+	this.res = res;
+	self.res.updatelist = [];
+	
+	self.log('dispatching api req: ' + req.body.method);
+	self.dir(req.body.params);
+
+	async.series(
+		[self.validatemethod, self.validateaccess, self.execute],
+		function(err, reply) {
+			if (err) self.senderror(err);
+		}
+	);
+},
+
+validatemethod: function(next) {
+	var self = NoteSoup;
+	if (typeof(self['api_' + self.req.body.method]) != 'function') {
+		self.log('No method for request: ');
+		self.dir(self.req.body);
+		next('The server does not know how to ' + self.req.body.method);
+	}
+	else if (!self.req.body.method in self.acl_checklist) {
+		self.log('No acl for method: ' + self.req.body.method);
+		next('ACL error');
+	}
+	next(null);
+},
+
+validateaccess: function(next) {
+	var self = NoteSoup;
+	next(null, 'Everybody has root!');		// enable this for wide-open soup
+	//next('No soup for you');				// enable this for closed soup
+	return;
+/*****
+	var aclcheck = acl_checklist[self.req.body.method];
+	var accesslevel = 'readers';
+	if (!aclcheck) next('No acl check string?!');
+
+	while (aclcheck.length) {
+
+		// determine the level of access required for the function
+		if (aclcheck.charat[1] == 'o') accesslevel = 'owners';
+		else if (aclcheck.charat[1] == 'e') accesslevel = 'editors';
+		else if (aclcheck.charat[1] == 's') accesslevel = 'senders';
+		else accesslevel = 'readers';
+
+		// now determine whether we're checking tofolder or fromfolder
+		if (aclcheck.charAt[0] == 't') {
+			self.req.body.params.tofolder
+		}
+		else { 	// assume from
+			self.req.body.params.tofolder
+		}
+		aclcheck = aclcheck.substring(2);	// prune off what we handled
+	};
+*****/
+	next(null);
+},
+
+execute: function(next) {
+	var self = NoteSoup;
+	//this['api_'+req.body.method]();
+	//self.call(self['api_' + self.req.body.method]);
+	NoteSoup['api_' + self.req.body.method]();
+	next(null);
 },
 
 
