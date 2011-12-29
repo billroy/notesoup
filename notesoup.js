@@ -674,7 +674,7 @@ inboxfolder: 'inbox',
 
 save_password_hash: function(user, passwordhash) {
 	var self = this;
-	self.redis.hset(self.key_usermeta(user), self.passwdattr, passwordhash, function(err, reply) {
+	self.redis.hset(self.key_usermeta(user), self.passwordattr, passwordhash, function(err, reply) {
 		self.addupdate(['say','Password saved.']);
 	});
 },
