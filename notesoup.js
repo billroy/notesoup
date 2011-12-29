@@ -71,7 +71,11 @@ dispatch: function(req, res) {
 	async.series(
 		[self.validatemethod, self.validateaccess, self.execute],
 		function(err, reply) {
-			if (err) self.senderror(err);
+			if (err) {
+				//self.senderror(err);
+				self.addupdate(['navigateto', '/folder/system/accesserror']);
+				self.sendreply();
+			}
 		}
 	);
 },
@@ -96,27 +100,30 @@ validateaccess: function(next) {
 	//next('No soup for you');				// enable this for closed soup
 	//return;
 
-	var accessmode;
-	var folder;
 	var aclcheck = self.acl_checklist[self.req.body.method];
 	if (!aclcheck) {
 		next(null);		// 'No acl check string?!');
 		return;
 	}
 
+	self.log('aclcheck: ' + aclcheck);
+
 	while (aclcheck.length) {
 
 		// determine the level of access required for the function
-		if (aclcheck.charAt[1] == 'o') accessmode = 'owners';
-		else if (aclcheck.charAt[1] == 'e') accessmode = 'editors';
-		else if (aclcheck.charAt[1] == 's') accessmode = 'senders';
+		var accessmode;
+		if (aclcheck[1] == 'o') accessmode = 'owners';
+		else if (aclcheck[1] == 'e') accessmode = 'editors';
+		else if (aclcheck[1] == 's') accessmode = 'senders';
 		else accessmode = 'readers';
 
 		// now determine whether we're checking tofolder or fromfolder
-		folder = (aclcheck.charAt[0] == 't') ?
-			self.req.body.params.tofolder :
-			self.req.body.params.fromfolder;
+		var folder;
+		if (aclcheck[0] == 't') folder = self.req.body.params.tofolder;
+		else if (aclcheck[0] == 'f') folder = self.req.body.params.fromfolder;
 
+		self.log('validateaccess: folder ' + folder + ' ' + accessmode);
+		self.dir(self.req.body.params);
 		aclcheck = aclcheck.substring(2);	// prune off what we handled
 
 		self.hasaccess(self.effectiveuser(), folder, accessmode, next);

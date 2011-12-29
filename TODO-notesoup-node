@@ -19,7 +19,8 @@ Notesoup/Node/Redis TODO list
 ===
 ACL support
 
-- CRASH: logging in as guest crashes
+- createuser logs you in but you can't re-log in to the same user
+- bug: createuser should require root permission
 
 
 ===
