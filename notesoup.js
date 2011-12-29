@@ -59,6 +59,90 @@ dispatch: function(req, res) {
 	return 1;
 },
 
+
+acl_checklist: {
+	'savenote': 		'ts',
+	'appendtonote': 	'ts',		// should be editors?  or is this a hack?
+	'sendnote': 		'tsfr',		// ts+deleteoriginal ? fe : fr, the api upgrades
+	'getnote': 			'fr',
+	'getfolder': 		'fr',
+	'openfolder': 		'fr',
+	'sync': 			'fr',
+	'gettemplatelist': 	'fr',		// fromfolder case: 'fr' else uses user templates
+	'getnotes': 		'fr',
+	'deletefolder': 	'fo',
+	'copyfolder': 		'frts',		// +destination folder create is required ? to : ts
+	'getfolderacl': 	'to',
+	'setfolderacl': 	'to'
+},
+
+isvalidfoldername: function(foldername) {
+	if (foldername.split('/').length != 2) return false;
+	return true;
+},
+
+hasaccess: function (requestor, tofolder, accessmode) {
+	var self = this;
+	var result = self.getaccess(requestor, tofolder, accessmode);
+
+	// read and append inherit from edit so appeal a "no" to the higher priv
+	if (!result && ((accessmode == this.readers) || (accessmode == this.senders)))
+		return self.getaccess(requestor, tofolder, this.editors);
+
+	self.log("hasAccess: " + requestor + ' ' + tofolder + ' ' + accessmode + ' ' + result);
+	return result;
+},
+
+getuserpart: function(folder) {
+	return folder.split('/')[0];
+},
+
+readers: 'readers',
+editors: 'editors',
+senders: 'senders',
+
+getaccess: function(requestor, tofolder, accessmode, next) {
+	var self = this;
+	if (!self.isvvalidfoldername(tofolder)) return false;
+	
+	// TODO: Can't access non-existent user/folder
+	
+	// A user has full access to her own folders...
+	// ...as does the systemuser
+	var owner = self.getuserpart(tofolder);
+	if ((requestor == owner) || (requestor == self.systemuser)) return True
+	
+	// Accessing another user's data - check the permissions
+	//accessstring = self.getAccess(tofolder, accessmode)
+	self.redis.hget(self.key_foldermeta(tofolder), accessmode, function(err, accessstring) {
+
+		// TODO: regexp matching for domain-based group permissions like *.example.com
+		// For now, *, -* and username, -username, separated by commas
+		// -@ means "anyone but guest"
+		var access = false;
+		for (var a in accessstring.split(',')) {
+			if (a == '') continue;		// skip empty/null items
+			if (a[0] == '-') {			// Process DENY items
+				var denied = a.substr(1);
+				if ((denied == '*') || (denied == requestor)) break;	// deny
+				if (denied == '@') {									// deny guest
+					access = (requestor == self.guestuser);
+					break;
+				}
+			}
+			else if ((a == '*') || (a == requestor)) access = true;		// allow
+			else if (a == '@') a = (requestor != self.guestuser);		// allow non-guest
+		}
+
+		if (access) {
+			next(null, tofolder);
+		}
+		else {
+			next("Access denied.");
+		}
+	});
+},
+
 systemuser: 'system',
 guestuser: 'guest',
 
@@ -408,7 +492,7 @@ api_createfolder: function() {
 },
 
 api_openfolder: function() {
-	this.res.updatelist.push(['navigateto', '/folder/' + this.req.body.params.tofolder]);
+	this.res.updatelist.push(['navigateto', '/folder/' + this.req.body.params.fromfolder]);
 	this.sendreply();
 },
 

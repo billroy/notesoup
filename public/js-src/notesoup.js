@@ -873,12 +873,12 @@ var notesoup = {
 	*	The current implementation triggers a navigation/reload on the new uri
 	*	@param {string} tofolder the folder to open
 	*/
-	openFolder: function(tofolder) {
+	openFolder: function(fromfolder) {
 
 		// Fast folder switching
 		// Issues: URL is not fixed up.
 		// OPPTYS: cache the notes for true multi folder sync
-		if (this.useFastFolderSwitching && (this.getUserFromFolderPath(tofolder) == this.username)) {
+		if (this.useFastFolderSwitching && (this.getUserFromFolderPath(fromfolder) == this.username)) {
 
 			// Validate the destination folder against the folder list
 			//if ($(tofolder + '_folder') == undefined) {
@@ -886,7 +886,7 @@ var notesoup = {
 			//	return;
 			//}
 
-			this.say("Switching to " + tofolder);
+			this.say("Switching to " + fromfolder);
 
 			// Cache the notes from this folder before we leave
 			this.foldercache[this.foldername] = {
@@ -900,7 +900,7 @@ var notesoup = {
 			this.lastupdate = 0;
 
 			// Reset local state to point to the new workspace
-			this.foldername = tofolder;
+			this.foldername = fromfolder;
 			document.title = 'Note Soup :: ' + this.foldername;
 
 			// Retrieve our notes from the cache if they are there
@@ -925,10 +925,10 @@ var notesoup = {
 			return;
 		}
 
-		if ((tofolder == null) || (tofolder == '')) 
-			tofolder = prompt('Enter the name of the folder to open:', tofolder);
+		if ((fromfolder == null) || (fromfolder == '')) 
+			fromfolder = prompt('Enter the name of the folder to open:', fromfolder);
 
-		if ((tofolder != null) && (tofolder != '')) {
+		if ((fromfolder != null) && (fromfolder != '')) {
 
 			notesoup.removeAvatar();
 
@@ -937,10 +937,10 @@ var notesoup = {
 			this.postRequest({
 				method:"openfolder",
 				params:{
-					tofolder:tofolder
+					fromfolder:fromfolder
 				}
 			},{
-				requestMessage: 'Connecting to ' + tofolder + '...',
+				requestMessage: 'Connecting to ' + fromfolder + '...',
 				successMessage: 'Connected...',
 				failureMessage: 'Could not open folder.'
 			});
