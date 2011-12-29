@@ -1,8 +1,12 @@
 Notesoup/Node/Redis TODO list
-12/28/11 -br
+12/29/11 -br
 
 ===
-- feat: paste html in commandbar should make a proper widget
+- createfolder fails
+- clearing a folder permission fails
+	- workaround: use -*
+- guestuser folder permissions are not set
+
 ===
 
 - bug: /refresh crashes the server
@@ -15,36 +19,7 @@ Notesoup/Node/Redis TODO list
 ===
 ACL support
 
-- ***-> test get/set attributes with widget
 
-**********
-
-acl_checklist: {
-	'savenote': 		'ts',
-	'appendtonote': 	'ts',		// should be editors?  or is this a hack?
-	'sendnote': 		'tsfr',		// ts+deleteoriginal ? fe : fr, the api upgrades
-	'getnote': 			'fr',
-	'getfolder': 		'fr',
-	'openfolder': 		'fr',
-	'sync': 			'fr',
-	'gettemplatelist': 	'fr',		// fromfolder case: 'fr' else uses user templates
-	'getnotes': 		'fr',
-	'deletefolder': 	'fo'
-	'copyfolder: 		'frts',		// +destination folder create is required ? to : ts
-	'getfolderacl': 	'to',
-	'setfolderacl': 	'to'
-},
-
-
-
-**********
-
-- acl modes
-	- strict: like old soup: respect ACL
-	- loose: anyone goes anywhere except system
-		- effectively no login required
-
-- python acl parser: review and redo
 
 ===
 widget issues
