@@ -2,6 +2,7 @@ Notesoup/Node/Redis TODO list
 12/29/11 -br
 
 ===
+- send to trash crashes
 - createfolder fails
 - clearing a folder permission fails
 	- workaround: use -*

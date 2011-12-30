@@ -80,7 +80,7 @@ dispatch_old: function(req, res) {
 		return 0;
 	}
 	this.log("api req: " + req.body.method);
-	this.dir(req.body.params);
+	//this.dir(req.body.params);
 	this['api_'+req.body.method](req, res);
 	return 1;
 },
@@ -91,7 +91,9 @@ dispatch: function(req, res) {
 	this.res = res;
 	self.res.updatelist = [];
 	
+	self.log('*********************************************************************');
 	self.log('dispatching api req: ' + req.body.method);
+	self.log('*********************************************************************');
 	self.dir(req.body.params);
 
 	async.series(
@@ -139,7 +141,7 @@ loadfolderacl: function(fieldname, next) {
 	if (!self.req.acl) self.req.acl = {};
 
 	self.log('loadfolderacl: ' + fieldname + ' ' + self.req.body.params[fieldname]);
-	self.dir(self.req.body.params);
+	//self.dir(self.req.body.params);
 
 	if (typeof(self.req.body.params[fieldname]) == 'undefined') {
 		self.log('no arg ' + fieldname);
@@ -203,20 +205,17 @@ validateaccess: function(next) {
 		else next('bad acl spec');
 
 		self.log('validateaccess: folder ' + folder + ' ' + accessmode);
-		self.dir(self.req.body.params);
+		//self.dir(self.req.body.params);
 		aclcheck = aclcheck.substring(2);	// prune off what we handled
 
-		if (self.hasaccess(self.effectiveuser(), folder, accessmode, next)) {
-			self.log('Access granted.');
-			next(null, folder);
-		}
-		else {
+		if (!self.hasaccess(self.effectiveuser(), folder, accessmode)) {
 			self.log('Access denied.');
 			next("Access denied.");
+			return;
 		}
-
-	};
-	//next(null);
+	}
+	self.log('Access granted.');
+	next(null);
 },
 
 execute: function(next) {
@@ -262,9 +261,9 @@ owners: 'owners',
 
 hasaccess: function (requestor, tofolder, accessmode) {
 	var self = this;
-	self.log('hasaccess: requestor ' + requestor);
-	self.log('hasaccess: tofolder ' + tofolder);
-	self.log('hasaccess: accessmode ' + accessmode);
+	//self.log('hasaccess: requestor ' + requestor);
+	//self.log('hasaccess: tofolder ' + tofolder);
+	//self.log('hasaccess: accessmode ' + accessmode);
 	var result = self.getaccess(requestor, tofolder, accessmode);
 
 	// read and append inherit from edit so appeal a "no" to the higher priv
@@ -284,7 +283,7 @@ getaccess: function(requestor, tofolder, accessmode) {
 	// A user has full access to her own folders...
 	// ...as does the systemuser
 	var owner = self.getuserpart(tofolder);
-	self.log('owner ' + owner + ' requestor ' + requestor);
+	//self.log('owner ' + owner + ' requestor ' + requestor);
 	if ((requestor == owner) || (requestor == self.systemuser)) {
 		return true;
 	}
@@ -662,9 +661,7 @@ key_folderquery: function(user) {
 
 api_getfolderlist: function() {
 	var self = this;
-
-	// Todo: should use session username
-	self.redis.keys(self.key_folderquery(self.req.body.params.user), function(err, keylist) {
+	self.redis.keys(self.key_folderquery(self.effectiveuser()), function(err, keylist) {
 		var folderlist = [];
 		keylist.forEach(function(key) {
 			folderlist.push(key.substr(6));	// prune off 'notes/'
