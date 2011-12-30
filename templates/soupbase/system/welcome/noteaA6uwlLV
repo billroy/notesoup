@@ -1,7 +1,7 @@
 {
   "height": 73, 
   "notename": "steal this badge!", 
-  "text": "<center<a href=\"http://notesoup.net\"><img src=\"http://notesoup.net/images/getnotesoup.png\" /></a></center>", 
+  "text": "<center<a href=\"http://alpha.notesoup.net:3000\"><img src=\"/images/getnotesoup.png\" /></a></center>", 
   "width": 110, 
   "xPos": 51, 
   "yPos": 439 

@@ -58,8 +58,9 @@ note.set({
 	},
 
 	snapcard: function() {
-		notesoup.sound.play('/sound/45813__themfish__draw_card.mp3');
-		//		19244__deathpie__cardDrop2.mp3');
+		if (notesoup.sound) 
+			notesoup.sound.play('/sound/45813__themfish__draw_card.mp3');
+			//		19244__deathpie__cardDrop2.mp3');
 	},
 
 	deletecard: function(cardid) {
@@ -75,7 +76,8 @@ note.set({
 	},
 
 	shuffle: function() {
-		notesoup.sound.play('/sound/19245__deathpie__shuffle.mp3');
+		if (notesoup.sound) 
+			notesoup.sound.play('/sound/19245__deathpie__shuffle.mp3');
 		this.cards = {};
 		for (var n in notesoup.notes) {
 			if (n == this.id) continue;

@@ -87,13 +87,7 @@ Folder management
 
 API buildout 
 
-- BIG BUG: ACL and error checks across the API
-	- api_anon_ vs. api_
-	- BUG: there is no error handling
-	- BUG: there is no ACL checking
-
-- bug: # Only a few methods should allowed if we're not logged in
-- bug: Some methods should only be allowed for the 'system' user
+- BUG: there is no error handling
 
 - bug: unimplemented API:
 	if method == 'getfeed': return apigetfeed(params)
@@ -172,9 +166,8 @@ Note Content and Import/Export
 - BUG: node load.js and loadsoup.js don't terminate properly
 
 - guest user: content in template/soupbase/guest
-	- folder permissions
 	- welcome/help
-	- auto-refresh every 15 minutes
+	- feat: auto-refresh every 15 minutes
 
 - new user: content to copy in template/soupbase/newuser
 	- folder permissions

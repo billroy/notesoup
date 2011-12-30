@@ -488,7 +488,8 @@ soupnote.prototype.rendernote = function() {
 			isimage = true;
 			islink = true;
 		}
-		else src = '/object/' + this.proxyfor;
+		//else src = '/object/' + this.proxyfor;
+		else src = this.proxyfor;
 
 		// Special handling for images
 		if (isimage || notesoup.ui.isImageFile(src)) {

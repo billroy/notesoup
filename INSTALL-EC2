@@ -73,6 +73,10 @@ forever start -o out.log -e err.log -l forever.log soup.js
 
 Database build procedure:
 
+The database is re-built automatically if the key stats/db_created cannot be found.
+
+You can flush and start over like this:
+
 !!! CAUTION THIS "FLUSHDB" IS THROWS AWAY ALL EXISTING CONTENT !!!
 !!! CAUTION THIS "FLUSHDB" IS THROWS AWAY ALL EXISTING CONTENT !!!
 !!! CAUTION THIS "FLUSHDB" IS THROWS AWAY ALL EXISTING CONTENT !!!
@@ -80,9 +84,7 @@ Database build procedure:
 # DELETE ALL THE DATA IN THE REDIS STORE
 redis-cli flushdb
 
-# Load the baseline soup into the database
-node loadsoup.js
-(^C when it's done)
+# now run soup as usual
 
 The default system password is: frobozz88
 - todo: setpass.js
