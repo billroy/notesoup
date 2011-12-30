@@ -29,7 +29,10 @@ notesoup.ui.set({
 	
 		notesoup.postRequest({
 			method:"gettemplatelist",
-			params:{}
+			params:{
+				fromfolder: notesoup.username + '/templates',
+				includesystemtemplates: true
+			}
 		},{
 			requestMessage: 'Fetching new note templates...',
 			successProc:	notesoup.ui.getTemplateListHandler,

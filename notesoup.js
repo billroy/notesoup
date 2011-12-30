@@ -180,6 +180,7 @@ validateaccess: function(next) {
 
 	var aclcheck = self.acl_checklist[self.req.body.method];
 	if (!aclcheck) {
+		self.log('validateaccess: *** no acl check for api: ' + self.req.body.method);
 		next(null);		// 'No acl check string?!');
 		return;
 	}
@@ -235,8 +236,9 @@ acl_checklist: {
 	'getfolder': 		'fr',
 	'openfolder': 		'fr',
 	'sync': 			'fr',
-	'gettemplatelist': 	'fr',		// fromfolder case: 'fr' else uses user templates
+	'gettemplatelist': 	'fr',
 	'getnotes': 		'fr',
+	'createfolder':		'to',
 	'deletefolder': 	'fo',
 	'copyfolder': 		'frts',		// +destination folder create is required ? to : ts
 	'getfolderacl': 	'to',
@@ -284,15 +286,14 @@ getaccess: function(requestor, tofolder, accessmode) {
 	var owner = self.getuserpart(tofolder);
 	self.log('owner ' + owner + ' requestor ' + requestor);
 	if ((requestor == owner) || (requestor == self.systemuser)) {
-		next(null, tofolder);
-		return;
+		return true;
 	}
 
 	// Accessing another user's data - check the permissions
 	//accessstring = self.getAccess(tofolder, accessmode)
 	if (!self.req.acl[tofolder]) {
 		self.log('getaccess: folder not in acl cache: ' + tofolder);
-		next('Access denied.');
+		return false;
 	}
 
 	var accessstring = self.req.acl[tofolder][accessmode];	// get access string from acl{}
@@ -307,7 +308,7 @@ getaccess: function(requestor, tofolder, accessmode) {
 	var specifiers = accessstring.split(',');
 	for (var i=0; i < specifiers.length; i++) {
 		var a = specifiers[i];
-		self.log('access string frag: ' + a);
+		//self.log('access string frag: ' + a);
 		if (a == '') continue;		// skip empty/null items
 		if (a[0] == '-') {			// Process DENY items
 			if (a.length < 2) break;	// naked '-'
@@ -624,7 +625,7 @@ api_gettemplatelist: function() {
 	self.res.templatelist = [];
 
 	// the portable hole uses the fromfolder form
-	if (self.req.body.params.fromfolder) {
+	if (!self.req.body.params.includesystemtemplates) {
 		self.getTemplates(self.req.body.params.fromfolder, function() {
 			self.addupdate(['templatelist', self.res.templatelist]);
 			self.sendreply();
@@ -675,6 +676,7 @@ api_getfolderlist: function() {
 },
 
 api_createfolder: function() {
+	this.req.body.params.fromfolder = this.req.body.params.tofolder;
 	this.api_openfolder();
 },
 
