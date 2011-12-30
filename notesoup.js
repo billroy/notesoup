@@ -132,17 +132,37 @@ loadtoacl: function(next) {
 },
 
 
+// todo: don't fetch a folder if it's already in the acl
+
 loadfolderacl: function(fieldname, next) {
 	var self = NoteSoup;
-	if (self.req.body.params[fieldname]) {
-		if (!self.req.acl) self.req.acl = {};
-		self.redis.hgetall(self.key_foldermeta(self.req.body.params[fieldname]), function (err, folderdata) {
+	if (!self.req.acl) self.req.acl = {};
+
+	self.log('loadfolderacl: ' + fieldname + ' ' + self.req.body.params[fieldname]);
+	self.dir(self.req.body.params);
+
+	if (typeof(self.req.body.params[fieldname]) == 'undefined') {
+		self.log('no arg ' + fieldname);
+		next(null);
+		return;
+	}
+
+	var folder = self.req.body.params[fieldname];	// fetch fromfolder or tofolder
+	
+	self.log('Loadfolderacl: ' + fieldname + ' ' + folder);
+
+	if (!self.isvalidfoldername(folder)) {
+		next('Invalid folder name.');
+	}
+	else if (folder in self.req.acl) next(null);	// if we already have it, don't reread it
+	else if (folder) {
+		self.redis.hgetall(self.key_foldermeta(folder), function (err, folderdata) {
 			if (err) {
-				self.log('Error fetching folder acl: ' + fieldname);
+				self.log('Error fetching folder acl: ' + folder);
 				next('Error fetching folder acl.');
 				return;
 			}
-			self.req.acl[fieldname] = folderdata;
+			self.req.acl[folder] = folderdata;
 			self.log('loadfolderacl: ');
 			self.dir(self.req.acl);
 			next(null);
@@ -153,6 +173,7 @@ loadfolderacl: function(fieldname, next) {
 
 validateaccess: function(next) {
 	var self = NoteSoup;
+
 	//next(null, 'Everybody has root!');		// enable this for wide-open soup
 	//next('No soup for you');				// enable this for closed soup
 	//return;
@@ -178,12 +199,21 @@ validateaccess: function(next) {
 		var folder;
 		if (aclcheck[0] == 't') folder = self.req.body.params.tofolder;
 		else if (aclcheck[0] == 'f') folder = self.req.body.params.fromfolder;
+		else next('bad acl spec');
 
 		self.log('validateaccess: folder ' + folder + ' ' + accessmode);
 		self.dir(self.req.body.params);
 		aclcheck = aclcheck.substring(2);	// prune off what we handled
 
-		self.hasaccess(self.effectiveuser(), folder, accessmode, next);
+		if (self.hasaccess(self.effectiveuser(), folder, accessmode, next)) {
+			self.log('Access granted.');
+			next(null, folder);
+		}
+		else {
+			self.log('Access denied.');
+			next("Access denied.");
+		}
+
 	};
 	//next(null);
 },
@@ -222,29 +252,28 @@ getuserpart: function(folder) {
 	return folder.split('/')[0];
 },
 
-hasaccess: function (requestor, tofolder, accessmode, next) {
-	var self = this;
-	self.log('hasaccess: requestor ' + requestor);
-	self.log('hasaccess: tofolder ' + tofolder);
-	self.log('hasaccess: accessmode ' + accessmode);
-	var result = self.getaccess(requestor, tofolder, accessmode, next);
-
-/***
-	// read and append inherit from edit so appeal a "no" to the higher priv
-	if (!result && ((accessmode == this.readers) || (accessmode == this.senders)))
-		return self.getaccess(requestor, tofolder, this.editors);
-
-	self.log("hasAccess: " + requestor + ' ' + tofolder + ' ' + accessmode + ' ' + result);
-	return result;
-***/
-},
-
 readers: 'readers',
 editors: 'editors',
 senders: 'senders',
 owners: 'owners',
 
-getaccess: function(requestor, tofolder, accessmode, next) {
+
+hasaccess: function (requestor, tofolder, accessmode) {
+	var self = this;
+	self.log('hasaccess: requestor ' + requestor);
+	self.log('hasaccess: tofolder ' + tofolder);
+	self.log('hasaccess: accessmode ' + accessmode);
+	var result = self.getaccess(requestor, tofolder, accessmode);
+
+	// read and append inherit from edit so appeal a "no" to the higher priv
+	if (!result && ((accessmode == this.readers) || (accessmode == this.senders))) {
+		result = self.getaccess(requestor, tofolder, this.editors);
+	}
+	self.log("hasAccess: " + requestor + ' ' + tofolder + ' ' + accessmode + ' ' + result);
+	return result;
+},
+
+getaccess: function(requestor, tofolder, accessmode) {
 	var self = this;
 	if (!self.isvalidfoldername(tofolder)) return false;
 	
@@ -258,53 +287,47 @@ getaccess: function(requestor, tofolder, accessmode, next) {
 		next(null, tofolder);
 		return;
 	}
-	
+
 	// Accessing another user's data - check the permissions
 	//accessstring = self.getAccess(tofolder, accessmode)
-	self.redis.hget(self.key_foldermeta(tofolder), accessmode, function(err, accessstring) {
+	if (!self.req.acl[tofolder]) {
+		self.log('getaccess: folder not in acl cache: ' + tofolder);
+		next('Access denied.');
+	}
 
-		if (self.err) next('Key error.');
-		if (!accessstring) accessstring = '';	// act like -*, deny below
-		accessstring = accessstring.trim();
-		self.log('getaccess: ' + accessmode + ' [' + accessstring + ']');
+	var accessstring = self.req.acl[tofolder][accessmode];	// get access string from acl{}
+	if (!accessstring) accessstring = '';	// act like -*, deny below
+	accessstring = accessstring.trim();
+	self.log('getaccess: ' + accessmode + ' [' + accessstring + ']');
 
-		// TODO: regexp matching for domain-based group permissions like *.example.com
-		// For now, *, -* and username, -username, separated by commas
-		// -@ means "anyone but guest"
-		var access = false;
-		var specifiers = accessstring.split(',');
-		for (var i=0; i < specifiers.length; i++) {
-			var a = specifiers[i];
-			self.log('access string frag: ' + a);
-			if (a == '') continue;		// skip empty/null items
-			if (a[0] == '-') {			// Process DENY items
-				if (a.length < 2) break;	// naked '-'
-				var denied = a.substr(1);
-				if ((denied == '*') || (denied == requestor)) break;	// deny
-				if (denied == '@') {									// deny guest
-					access = (requestor == self.guestuser);
-					break;
-				}
-			}
-			else if ((a == '*') || (a == requestor)) {
-				access = true;		// allow
-				break;
-			}
-			else if (a == '@') {
-				access = (requestor != self.guestuser);		// allow non-guest
+	// TODO: regexp matching for domain-based group permissions like *.example.com
+	// For now, *, -* and username, -username, separated by commas
+	// -@ means "anyone but guest"
+	var access = false;
+	var specifiers = accessstring.split(',');
+	for (var i=0; i < specifiers.length; i++) {
+		var a = specifiers[i];
+		self.log('access string frag: ' + a);
+		if (a == '') continue;		// skip empty/null items
+		if (a[0] == '-') {			// Process DENY items
+			if (a.length < 2) break;	// naked '-'
+			var denied = a.substr(1);
+			if ((denied == '*') || (denied == requestor)) break;	// deny
+			if (denied == '@') {									// deny guest
+				access = (requestor == self.guestuser);
 				break;
 			}
 		}
-
-		if (access) {
-			self.log('Access granted.');
-			next(null, tofolder);
+		else if ((a == '*') || (a == requestor)) {
+			access = true;		// allow
+			break;
 		}
-		else {
-			self.log('Access denied.');
-			next("Access denied.");
+		else if (a == '@') {
+			access = (requestor != self.guestuser);		// allow non-guest
+			break;
 		}
-	});
+	}
+	return access;
 },
 
 systemuser: 'system',
