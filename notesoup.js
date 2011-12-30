@@ -67,6 +67,8 @@ connect: function(redis_url) {
 	this.redis.on("error", function (err) {
 		console.log("Redis Error " + err);
 	});
+	
+	this.initdatabase();
 },
 
 dispatch_old: function(req, res) {
@@ -991,7 +993,28 @@ loaduser: function(user) {
 			self.dir(reply);
 		}
 	);
+},
+
+key_dbcreated: function() { return 'stats/db_created'; },
+
+initdatabase: function() {
+	var self = this;
+	self.log('Checking for database...');
+	self.redis.get(self.key_dbcreated(), function(err, created) {
+		if (err) self.log('Error checking database.');
+		else if (created) self.log('Using database created ' + created);
+		else {
+			var now = new Date();
+			self.log('Initializing database: ' + now);
+			self.redis.set(self.key_dbcreated(), now, function(err, worked) {			
+				self.loaduser('system');
+				self.loaduser('widgets');
+				self.loaduser('guest');
+			});
+		}
+	});
 }
+
 
 };	// NoteSoup = {...};
 

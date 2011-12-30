@@ -2,27 +2,18 @@ Notesoup/Node/Redis TODO list
 12/29/11 -br
 
 ===
-- send to trash crashes
+
 - createfolder fails
 - clearing a folder permission fails
 	- workaround: use -*
-- guestuser folder permissions are not set
-
-
-===
-- pipeline load the acls for fromfolder and tofolder
+- guestuser folder permissions are not set up properly
 
 - bug: gettemplatelist crash
 	- it's 'fr' for the remote case
-	- no fromfolder passed in the default case
-	- pipelining will fix this?
 
 - bug: /refresh crashes the server
 	- race condx / headers complaint
 --
-
- grep -rl "\"id\":" . | more
- grep -rl "\"syncme\":" . | xargs edit
 
 ===
 ACL support
@@ -33,28 +24,15 @@ ACL support
 		- public/readers/*
 		- trash/
 
-- bugs: other acl checks
-	- createuser is one. 
-	- some commands require systemuser 'us'?
-	- deleteuser too
-
 - bug: createuser should require systemuser OR opensignup
 	- bug: should not overwrite existing user unless systemuser
-	- do we need updateuser?
+	- need updateuser to update password
+
+- bugs: other acl checks
+	- createuser/deleteuser
+	- some commands require systemuser 'us'?
 
 - bug: eraseall crashes the server with headers complaint
-
-
-***
-- bugs: sendnote
-	the loop in getaccess isn't working
-	one thread finishes and sends a reply, maybe?
-	run a fromfolder and tofolder permissions lookup
-		as a pipeline task before checking isvalid
-		attach the whole bloody thing so the recursive lookup works
-
-
-***
 
 ===
 widget issues
@@ -193,16 +171,11 @@ Note Content and Import/Export
 
 - BUG: node load.js and loadsoup.js don't terminate properly
 
-- startup: auto load system and widgets if they aren't there
-	- could read stats/notes_created and load if == 0
-
-- loadnotes: 
-	capture .files for acl
-
 - guest user: content in template/soupbase/guest
 	- folder permissions
 	- welcome/help
 	- auto-refresh every 15 minutes
+
 - new user: content to copy in template/soupbase/newuser
 	- folder permissions
 ===
@@ -215,6 +188,9 @@ note slinging
 	- (part done: backup note does this clumsily now by popping a window)
 	- make a way to copy
 	- send via email would be nice too
+- fishing
+	grep -rl "\"id\":" . | more
+	grep -rl "\"syncme\":" . | xargs edit
 
 ===
 
