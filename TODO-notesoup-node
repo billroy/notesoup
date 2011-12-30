@@ -9,6 +9,12 @@ Notesoup/Node/Redis TODO list
 
 
 ===
+- pipeline load the acls for fromfolder and tofolder
+
+- bug: gettemplatelist crash
+	- it's 'fr' for the remote case
+	- no fromfolder passed in the default case
+	- pipelining will fix this?
 
 - bug: /refresh crashes the server
 	- race condx / headers complaint
@@ -23,22 +29,31 @@ ACL support
 - bugs: createuser
 	- need to set up folders with permissions:
 		- inbox/senders/*
+		- public/readers/*
 		- trash/
-	- createuser logs you in but you can't re-log in to the same user
 
 - bugs: other acl checks
-	- createuser is one.  search 'hasaccess'
+	- createuser is one. 
 	- some commands require systemuser 'us'?
+	- deleteuser too
+
+- bug: createuser should require systemuser OR opensignup
+	- bug: should not overwrite existing user unless systemuser
+	- do we need updateuser?
+
+- bug: eraseall crashes the server with headers complaint
+
 
 ***
 - bugs: sendnote
 	the loop in getaccess isn't working
 	one thread finishes and sends a reply, maybe?
+	run a fromfolder and tofolder permissions lookup
+		as a pipeline task before checking isvalid
+		attach the whole bloody thing so the recursive lookup works
+
+
 ***
-
-
-- bug: createuser should require root permission
-- bug: eraseall crashes the server with headers complaint
 
 ===
 widget issues
