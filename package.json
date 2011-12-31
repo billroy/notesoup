@@ -2,7 +2,7 @@
   "name": "notesoup", 
   "version": "0.0.2",
   "private": true, 
-  "author": "bill@bitlash.net",
+  "author": "Bill Roy <bill@bitlash.net>",
   "description": "note soup: sticky notes on steroids for the web",
   "scripts": {
     "start": "forever start soup.js", 
@@ -18,5 +18,8 @@
     "redis": ">=0.7.1", 
     "redis-url": "0.1.0", 
     "socket.io": ">=0.8.7"
+  },
+  "engine": {
+  	"node": ">=0.4"
   }
 }

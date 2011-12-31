@@ -1008,7 +1008,7 @@ initdatabase: function() {
 			self.log('Initializing database: ' + now);
 			self.redis.set(self.key_dbcreated(), now, function(err, worked) {			
 				self.loaduser('system');
-				self.loaduser('widgets');
+				//self.loaduser('widgets');
 				self.loaduser('guest');
 			});
 		}

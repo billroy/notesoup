@@ -39,10 +39,10 @@ Clone the project:
 
 Set the environment variable REDIS_URL if you're using a remote redis server:
 
-	$ REDIS_URL="redis://barney:d9dc5a9d2c7a1727667e0fd7f17260f7@stingfish.redistogo.com:9361/"
+	$ REDISTOGO_URL="redis://barney:d9dc5a9d2c7a1727667e0fd7f17260f7@stingfish.redistogo.com:9361/"
 	- or -
-	$ REDIS_URL='redis://user:auth@hostname:port'
-	$ export REDIS_URL
+	$ REDISTOGO_URL='redis://user:auth@hostname:port'
+	$ export REDISTOGO_URL
 
 If REDIS_URL is not provided the server will connect to Redis on the default localhost:6379.
 

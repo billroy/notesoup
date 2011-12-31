@@ -968,8 +968,17 @@ var notesoup = {
 	*/
 	createFolder: function(tofolder, stayhere) {
 
-		if ((tofolder == null) || (tofolder == '')) 
-			tofolder = prompt('Enter the name of the folder to create:', this.randomName(32));
+		if ((tofolder == null) || (tofolder == '')) {
+			//tofolder = prompt('Enter the name of the folder to create:', this.randomName(32));
+			tofolder = prompt('Enter the name of the folder to create:', this.username + '/newfolder');
+		}
+
+		var parts = tofolder.split('/').length;
+		if (parts == 1) tofolder = notesoup.username + '/' + tofolder;
+		else if (parts != 2) {
+			notesoup.say('A legal folder name is of the form: user/folder');
+			return;
+		}
 
 		if ((tofolder != null) && (tofolder != '')) {
 

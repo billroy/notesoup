@@ -4,7 +4,7 @@
   "formula": "new Date()", 
   "height": 168, 
   "notename": "Silly Clock", 
-  "imports": "/js-src/js-widgets/calculator",
+  "imports": "/js-src/js-widgets/calculator.js",
   "width": 370, 
   "xPos": 735, 
   "yPos": 163 

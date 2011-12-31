@@ -5,10 +5,16 @@ Notesoup/Node/Redis TODO list
 
 - acl errors in the API shouldn't go to accesserror
 	send failure message
+	- acl failure in openfolder should navigate, though?
+	- direct navigation to an un-permitted url should get accesserror
 
-- createfolder fails
-- clearing a folder permission fails
+- bug: clearing a folder permission by setting it empty fails
 	- workaround: use -*
+	
+- client mtime handling needs review
+	- widgets use it
+	- dragdrop uses it
+	- updatenote uses it
 
 ===
 ACL support
