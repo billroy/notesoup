@@ -1,0 +1,20 @@
+###Note Soup on Heroku
+
+Runs out of the box with an easy install pretty much per the cookbook:
+
+	http://devcenter.heroku.com/articles/node-js
+
+IMPORTANT NOTE: The cookbook directions have you start the server (with "git push...")
+before adding the Redis add-on.  It's better to add the redis database add-on first 
+so that you don't have a server crash to debug as your first task.
+
+In other words, be sure to do:
+
+	heroku addons:add redistogo
+
+To auto-provision the free Nano Redis,
+
+Before you do your first:
+
+	git push heroku master
+	
