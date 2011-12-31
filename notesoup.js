@@ -103,9 +103,9 @@ dispatch: function(req, res) {
 			self.validateaccess, self.execute],
 		function(err, reply) {
 			if (err) {
-				//self.senderror(err);
-				self.addupdate(['navigateto', '/folder/system/accesserror']);
-				self.sendreply();
+				self.senderror(err);
+				//self.addupdate(['navigateto', '/folder/system/accesserror']);
+				//self.sendreply();
 			}
 		}
 	);

@@ -61,7 +61,6 @@ sudo npm install -g forever
 # run the server until reboot and dump logs to ~/.forever:
 forever start -o out.log -e err.log -l forever.log soup.js
 
-
 - Give the server a name like "alpha.notesoup.net"
 	- sign in to DNS provider
 	- set up CNAME record pointing to the server:
@@ -73,7 +72,8 @@ forever start -o out.log -e err.log -l forever.log soup.js
 
 Database build procedure:
 
-The database is re-built automatically if the key stats/db_created cannot be found.
+The database is re-built automatically at startup,
+if the key stats/db_created cannot be found.
 
 You can flush and start over like this:
 

@@ -72,12 +72,15 @@ notesoup.ui = {
 						imports: 'system/widgets/@Ink'
 					});
 				}, icon: notesoup.imageHost + 'images/famfamfam.com/paintbrush.png'},
+/*****
 				{text: 'Portable Hole', handler: function() {
 					notesoup.saveNote({
 						notename: '',
 						imports: 'system/widgets/@Portable Hole'
 					});
 				}, icon: notesoup.imageHost + 'images/famfamfam.com/picture.png'},
+*****/
+/*****
 				{text: 'Send a Message', handler: function() {
 					notesoup.saveNote({
 						notename: 'Send a Message',
@@ -85,6 +88,8 @@ notesoup.ui = {
 						imports: 'system/widgets/@Send a Message'
 					});
 				}, icon: notesoup.imageHost + 'images/famfamfam.com/sound.png'},
+*****/
+/*****
 				{text: 'Sound Board', handler: function() {
 					notesoup.saveNote({
 						notename: 'Sound Board',
@@ -92,6 +97,7 @@ notesoup.ui = {
 						imports: 'system/widgets/@Sound Board'
 					});
 				}, icon: notesoup.imageHost + 'images/famfamfam.com/bell.png'},
+*****/
 				{text: 'Timer', handler: function() {
 					notesoup.saveNote({
 						notename: 'Timer',

@@ -3,7 +3,7 @@
   "version": "0.0.2",
   "private": true, 
   "author": "bill@bitlash.net",
-  "description": "the note soup web organizer",
+  "description": "note soup: sticky notes on steroids for the web",
   "scripts": {
     "start": "forever start soup.js", 
     "stop": "forever stop soup.js",

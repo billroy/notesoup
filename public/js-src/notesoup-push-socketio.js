@@ -255,7 +255,7 @@ notesoup.set({
 	},
 	folderRefresh: function(str) {
 		notesoup.say('Refreshing all connected workspaces...');
-		notesoup.push.folderRcon('=notesoup.openFolder(notesoup.foldername);');
+		notesoup.folderRcon('=notesoup.openFolder(notesoup.foldername);');
 	},
 	folderPlay: function(str) {
 		notesoup.say('Playing on all stations: ' + str);
