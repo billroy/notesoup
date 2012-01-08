@@ -850,6 +850,11 @@ soupnote.prototype.endEdit = function(saveChanges, newValue) {
 		if ((newValue.length >= 2) && (newValue.charCodeAt(0) == 0xc2) 
 			&& (newValue.charCodeAt(1) == 0xa0)) this.text = newValue.substr(2);
 		else this.text = newValue;
+
+		// If this note originated as an import, and we just edited it,
+		// remove the import specifier
+		delete this.imports;
+
 		this.save();
 	}
 	else this.show();

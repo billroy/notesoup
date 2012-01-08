@@ -10,8 +10,9 @@ note.set({
 	ontick: function() {
 		this.setContentDiv([
 			'<h2><center>',
-				notesoup.timeStamp('','time'),
-			'</h2></center>'].join(''));
+			notesoup.timeStamp('','time'),
+			'</h2></center>'
+		].join(''));
 	}
 });
 </script>

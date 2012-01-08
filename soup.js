@@ -14,6 +14,7 @@ var express = require('express')
   , routes = require('./routes');
 
 var app = module.exports = express.createServer();
+var util = require('util');
 
 var soup = require('./notesoup.js');
 soup.connect(process.env.REDISTOGO_URL);
@@ -21,6 +22,7 @@ soup.connect(process.env.REDISTOGO_URL);
 soup.io = require('socket.io').listen(app);
 soup.io.sockets.on('connection', function(socket) {
 	console.log('Socket connection accepted.');
+	console.log(util.inspect(socket, 3));
 	socket.on('subscribe', function(request) {
 		console.log('Subscription request:');
 		console.dir(request);

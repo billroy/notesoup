@@ -7,7 +7,7 @@
 *	See http://notesoup.net/js/LICENSE
 */
 note.set({
-	url: 'http://alpha.notesoup.net:3000/folder/system/welcome',
+	url: 'http://alpha.notesoup.net:3000/status',
 	bgcolor: 'yellow',
 	status: 'unknown',
 	normaltimeout: 60,

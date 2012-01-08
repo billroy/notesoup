@@ -36,11 +36,6 @@ note.set({
 		[2, "notesoup.folderShow('- John F. Kennedy');"],
 		[1, "notesoup.folderShow('(1917-1963)');"],
 		[1, "notesoup.folderShow(' ');"],
-		[2, "notesoup.folderShow('Get the Fava Beans');"],
-		[2, "notesoup.folderShow('Open some Nice Chianti');"],
-		[2, "notesoup.folderShow('It\\\'s coming...');"],
-		[4, "notesoup.folderShow('liver-of-fat-banker-movie.com');"],
-		[1, "notesoup.folderShow(' ');"],
 		[1, "notesoup.folderFlash(' ');"]
 	]
 

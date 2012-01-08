@@ -59,6 +59,7 @@ notesoup.push = {
 
 	send: function(channel, msg) {
 		channel = channel || '/folder/' + notesoup.foldername;
+		msg.sender = notesoup.username;
 		if (notesoup.push.connected) notesoup.push.socket.emit(channel, msg);
 		else notesoup.say('Cannot send notification: server disconnected');
 	},

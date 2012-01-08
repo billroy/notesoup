@@ -70,7 +70,7 @@ note.set({
 		bubbles.drawPiece();
 		//bubbles.drawAnt();
 		
-		//this.snapshot();
+		this.snapshot();
 	},
 
 	snapshot: function() {

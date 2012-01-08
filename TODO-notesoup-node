@@ -1,10 +1,15 @@
 Notesoup/Node/Redis TODO list
-12/31/11 -br
+1/6/12 -br
 
 ===
 
+- bug: button, for example: reimports clobber edited text
+	(fixed.  test.)
+
+- validfolder check in folder validation path
+
 - acl errors in the API shouldn't go to accesserror
-	send failure message
+	- (done) send failure message
 	- acl failure in openfolder should navigate, though?
 	- direct navigation to an un-permitted url should get accesserror
 
@@ -31,6 +36,7 @@ ACL support
 	- need updateuser to update password
 
 - bugs: other acl checks
+	- double check the "prelogin" command roster for issues
 	- createuser/deleteuser
 	- some commands require systemuser 'us'?
 
@@ -38,6 +44,7 @@ ACL support
 widget issues
 
 - bug: flickrjson widget fails on alpha box but works here
+- bug: same fail on heroku
 	- alpha box can't nc to bitlash.net
 	- firewall problem?
 	
