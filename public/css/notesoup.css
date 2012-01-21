@@ -15,7 +15,9 @@ body {
 	font: normal 1em lucida grande, verdana, tahoma, arial, helvetica, sans-serif !important;
 }
 .notetitle {
+/*
 	font: bold 1em lucida grande, verdana, tahoma, arial, helvetica, sans-serif !important;
+*/
 	font-weight: bold;
 	text-align: center;
 }

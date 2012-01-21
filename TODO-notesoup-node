@@ -1,10 +1,18 @@
 Notesoup/Node/Redis TODO list
-1/6/12 -br
+1/20/12 -br
 
 ===
 
+- bug: change note color in commandbar and make new note.  refresh.  color is gone.
+	defaultbackgroundcolor issue.
+
 - bug: button, for example: reimports clobber edited text
 	(fixed.  test.)
+
+
+- setpassword
+	- system and guest are special
+
 
 - validfolder check in folder validation path
 

@@ -92,6 +92,7 @@ dispatch: function(req, res) {
 	this.req = req;
 	this.res = res;
 	self.res.updatelist = [];
+	self.req.starttime = new Date().getTime();
 	
 	self.log('*********************************************************************');
 	self.log('dispatching api req: ' + req.body.method);
@@ -369,8 +370,11 @@ sendreply: function() {
 		command: this.res.updatelist
 	};
 
+	this.req.endtime = new Date().getTime();
+	this.req.time = this.req.endtime - this.req.starttime;
 	this.log('Reply:');
 	this.dir(reply);
+	this.log('dt=' + this.req.time + 'ms');
 
 	this.res.send(reply);
 },
