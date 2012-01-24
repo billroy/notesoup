@@ -12,6 +12,7 @@ Notesoup/Node/Redis TODO list
 
 - setpassword
 	- system and guest are special
+	- passwd.js
 
 
 - validfolder check in folder validation path

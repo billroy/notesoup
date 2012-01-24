@@ -51,7 +51,7 @@ var crypto = require('crypto');
 var util = require('util');
 var async = require('async');
 
-NoteSoup = {
+var NoteSoup = {
 
 connect: function(redis_url) {
 
@@ -407,7 +407,7 @@ api_savenote: function() {
 },
 
 checkid: function(next) {
-	var self = this.NoteSoup;
+	var self = NoteSoup;
 
 	//console.log('Checkid: this');
 	//console.dir(this);
@@ -434,7 +434,7 @@ addupdate: function(update) {
 },
 
 savenote: function(next) {
-	var self = this.NoteSoup;
+	var self = NoteSoup;
 	var now = new Date().getTime();
 	var jsonnote = JSON.stringify(self.req.body.params.thenote);
 
@@ -907,7 +907,7 @@ loadfile: function(fromdirectory, filename, tofolder) {
 	if (note.backImage) note.backImage = note.backImage.replace('http://notesoup.net', '');
 
 	// Nuke some fields entirely
-	killfields = ['syncme','showme','feedstr','feeddata','from'];
+	var killfields = ['syncme','showme','feedstr','feeddata','from'];
 	for (var k in killfields) delete note[k];
 
 	// Map fields to new squeezenote format
@@ -916,7 +916,7 @@ loadfile: function(fromdirectory, filename, tofolder) {
 
 		note.id = id.toString();
 		//note.mtime = new Date().getTime();
-		mtime = new Date().getTime();
+		var mtime = new Date().getTime();
 		var jsonnote = JSON.stringify(note);
 
 		self.redis.multi() 

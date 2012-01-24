@@ -87,7 +87,12 @@ redis-cli flushdb
 # now run soup as usual
 
 The default system password is: frobozz88
-- todo: setpass.js
+
+# CHANGE THE SYSTEM PASSWORD
+node passwd -u system -p <newpassword>
+
+# to lock down the guest user:
+node passwd -u guest -p <newpassword>
 
 Log in as system, go to Templates, and Make Templates
 Log out

@@ -10,8 +10,8 @@
  * Module dependencies.
  */
 
-var express = require('express')
-  , routes = require('./routes');
+var express = require('express');
+var routes = require('./routes');
 
 var app = module.exports = express.createServer();
 var util = require('util');
@@ -106,7 +106,7 @@ function render_folder(req, res, user, folder) {
 	console.log('Rendering options:');
 	console.log(string_opts);
 	res.send(this_page.replace('\'{0}\'', string_opts));
-};
+}
 
 app.post('/api', function(req, res) {
 	console.log("api:session");
@@ -115,8 +115,8 @@ app.post('/api', function(req, res) {
 	soup.dispatch(req, res);	
 });
 
-url = require('url');
-http = require('http');
+var url = require('url');
+var http = require('http');
 
 app.get('/geturl', function(req, res) {
 	console.log('Geturl: ' + req.query.url);
