@@ -1,5 +1,5 @@
 Notesoup/Node/Redis TODO list
-1/20/12 -br
+1/24/12 -br
 
 ===
 
@@ -8,12 +8,6 @@ Notesoup/Node/Redis TODO list
 
 - bug: button, for example: reimports clobber edited text
 	(fixed.  test.)
-
-
-- setpassword
-	- system and guest are special
-	- passwd.js
-
 
 - validfolder check in folder validation path
 
