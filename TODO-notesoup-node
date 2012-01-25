@@ -5,12 +5,16 @@ _____       _         _____
                                        |_|  
                                        
 Notesoup/Node/Redis TODO list
-1/24/12 -br
+1/25/12 -br
 
 ===
 
-- bug: Sharing->FAC: Access Denied on the widget
-	there is no system/widgets folder
+- bug: Open Folder -> list is not populated with all folders??
+
+- bug: setup: auto-build the system templates at initdb(), please
+- bug: setup: require a new system password
+
+- bug: crash on access denied to widgets:race?
 
 - bug: change note color in commandbar and make new note.  refresh.  color is gone.
 	defaultbackgroundcolor issue.
@@ -36,7 +40,7 @@ Notesoup/Node/Redis TODO list
 ===
 ACL support
 
-- bugs: createuser
+- feat: createuser
 	- need to set up folders with permissions:
 		- inbox/senders/*
 		- public/readers/*

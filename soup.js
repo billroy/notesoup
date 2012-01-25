@@ -69,7 +69,29 @@ app.get('/status', function(req, res) {
 });
 
 app.get('/folder/:user/:folder', function(req, res) {
-	render_folder(req, res, req.params.user, req.params.folder);
+
+	console.log('Render folder ' + req.params.user + ' ' + req.params.folder);
+
+	// provision the client options	
+	// TODO: hook up real ACL
+	var opts = {
+		loggedin:	req.session.loggedin || false,
+		username:	req.session.username || 'guest',
+		foldername:	req.params.user + '/' + req.params.folder,
+		isowner:	req.session.loggedin && (req.session.username == req.params.user)
+		//iseditor:	true,
+		//isreader:	true,
+		//issender:	true,
+		//ispublic:	true
+		//initnotes:{}
+	};
+
+	// render index.html as a template with these options
+	var this_page = html_template;
+	var string_opts = JSON.stringify(opts);
+	console.log('Rendering options:');
+	console.log(string_opts);
+	res.send(this_page.replace('\'{0}\'', string_opts));
 });
 
 app.get('/json/:user/:folder', function(req, res) {
@@ -80,33 +102,6 @@ app.get('/json/:user/:folder', function(req, res) {
 	soup.res.updatelist = [];
 	soup.api_getnotes();
 });
-
-function render_folder(req, res, user, folder) {
-	console.log('Render folder ' + user + ' ' + folder);
-	//res.send(req.params.user + '/' + req.params.folder);
-	//console.dir(req.params);
-
-	// provision the client options	
-	// TODO: hook up real ACL
-	var opts = {
-		loggedin:	req.session.loggedin || false,
-		username:	req.session.username || 'guest',
-		foldername:	user + '/' + folder,
-		isowner:	true,
-		iseditor:	true,
-		isreader:	true,
-		issender:	true,
-		ispublic:	true
-	//	initnotes:{}
-	};
-
-	// render index.html as a template with these options
-	var this_page = html_template;
-	var string_opts = JSON.stringify(opts);
-	console.log('Rendering options:');
-	console.log(string_opts);
-	res.send(this_page.replace('\'{0}\'', string_opts));
-}
 
 app.post('/api', function(req, res) {
 	console.log("api:session");

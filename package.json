@@ -3,7 +3,7 @@
   "version": "0.0.2",
   "private": true, 
   "author": "Bill Roy <bill@bitlash.net>",
-  "description": "note soup: sticky notes on steroids for the web",
+  "description": "Note Soup: live, multi-user sticky note organizer and dashboard factory",
   "scripts": {
     "start": "forever start soup.js", 
     "stop": "forever stop soup.js",
