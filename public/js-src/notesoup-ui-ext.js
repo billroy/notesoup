@@ -514,6 +514,7 @@ notesoup.ui = {
 				tooltip: {text:'click to manage your folders', title:'Folder Menu'},
 				menu: this.folderMenu
 			}),
+/*****
 			new Ext.Toolbar.Separator(),
 			{
 				text: '&nbsp;&nbsp;&nbsp;&nbsp;',
@@ -527,6 +528,7 @@ notesoup.ui = {
 					}
 				}
 			}, 
+*****/
 			new Ext.Toolbar.Separator(),
 			{
 				text: '&nbsp;&nbsp;&nbsp;&nbsp;',

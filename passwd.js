@@ -24,6 +24,6 @@ var crypto = require('crypto');
 var passwordhash = crypto.createHash('sha1').update(argv.p).digest('hex');
 
 var soup = require('./notesoup.js').connect(process.env.REDIS_URL);
-soup.save_password_hash(argv.u, argv.p);
+soup.save_password_hash(argv.u, passwordhash);
 
 setTimeout(process.exit, 1000);		// should be a callback from save_hash
