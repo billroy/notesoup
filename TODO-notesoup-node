@@ -9,18 +9,16 @@ Notesoup/Node/Redis TODO list
 
 ===
 
-- bug: Open Folder -> list is not populated with all folders??
 
-- bug: setup: populate the system templates directory please
 - bug: setup: require a new system password
-
+	- problem: loaduser isn't synchronous so the password prompt is lost
+		work loaduser.
 - bug: crash on access denied to widgets:race?
 
 - bug: change note color in commandbar and make new note.  refresh.  color is gone.
 	defaultbackgroundcolor issue.
 
-- bug: button, for example: reimports clobber edited text
-	(fixed.  test.)
+- bug: Open Folder -> list is not populated with all folders??
 
 - validfolder check in folder validation path
 

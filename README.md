@@ -7,11 +7,14 @@ Note Soup is a live, multi-user sticky note organizer and dashboard factory base
 
 ### Requirements
 
-- Git from http://git-scm.com/
+- Git (http://git-scm.com)
 
-- Node.js 0.6.6 ish
+- Node.js 0.6.6+ ish
+	http://nodejs.org for doc/downloads
 	http://blog.nodejs.org/2011/12/15/node-v0-6-6/
-	http://nodejs.org/ for doc
+
+- npm
+	http://npmjs.org
 
 - A redis server, either:
 
@@ -58,36 +61,18 @@ Start the server:
 
 	$ node soup.js
 
-Browse to http://localhost:3000
+The database will auto-initialize the first time you run it.
 
-The database will auto-initialise the first time you run it.
+When asked, specify a password for the "system" user; see below for more.
+
+Browse to http://localhost:3000.
 
 Create a user account and play.
+
 Hint: Create a note by typing in the command bar at the top
 
-^C to quit
+^C to quit the server
 
-
-### About the System user
-
-The system user is the equivalent of "root" on the soup.
-
-System provides a home for the system templates (in the folder system/templates); 
-these are the templates that auto-populate the System part of the mytemplates dropdown.  
-
-The welcome and login page is configured in the system/welcome folder.  Edit this as appropriate
-for your site/project.
-
-You must be logged in as system to delete a user, and to create a user if open account creation
-is disabled.
-
-### CHANGE THE SYSTEM PASSWORD!!
-
-The default administrative username is "system" and its default password is "frobozz88"
-
-Change the password or become a security statistic!  Like this:
-
-	$ node passwd -u system -p newpassword
 
 ### Run as a daemon
 
@@ -107,6 +92,29 @@ You must manually restart upon reboot.
 	$ git pull...
 	$ forever start soup.js
 
+### About the System user
+
+The system user is the equivalent of "root" on the soup.
+
+System provides a home for the system templates (in the folder system/templates); 
+these are the templates that auto-populate the System part of the mytemplates dropdown.  
+
+The welcome and login page is configured in the system/welcome folder.  Edit this as appropriate
+for your site/project.
+
+You must be logged in as system to delete a user, and to create a user if open account creation
+is disabled.
+
+### To change the system user password
+
+The administrative username is "system".
+
+You are required to enter a system password when the database is initialized.
+
+You can change the password at any time, from the server console, like this:
+
+	$ node passwd -u system -p newpassword
+
 
 ### About the Guest User
 
@@ -116,6 +124,6 @@ in system/welcome, too.
 
 	$ node passwd -u guest -p newpassword
 
-### Change a user's password
+### To change a user's password
 
 	$ node passwd -u user -p newpassword
