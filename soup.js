@@ -1,7 +1,7 @@
 /*****
 	Note Soup server for node.js / redis
 	
-	Copyright 2011 by Bill Roy.
+	Copyright 2011-2012 by Bill Roy.
 	Licensed for use.  See LICENSE.
 
 *****/

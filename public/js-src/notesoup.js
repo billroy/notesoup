@@ -1,7 +1,7 @@
 /**
 *	notesoup.js
 *
-*	Copyright 2007, 2008 Bill Roy
+*	Copyright 2007-2012 Bill Roy
 *	This file is licensed under the Note Soup Client License
 *	See http://notesoup.net/js/LICENSE
 */

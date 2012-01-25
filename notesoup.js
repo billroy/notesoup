@@ -1,7 +1,7 @@
 /*****
 	Note Soup server for node.js / redis
 	
-	Copyright 2011 by Bill Roy.
+	Copyright 2011-2012 by Bill Roy.
 
 	Redistribution and use in source and binary forms, with or without modification, 
 	are permitted provided that the following conditions are met:
@@ -1069,10 +1069,10 @@ initdatabase: function() {
 		else {
 			self.log('Initializing database.');
 			async.series([
-					self.getsystempassword, 
-					self.setdbcreated,
 					self.loadsystemuser,
-					self.loadguestuser
+					self.loadguestuser,
+					self.getsystempassword,
+					self.setdbcreated
 				], 
 				function(err, reply) {
 					if (err) self.log(err);

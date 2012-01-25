@@ -11,7 +11,7 @@ Notesoup/Node/Redis TODO list
 
 - bug: Open Folder -> list is not populated with all folders??
 
-- bug: setup: auto-build the system templates at initdb(), please
+- bug: setup: populate the system templates directory please
 - bug: setup: require a new system password
 
 - bug: crash on access denied to widgets:race?
