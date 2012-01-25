@@ -759,10 +759,18 @@ inboxfolder: 'inbox',
 
 save_password_hash: function(user, passwordhash) {
 	var self = this;
-	self.redis.hset(self.key_usermeta(user), self.passwordattr, passwordhash, function(err, reply) {
-		self.addupdate(['say','Password saved.']);
-	});
+	self.redis.hset(self.key_usermeta(user), 
+		self.passwordattr, 
+		passwordhash, 
+		function(err, reply) {
+			if (err) self.log(err);
+			else {
+				self.log('Password updated for ' + user);
+				self.dir(reply);
+			}
+		});
 },
+
 
 key_foldermeta: function(folder) {
 	return 'fldr/' + folder;

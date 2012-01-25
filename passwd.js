@@ -25,13 +25,6 @@ var passwordhash = crypto.createHash('sha1').update(argv.p).digest('hex');
 
 var soup = require('./notesoup.js');
 soup.connect(process.env.REDIS_URL);
-soup.redis.hset(soup.key_usermeta(argv.u), 
-	soup.passwordattr, 
-	passwordhash, 
-	function(err, reply) {
-		if (err) soup.log(err);
-		else {
-			soup.log('Password updated');
-			soup.dir(reply);
-		}
-	});
+soup.save_password_hash(argv.u, argv.p);
+
+setTimeout(process.exit, 1000);		// should be a callback from save_hash

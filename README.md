@@ -63,10 +63,10 @@ Hint: Create a note by typing in the command bar at the top
 The default administrative username is "system" and its default password is "frobozz88"
 
 # CHANGE THE SYSTEM PASSWORD
-node passwd -u system -p <newpassword>
+node passwd -u system -p newpassword
 
 # to lock down the guest user:
-node passwd -u guest -p <newpassword>
+node passwd -u guest -p newpassword
 
 The system user provides a home for the system templates (in the folder system/templates); 
 these are the templates that auto-populate the System part of the mytemplates folder.  
