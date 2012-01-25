@@ -6,11 +6,10 @@
 #
 - TODO: update redis config
 	- where is the data?
-	- what changes
 
 - TODO: redis data file backup
 
-- TODO: make forever start soup.js at restart
+- TODO: make forever start soup.js at boot
 
 - TODO: production should use redis session data store
 
@@ -19,6 +18,7 @@
 INSTALL
 
 # launch an EC2 instance
+# this Ubuntu AMI works for me:
 https://console.aws.amazon.com/ec2/home?region=us-east-1#launchAmi=ami-bf62a9d6
 
 SECURITY: Ensure port 3000 inbound is open in the Security Group you launch with
@@ -44,11 +44,11 @@ curl http://npmjs.org/install.sh | sudo sh
 cd ~
 git clone ssh://talky@bitlash.net/~/notesoup-node.git
 cd notesoup-node
-node loadsoup.js
-# ^C to exit when done
 
 # run the server for a quick test
 node soup.js
+
+# specify the system user password when requested
 
 # browse to http://localhost:3000 or http://yourserver:3000
 # ^C to exit or just let it babble
@@ -86,16 +86,13 @@ redis-cli flushdb
 
 # now run soup as usual
 
-The default system password is: frobozz88
+# To change the system password:
 
-# CHANGE THE SYSTEM PASSWORD
 node passwd -u system -p <newpassword>
 
 # to lock down the guest user:
 node passwd -u guest -p <newpassword>
 
-Log in as system, go to Templates, and Make Templates
-Log out
 Log in as Guest
 Make a Clock
 	Add Menu -> Add From My Templates -> Clock

@@ -67,7 +67,7 @@ connect: function(redis_url) {
 	}
 	
 	this.redis.on("error", function (err) {
-		console.log("Redis Error " + err);
+		console.log("Redis Error: " + err);
 	});
 	
 	this.initdatabase();
@@ -102,17 +102,20 @@ dispatch: function(req, res) {
 	self.log('*********************************************************************');
 	self.dir(req.body.params);
 
-	async.series(
-		[self.validatemethod, self.loadfromacl, self.loadtoacl, 
-			self.validateaccess, self.execute],
+	async.series([
+			self.validatemethod, 
+			self.loadfromacl, 
+			self.loadtoacl, 
+			self.validateaccess, 
+			self.execute
+		],
 		function(err, reply) {
 			if (err) {
 				self.senderror(err);
 				//self.addupdate(['navigateto', '/folder/system/accesserror']);
 				//self.sendreply();
 			}
-		}
-	);
+		});
 },
 
 validatemethod: function(next) {
@@ -233,6 +236,12 @@ execute: function(next) {
 },
 
 
+// Encoded folder access requirements for command ACL checks
+//
+// ts: tofolder requires sender permission or better
+// fr: fromfolder requires reader
+// to: tofolder requires owner
+//
 acl_checklist: {
 	'savenote': 		'ts',
 	'appendtonote': 	'ts',		// should be editors?  or is this a hack?
@@ -361,6 +370,11 @@ senderror: function(errormessage) {
 		id: this.req.body.id,
 		command: []		
 	};
+
+	this.log('Error:');
+	this.dir(reply);
+	this.log('dt=' + this.req.time + 'ms');
+
 	this.res.send(reply);
 },
 
@@ -383,6 +397,14 @@ sendreply: function() {
 },
 
 
+// generic end-of-api-call result handler
+simpleReply: function(err, reply) {
+	var self = NoteSoup;
+	if (err) self.senderror(err);
+	else self.sendreply();
+},
+
+
 api_savenote: function() {
 	var self = this;
 
@@ -395,18 +417,10 @@ api_savenote: function() {
 		function(note, next) {
 			self.req.body.params.thenote = note;
 			async.series([self.checkid, self.savenote], function(err, reply) {
-				next(null);
+				next(err);
 			});
 		},
-		function(err, reply) { 
-			if (err) self.log('Savenote error: ' + err); 
-			else {
-				self.log('Savenote complete');
-				self.dir(reply);
-				self.sendreply();
-			}
-		}
-	);
+		self.simpleReply);
 },
 
 checkid: function(next) {
@@ -480,7 +494,9 @@ api_appendtonote: function() {
 	self.redis.hget(self.key_note(self.req.body.params.tofolder), 
 		self.req.body.params.noteid, function(err, notetext) {
 
-		if (notetext) {
+		if (err) self.senderror(err);
+		else if (!notetext) self.senderror('Note?');
+		else {
 			var note = JSON.parse(notetext);
 			self.log('Append: note ' + typeof(note));
 			self.dir(note);
@@ -502,13 +518,15 @@ api_sync: function() {
 	// TODO: HGETALL would save a server roundtrip here
 	if (self.req.body.params.lastupdate == 0) {
 		self.redis.hkeys(self.key_note(self.req.body.params.fromfolder), function(err, noteids) {
-			self.sync_sendupdates(noteids);
+			if (err) self.senderror(err);
+			else self.sync_sendupdates(noteids);
 		});
 	}
 	else {
 		self.redis.zrangebyscore(self.key_mtime(self.req.body.params.fromfolder), 
 			self.req.body.params.lastupdate, self.res.newlastupdate, function(err, noteids) {
-			self.sync_sendupdates(noteids);
+			if (err) self.senderror(err);
+			else self.sync_sendupdates(noteids);
 		});
 	}
 },
@@ -517,6 +535,11 @@ sync_sendupdates: function(noteids) {
 
 	var self = this;
 	self.redis.hmget(self.key_note(self.req.body.params.fromfolder), noteids, function(err, notes) {
+		if (err) {
+			self.senderror(err);
+			return;
+		}
+
 		if (notes) {
 			self.log("Syncing notes:");
 			self.dir(notes);
@@ -547,12 +570,9 @@ api_sendnote: function() {
 	async.forEachSeries(self.req.body.params.noteid,
 		function(noteid, next) {
 			self.sendnote(noteid, function(err, reply) {
-				next(null, noteid);
+				next(err);
 			});
-		},
-		function(err, reply) {
-			self.sendreply();
-		});
+		}, self.simpleReply);
 },
 
 sendnote: function(noteid, next) {
@@ -562,9 +582,10 @@ sendnote: function(noteid, next) {
 		.incr(self.key_nextid(self.req.body.params.tofolder))
 		.exec(function(err, reply) {
 
-			// Bug: crash here on Duplicate Note: note is null?!
-			self.log('Send note bulk reply: ');
-			self.dir(reply);
+			if (err) {
+				next(err);
+				return;
+			}
 
 			var note = JSON.parse(reply[0]);
 			self.log('Fetched note: ' + typeof(note));
@@ -578,6 +599,11 @@ sendnote: function(noteid, next) {
 				.zadd(self.key_mtime(self.req.body.params.tofolder), now, note.id)
 				.exec(function(err, reply) {
 
+					if (err) {
+						next(err);
+						return;
+					}
+
 					if (self.req.body.params.tofolder == self.req.body.params.notifyfolder)
 						self.addupdate(['updatenote', note]);
 
@@ -586,6 +612,11 @@ sendnote: function(noteid, next) {
 							.hdel(self.key_note(self.req.body.params.fromfolder), noteid)
 							.zrem(self.key_mtime(self.req.body.params.fromfolder), noteid)
 							.exec(function(err, reply) {
+								if (err) {
+									next(err);
+									return;
+								}
+
 								if (self.req.body.params.fromfolder == self.req.body.params.notifyfolder)
 									self.addupdate(['deletenote', noteid]);
 								next(null, noteid);
@@ -606,8 +637,12 @@ api_postevent: function() {
 getTemplates: function(folder, next) {
 	var self = this;
 	self.redis.hgetall(self.key_note(folder), function(err, jsonnotes) {
-		//self.log('getTemplates:');
-		//self.dir(jsonnotes);
+
+		if (err) {
+			next(err);
+			return;
+		}
+	
 		if (!jsonnotes) {
 			next('no notes');
 			return;
@@ -877,7 +912,7 @@ api_logout: function() {
 
 // File Import
 
-loadfile: function(fromdirectory, filename, tofolder) {
+loadfile: function(fromdirectory, filename, tofolder, next) {
 	var self = NoteSoup;
 	self.log('Loadfile: ' + filename);
 
@@ -894,15 +929,18 @@ loadfile: function(fromdirectory, filename, tofolder) {
 
 		self.redis.hset(self.key_foldermeta(tofolder), aclattrs[aclindex], filetext, 
 			function(err, reply) {
-				self.log('folder attribute set: ' + tofolder + ' ' + aclattrs[aclindex] + ' ' + filetext);
-				//nextfolder(null, foldername);
+				if (err) next(err);
+				else {
+					self.log('folder attribute set: ' + tofolder + ' ' + aclattrs[aclindex] + ' ' + filetext);
+					next(null);
+				}
 			}
 		);
 		return;
 	}
 	else if (filename.charAt(0) == '.') {
 		self.log('Skipping unhandled system file ' + filename);
-		//nextfile(null, filename);
+		next(null);
 		return;
 	}
 
@@ -939,7 +977,8 @@ loadfile: function(fromdirectory, filename, tofolder) {
 			.hset(self.key_note(tofolder), note.id, jsonnote)
 			.zadd(self.key_mtime(tofolder), mtime, note.id)
 			.exec(function (err, replies) {
-				//nextfile(null, filename);
+				if (err) next(err);
+				else next(null);
 			});
 	});
 },
@@ -977,8 +1016,11 @@ loadfolder: function(foldername, nextfolder) {
 	self.dir(files);
 	async.forEachSeries(files,
 		function(filename, nextfile) {
-			NoteSoup.loadfile(self.load.fromdirectory, filename, self.load.tofolder);
-			nextfile(null, filename);
+			NoteSoup.loadfile(self.load.fromdirectory, filename, self.load.tofolder, 
+				function(err, reply) {
+					if (err) nextfile(err);
+					else nextfile(null);
+				});
 		},
 		function(err, reply) { 
 			if (err) self.log('Loadfolder: ' + err); 
@@ -1005,7 +1047,8 @@ loaduser: function(user, next) {
 			self.load.fromdirectory = userpath + '/' + foldername;
 			self.load.tofolder = user + '/' + foldername;
 			NoteSoup.loadfolder(foldername, function(err, reply) {
-				nextfolder(null, foldername);
+				if (err) nextfolder(err);
+				else nextfolder(null, foldername);
 			});
 		},
 		function(err, reply) {

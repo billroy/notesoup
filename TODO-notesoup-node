@@ -10,9 +10,6 @@ Notesoup/Node/Redis TODO list
 ===
 
 
-- bug: setup: require a new system password
-	- problem: loaduser isn't synchronous so the password prompt is lost
-		work loaduser.
 - bug: crash on access denied to widgets:race?
 
 - bug: change note color in commandbar and make new note.  refresh.  color is gone.
@@ -20,16 +17,17 @@ Notesoup/Node/Redis TODO list
 
 - bug: Open Folder -> list is not populated with all folders??
 
-- validfolder check in folder validation path
-
 - acl errors in the API shouldn't go to accesserror
 	- (done) send failure message
 	- acl failure in openfolder should navigate, though?
 	- direct navigation to an un-permitted url should get accesserror
 
-- bug: clearing a folder permission by setting it empty fails
-	- workaround: use -*
-	
+	1. api_openfolder needs a way to control what happens on failed access?
+	2. /folder handler should call api_openfolder?
+	nope
+	/folder handler needs its own pipeline, navigates out on error
+	api_openfolder navigates out on error
+
 - client mtime handling needs review
 	- widgets use it
 	- dragdrop uses it
@@ -37,6 +35,9 @@ Notesoup/Node/Redis TODO list
 
 ===
 ACL support
+
+- bug: clearing a folder permission by setting it empty fails
+	- workaround: use -*	
 
 - feat: createuser
 	- need to set up folders with permissions:
