@@ -1,0 +1,7 @@
+{
+  "bgcolor": "#ccffcc", 
+  "height": 58, 
+  "imports": "/js-src/js-widgets/timer.js", 
+  "notename": "Timer", 
+  "width": 250 
+}

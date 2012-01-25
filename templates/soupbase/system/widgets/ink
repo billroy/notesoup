@@ -1,0 +1,7 @@
+{
+  "bgcolor": "#ccffcc", 
+  "height": 103, 
+  "imports": "/js-src/js-widgets/ink.js", 
+  "notename": "Ink", 
+  "width": 250
+}

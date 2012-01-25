@@ -109,9 +109,9 @@ soupnote.prototype.applyImports = function() {
 	}
 
 	var importNote = notesoup.getImport(this.imports);
-	notesoup.say('Import=' + notesoup.dump(importNote));
+	if (notesoup.debugmode) notesoup.say('Import=' + notesoup.dump(importNote));
 	if (importNote < 0) {
-		notesoup.say('Import spin...');
+		if (notesoup.debugmode) notesoup.say('Import spin...');
 		this.reapplyImports(200);
 	}
 	else if (!importNote) notesoup.say('Import cannot be found: ' + this.imports, 'error');
@@ -124,7 +124,7 @@ soupnote.prototype.applyImports = function() {
 			
 			// if the widget has an imports:, that's all we're interested in
 			if (importNote.imports) {
-				notesoup.say("Merging imports: " + importNote.imports);
+				if (notesoup.debugmode) notesoup.say("Merging imports: " + importNote.imports);
 				this.imports = importNote.imports;
 				this.reapplyImports(20);	// now apply what we got
 				this.save();

@@ -69,6 +69,7 @@ connect: function(redis_url) {
 	});
 	
 	this.initdatabase();
+	return this;
 },
 
 dispatch_old: function(req, res) {
@@ -1020,8 +1021,8 @@ initdatabase: function() {
 			self.log('Initializing database: ' + now);
 			self.redis.set(self.key_dbcreated(), now, function(err, worked) {			
 				self.loaduser('system');
-				//self.loaduser('widgets');
 				self.loaduser('guest');
+				//self.loaduser('widgets');
 			});
 		}
 	});

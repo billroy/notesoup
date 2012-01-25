@@ -1,0 +1,7 @@
+{
+  "bgcolor": "#ccffcc", 
+  "height": 55, 
+  "imports": "/js-src/js-widgets/clock.js", 
+  "notename": "Clock", 
+  "width": 100
+}

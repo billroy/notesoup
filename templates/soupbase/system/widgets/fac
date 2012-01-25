@@ -1,0 +1,7 @@
+{
+  "bgcolor": "#ccffcc", 
+  "height": 328, 
+  "imports": "/js-src/js-widgets/folderacl.js", 
+  "notename": "Folder Access Control", 
+  "width": 250
+}

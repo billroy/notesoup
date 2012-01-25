@@ -1,13 +1,13 @@
 /*****
 	password.js: Password Utility for Note Soup server for node.js / redis
 
-	Copyright 2011 by Bill Roy.  See LICENSE.
+	Copyright 2012 by Bill Roy.  See LICENSE. 
 
 	Usage:
 	$ node passwd -u system -p <new pass>
 
 	todo: verify user exists first / create user
-	todo: generate password
+	feat: auto generate memorable password
 	todo: invalidate logged-in sessions of the changed user
 
 ***/
@@ -23,8 +23,7 @@ var argv = require('optimist')
 var crypto = require('crypto');
 var passwordhash = crypto.createHash('sha1').update(argv.p).digest('hex');
 
-var soup = require('./notesoup.js');
-soup.connect(process.env.REDIS_URL);
+var soup = require('./notesoup.js').connect(process.env.REDIS_URL);
 soup.save_password_hash(argv.u, argv.p);
 
 setTimeout(process.exit, 1000);		// should be a callback from save_hash

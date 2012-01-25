@@ -9,6 +9,9 @@ Notesoup/Node/Redis TODO list
 
 ===
 
+- bug: Sharing->FAC: Access Denied on the widget
+	there is no system/widgets folder
+
 - bug: change note color in commandbar and make new note.  refresh.  color is gone.
 	defaultbackgroundcolor issue.
 
