@@ -83,11 +83,11 @@ is disabled.
 
 ### CHANGE THE SYSTEM PASSWORD!!
 
-	$ node passwd -u system -p newpassword
-
 The default administrative username is "system" and its default password is "frobozz88"
 
-Change the password or become a security statistic!
+Change the password or become a security statistic!  Like this:
+
+	$ node passwd -u system -p newpassword
 
 ### Run as a daemon
 

@@ -50,6 +50,8 @@ var fs = require('fs');
 var crypto = require('crypto');
 var util = require('util');
 var async = require('async');
+var rl = require('readline');
+
 
 var NoteSoup = {
 
@@ -751,25 +753,30 @@ passwordattr: 'password',
 
 api_createuser: function() {
 	this.initsessiondata();
-	this.save_password_hash(this.req.body.params.username, this.req.body.params.password);
-	this.navigatehome();
-	this.sendreply();
+	this.save_password_hash(this.req.body.params.username, this.req.body.params.password, 
+		function(err, reply) {
+			this.navigatehome();
+			this.sendreply();
+		}
+	);
 },
 
 inboxfolder: 'inbox',
 
-save_password_hash: function(user, passwordhash) {
+save_password_hash: function(user, passwordhash, next) {
 	var self = this;
 	self.redis.hset(self.key_usermeta(user), 
 		self.passwordattr, 
 		passwordhash, 
 		function(err, reply) {
-			if (err) self.log(err);
+			if (err) next(err);
 			else {
 				self.log('Password updated for ' + user);
 				self.dir(reply);
+				next(null);
 			}
-		});
+		}
+	);
 },
 
 
@@ -984,7 +991,7 @@ loadfolder: function(foldername, nextfolder) {
 	);
 },
 
-loaduser: function(user) {
+loaduser: function(user, next) {
 	var self = this;
 	self.load = {};
 	var userpath = __dirname + '/templates/soupbase/' + user;
@@ -1004,9 +1011,52 @@ loaduser: function(user) {
 		function(err, reply) {
 			self.log('Loaduser complete.');
 			self.dir(reply);
+			next(null);
 		}
 	);
 },
+
+
+// pipeline for initdb
+
+getsystempassword: function(next) {
+	var self = NoteSoup;
+	var i = rl.createInterface(process.stdin, process.stdout, null);
+	i.question('Enter a password for the "system" user:', function(password) {
+		i.question('Enter it again:', function(password2) {
+			if (password != password2) {
+				self.log('Passwords do not match.  Please try again.');
+				process.exit(1);
+			}
+
+			var passwordhash = crypto.createHash('sha1').update(password).digest('hex');
+	
+			self.log('Password hash: ' + passwordhash);
+			self.save_password_hash(self.systemuser, passwordhash, 
+				function(err, reply) {
+	
+					// per recipe from nodejs readline doc
+					i.close();
+					process.stdin.destroy();
+					next(null);
+				}
+			);
+
+		});
+	});
+},
+
+setdbcreated: function(next) {
+	var self = NoteSoup;
+	var now = new Date().getTime();
+	self.redis.set(self.key_dbcreated(), now, function(err, worked) {
+		if (err) next(err);
+		else next(null);
+	});
+},
+
+loadsystemuser: function(next) { NoteSoup.loaduser('system', next); },
+loadguestuser: function(next) { NoteSoup.loaduser('guest', next); },
 
 key_dbcreated: function() { return 'stats/db_created'; },
 
@@ -1017,13 +1067,18 @@ initdatabase: function() {
 		if (err) self.log('Error checking database.');
 		else if (created) self.log('Using database created ' + created);
 		else {
-			var now = new Date();
-			self.log('Initializing database: ' + now);
-			self.redis.set(self.key_dbcreated(), now, function(err, worked) {			
-				self.loaduser('system');
-				self.loaduser('guest');
-				//self.loaduser('widgets');
-			});
+			self.log('Initializing database.');
+			async.series([
+					self.getsystempassword, 
+					self.setdbcreated,
+					self.loadsystemuser,
+					self.loadguestuser
+				], 
+				function(err, reply) {
+					if (err) self.log(err);
+					else self.log('Database initialization complete.');
+				}
+			);
 		}
 	});
 }
