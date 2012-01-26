@@ -8,6 +8,8 @@ Notesoup/Node/Redis TODO list
 1/26/12 -br
 
 ===
+- bug: createuser should check / not overwrite existing user unless systemuser
+	- need api_updateuser to update password
 
 ===
 Elvis?
@@ -18,15 +20,12 @@ Elvis?
 ===
 ACL support
 
-- feat: createuser
+- feat: createuser from skeleton
 	- need to set up folders with permissions:
 		- inbox/senders/*
 		- public/readers/*
 		- trash/
 	- need initial folder content
-
-- bug: createuser should not overwrite existing user unless systemuser
-	- need api_updateuser to update password
 
 - bugs: other acl checks
 	- double check the "prelogin" command roster for issues

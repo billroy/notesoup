@@ -901,15 +901,38 @@ passwordattr: 'password',
 
 api_createuser: function() {
 	var self = this;
+	async.series([
+			self.checksignup,
+			self.checkuserexists,
+			self.inituser
+		],
+		function(err, reply) {
+			if (err) self.senderror(err);
+		});
+},
 
+checksignup: function(next) {
+	var self = NoteSoup;
 	if (!self.opensignup &&
 		(!self.req.session.loggedin || (self.effectiveuser() != self.systemuser))) {
-		self.senderror('Signups are closed.  Please contact the system administrator to create a new user.');
-		return;
+		next('Signups are closed.  Please contact the system administrator to create a new user.');
 	}
+	else next(null);
+},
 
+checkuserexists: function(next) {
+	var self = NoteSoup;
+	self.redis.hget(self.key_usermeta(self.req.body.params.username), 
+		self.passwordattr, function(err, passwordhash) {
+			if (err) next(null);	// error-> no password saved -> no user -> ok to create
+			else next('That name is not available.');	// no error-> name taken
+		});
+},
+
+inituser: function(next) {
+	var self = NoteSoup;
 	self.initsessiondata();
-	self.save_password_hash(this.req.body.params.username, this.req.body.params.password, 
+	self.save_password_hash(self.req.body.params.username, self.req.body.params.password, 
 		function(err, reply) {
 			if (err) self.senderror(err);
 			else {
@@ -960,18 +983,15 @@ api_getfolderacl: function() {
 api_setfolderacl: function() {
 	var self = this;
 	var acl = {};
-	async.forEachSeries(
-		['readers','senders', 'editors', 'password'],
-		function(fieldname, next) {
+	['readers','senders', 'editors', 'password'].forEach(
+		function(fieldname, index) {
 			if (self.req.body.params.hasOwnProperty(fieldname)) {
 				acl[fieldname] = self.req.body.params[fieldname];
 			}
-			next(null);
-		},
-		function(err, reply) {
-			self.log("SetACL " + self.req.body.params.tofolder);
-			self.dir(acl);
 		});
+
+	self.log("SetACL " + self.req.body.params.tofolder);
+	self.dir(acl);
 
 	self.redis.hmset(self.key_foldermeta(self.req.body.params.tofolder), acl, function(err, reply) {
 		if (err) self.senderror(err);
