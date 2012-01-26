@@ -8,36 +8,6 @@ Notesoup/Node/Redis TODO list
 1/26/12 -br
 
 ===
-- bug: Make Folder Private is broken 
-
-*********************************************************************
-dispatching api req: setfolderacl
-*********************************************************************
-{ tofolder: 'guest/inbox',
-  readers: '',
-  lastupdate: '1327584781022' }
-loadfolderacl: fromfolder undefined
-no arg fromfolder
-loadfolderacl: tofolder guest/inbox
-Loadfolderacl: tofolder guest/inbox
-loadfolderacl: 
-{ 'guest/inbox': { senders: '*', readers: '*' } }
-aclcheck: to
-validateaccess: folder guest/inbox owners
-hasAccess: guest guest/inbox owners true
-Access granted.
-SetACL guest/inbox
-{}
-Error:
-{ result: '',
-  error: [Error: ERR wrong number of arguments for 'hmset' command],
-  id: 8,
-  command: [] }
-
-same bug as:
-
-- bug: clearing a folder permission by setting it empty fails
-	- workaround: use -*	
 
 ===
 Elvis?

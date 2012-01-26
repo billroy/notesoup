@@ -20,11 +20,7 @@ Note Soup is a live, multi-user sticky note organizer and dashboard factory base
 
 	- Redis server running on the server host
 		See http://redis.io/ for download/install instructions
-		Start a local server:
-		$ redis_server
-
 	-or-
-
 	- Remote redis server (http://redistogo.com, for example)
 		Start a server and copy the server URL from the config page for REDIS_URL
 		
@@ -33,17 +29,22 @@ Note Soup is a live, multi-user sticky note organizer and dashboard factory base
 
 Below are generic install instructions tested on OS X and several flavors of Linux.
 
-See also INSTALL-EC2 for a bare Ubuntu machine buildout.
-
-See also INSTALL-Heroku for an easy push-to-Heroku install.
+- See also INSTALL-EC2 for a bare Ubuntu machine buildout.
+- See also INSTALL-Heroku for an easy push-to-Heroku install.
 
 
 ### Generic Install Instructions
 
-Clone the project:
+Get notesoup using git:
 
 	$ git clone https://github.com/billroy/notesoup.git
 	$ cd notesoup
+
+Alternatively, download the .zip file and unpack it somewhere.
+
+### Redis configuration
+
+#### Remote redis
 
 If you are using a remote redis server, you must first set the environment variable REDIS_URL:
 
@@ -52,7 +53,18 @@ If you are using a remote redis server, you must first set the environment varia
 	$ REDISTOGO_URL='redis://user:auth@hostname:port'
 	$ export REDISTOGO_URL
 
+#### Local redis (common case)
+
 If REDIS_URL is not provided the server will connect to Redis on the default localhost:6379.
+
+To make sure your redis server is running:
+
+	$ redis-cli info
+
+To start a local redis server:
+
+	$ redis-server
+
 
 
 ### Test Run
@@ -89,7 +101,7 @@ You must manually restart upon reboot.
 
 	$ cd (wherever notesoup is)
 	$ forever stop soup.js
-	$ git pull...
+	$ git pull
 	$ forever start soup.js
 
 ### About the System user
