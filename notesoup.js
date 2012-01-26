@@ -340,15 +340,15 @@ acl_checklist: {
 },
 
 
-// characters valid in user and folder names
-validchars: /[^A-z0-9\-._]/g,
+// test for characters invalid in user and folder names
+invalidchars: /[^A-z0-9\-._]/g,
 
 isvalidfoldername: function(foldername) {
 	var self = NoteSoup;
 	var parts = foldername.split('/');
 	if (parts.length != 2) return false;
-	if (self.validchars.test(parts[0])) return false;
-	if (self.validchars.test(parts[1])) return false;
+	if (self.invalidchars.test(parts[0])) return false;
+	if (self.invalidchars.test(parts[1])) return false;
 	return true;
 },
 
@@ -931,7 +931,7 @@ checksignup: function(next) {
 
 validateusername: function(next) {
 	var self = NoteSoup;
-	if (self.validchars.test(self.req.body.params.username)) next('Invalid character.');
+	if (self.invalidchars.test(self.req.body.params.username)) next('Invalid character.');
 	else next(null);
 },
 
