@@ -105,8 +105,6 @@ Folder management
 
 API buildout 
 
-- BUG: there is no error handling
-
 - bug: unimplemented API:
 	if method == 'getfeed': return apigetfeed(params)
 	if method == 'getnote': return apigetnote(params)
@@ -127,7 +125,7 @@ API buildout
 ===
 Production 
 
-- alpha server on http://alpha.notesoup.net:3000
+- alpha server
 	- todo: run nodejs at boot time
 	- todo: server logs???
 	- todo: backup .db
@@ -179,14 +177,13 @@ Feature candidates
 
 Note Content and Import/Export
 
-- BUG: node load.js and loadsoup.js don't terminate properly
-
 - guest user: content in template/soupbase/guest
 	- welcome/help
 	- feat: auto-refresh every 15 minutes
 
 - new user: content to copy in template/soupbase/newuser
 	- folder permissions
+
 ===
 note slinging
 

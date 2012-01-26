@@ -51,6 +51,7 @@ var crypto = require('crypto');
 var util = require('util');
 var async = require('async');
 var rl = require('readline');
+var fs = require('fs');
 
 
 var NoteSoup = {
@@ -93,21 +94,41 @@ connect: function(redis_url) {
 	return this;
 },
 
-dispatch_old: function(req, res) {
-	res.updatelist = [];
-	this.req = req;
-	this.res = res;
-	if (typeof(this['api_' + req.body.method]) != "function") {
-		this.log("No method for request: ");
-		this.dir(req.body);
-		this.senderror("The server does not know how to " + req.body.method);
-		return 0;
-	}
-	this.log("api req: " + req.body.method);
-	//this.dir(req.body.params);
-	this['api_'+req.body.method](req, res);
-	return 1;
+workspace_template: null,
+
+load_workspace_template: function() {
+	var self = this;
+	self.workspace_template = fs.readFileSync(__dirname + '/templates/index.html', 'utf-8');
 },
+
+renderworkspace: function(req, res) {
+	var self = this;
+	console.log('Render folder ' + req.params.user + ' ' + req.params.folder);
+
+	// provision the client options	
+	// TODO: hook up real ACL
+	var opts = {
+		loggedin:	req.session.loggedin || false,
+		username:	req.session.username || 'guest',
+		foldername:	req.params.user + '/' + req.params.folder,
+		isowner:	req.session.loggedin && (req.session.username == req.params.user)
+		//iseditor:	true,
+		//isreader:	true,
+		//issender:	true,
+		//ispublic:	true
+		//initnotes:{}
+	};
+
+	// render index.html as a template with these options
+	if (!self.workspace_template) self.load_workspace_template();
+	var this_page = self.workspace_template;
+
+	var string_opts = JSON.stringify(opts);
+	console.log('Rendering options:');
+	console.log(string_opts);
+	res.send(this_page.replace('\'{0}\'', string_opts));
+},
+
 
 dispatch: function(req, res) {
 	var self = this;
