@@ -924,19 +924,22 @@ checkuserexists: function(next) {
 	var self = NoteSoup;
 	self.redis.hget(self.key_usermeta(self.req.body.params.username), 
 		self.passwordattr, function(err, passwordhash) {
-			if (err) next(null);	// error-> no password saved -> no user -> ok to create
-			else next('That name is not available.');	// no error-> name taken
+			if (err || passwordhash) next('That name is not available.');
+			else next(null);
 		});
 },
 
 inituser: function(next) {
 	var self = NoteSoup;
-	self.initsessiondata();
 	self.save_password_hash(self.req.body.params.username, self.req.body.params.password, 
 		function(err, reply) {
 			if (err) self.senderror(err);
 			else {
-				self.navigatehome();
+				// if it's not admin creating a new user we log in and go there
+				if (self.effectiveuser() != self.systemuser) {
+					self.initsessiondata();
+					self.navigatehome();
+				}
 				self.sendreply();
 			}
 		}
