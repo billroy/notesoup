@@ -55,6 +55,8 @@ var rl = require('readline');
 
 var NoteSoup = {
 
+enablePush: false,
+
 connect: function(redis_url) {
 
 	if (redis_url) {
@@ -69,8 +71,25 @@ connect: function(redis_url) {
 	this.redis.on("error", function (err) {
 		console.log("Redis Error: " + err);
 	});
-	
+
 	this.initdatabase();
+
+	// init socket.io
+	if (this.enablePush) {
+		this.io = require('socket.io').listen(this.app);
+		this.io.sockets.on('connection', function(socket) {
+			console.log('Socket connection accepted.');
+			//console.log(util.inspect(socket, 3));
+			socket.on('subscribe', function(request) {
+				console.log('Subscription request:');
+				console.dir(request);
+				socket.on(request.channel, function(msg) {
+					this.io.sockets.emit(request.channel, msg);
+				});
+			});
+		});
+	}
+
 	return this;
 },
 
@@ -515,44 +534,56 @@ api_sync: function() {
 	var self = this;
 	self.res.newlastupdate = new Date().getTime();
 
-	// TODO: HGETALL would save a server roundtrip here
 	if (self.req.body.params.lastupdate == 0) {
-		self.redis.hkeys(self.key_note(self.req.body.params.fromfolder), function(err, noteids) {
-			if (err) self.senderror(err);
-			else self.sync_sendupdates(noteids);
+		self.redis.hgetall(self.key_note(self.req.body.params.fromfolder), function(err, notes) {
+			if (err) {
+				self.senderror(err);
+				return;
+			}
+			self.log('First sync:');
+			self.dir(notes);
+			self.addupdate(['beginupdate','']);
+			for (var id in notes) {
+				var note = JSON.parse(notes[id]);
+				self.addupdate(['updatenote', note]);
+			}
+			self.addupdate(['endupdate','']);
+			self.addupdate(['setupdatetime', self.res.newlastupdate.toString()]);
+			self.sendreply();
 		});
 	}
 	else {
 		self.redis.zrangebyscore(self.key_mtime(self.req.body.params.fromfolder), 
 			self.req.body.params.lastupdate, self.res.newlastupdate, function(err, noteids) {
-			if (err) self.senderror(err);
-			else self.sync_sendupdates(noteids);
+				if (err) {
+					self.senderror(err);
+					return;
+				}
+				if (!noteids.length) {
+					self.addupdate(['setupdatetime', self.res.newlastupdate.toString()]);
+					self.sendreply();
+					return;
+				}
+				self.redis.hmget(self.key_note(self.req.body.params.fromfolder), noteids, function(err, notes) {
+					if (err) {
+						self.senderror(err);
+						return;
+					}
+					self.log('Syncing updated notes:');
+					self.dir(notes);
+					if (notes) {
+						self.addupdate(['beginupdate','']);
+						for (var i=0; i<notes.length; i++) {
+							var note = JSON.parse(notes[i]);
+							self.addupdate(['updatenote', note]);
+						}
+						self.addupdate(['endupdate','']);
+					}
+					self.addupdate(['setupdatetime', self.res.newlastupdate.toString()]);
+					self.sendreply();
+				});
 		});
 	}
-},
-
-sync_sendupdates: function(noteids) {
-
-	var self = this;
-	self.redis.hmget(self.key_note(self.req.body.params.fromfolder), noteids, function(err, notes) {
-		if (err) {
-			self.senderror(err);
-			return;
-		}
-
-		if (notes) {
-			self.log("Syncing notes:");
-			self.dir(notes);
-			self.addupdate(['beginupdate','']);
-			for (var i=0; i<notes.length; i++) {
-				var note = JSON.parse(notes[i]);
-				self.addupdate(['updatenote', note]);
-			}
-			self.addupdate(['endupdate','']);
-		}
-		self.addupdate(['setupdatetime', self.res.newlastupdate.toString()]);
-		self.sendreply();
-	});
 },
 
 api_sendnote: function() {
@@ -1091,7 +1122,7 @@ getsystempassword: function(next) {
 
 setdbcreated: function(next) {
 	var self = NoteSoup;
-	var now = new Date().getTime();
+	var now = new Date();
 	self.redis.set(self.key_dbcreated(), now, function(err, worked) {
 		if (err) next(err);
 		else next(null);

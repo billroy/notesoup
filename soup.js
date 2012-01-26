@@ -17,20 +17,8 @@ var app = module.exports = express.createServer();
 var util = require('util');
 
 var soup = require('./notesoup.js');
+soup.app = app;
 soup.connect(process.env.REDISTOGO_URL);
-
-soup.io = require('socket.io').listen(app);
-soup.io.sockets.on('connection', function(socket) {
-	console.log('Socket connection accepted.');
-	console.log(util.inspect(socket, 3));
-	socket.on('subscribe', function(request) {
-		console.log('Subscription request:');
-		console.dir(request);
-		socket.on(request.channel, function(msg) {
-			soup.io.sockets.emit(request.channel, msg);
-		});
-	});
-});
 
 var fs = require("fs");
 var html_template = fs.readFileSync(__dirname + '/templates/index.html', 'utf-8');
