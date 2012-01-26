@@ -102,16 +102,37 @@ load_workspace_template: function() {
 },
 
 renderworkspace: function(req, res) {
-	var self = this;
+	var self = NoteSoup;
 	console.log('Render folder ' + req.params.user + ' ' + req.params.folder);
+
+	// marshall like an api call so we can use the API's ACL-check pipeline handlers
+	self.req = req;
+	self.res = res;
+	self.req.body.method = 'openfolder';
+	if (!self.req.body.params) self.req.body.params = {};
+	self.req.body.params.fromfolder = req.params.user + '/' + req.params.folder;
+
+	async.series([
+			self.loadfromacl, 
+			self.validateaccess,
+			self.sendworkspace
+		],
+		function(err, reply) {
+			if (err) self.senderror(err);
+		});
+},
+
+
+sendworkspace: function(next) {
+	var self = NoteSoup;
 
 	// provision the client options	
 	// TODO: hook up real ACL
 	var opts = {
-		loggedin:	req.session.loggedin || false,
-		username:	req.session.username || 'guest',
-		foldername:	req.params.user + '/' + req.params.folder,
-		isowner:	req.session.loggedin && (req.session.username == req.params.user)
+		loggedin:	self.req.session.loggedin || false,
+		username:	self.req.session.username || 'guest',
+		foldername:	self.req.params.user + '/' + self.req.params.folder,
+		isowner:	self.req.session.loggedin && (self.req.session.username == self.req.params.user)
 		//iseditor:	true,
 		//isreader:	true,
 		//issender:	true,
@@ -126,7 +147,8 @@ renderworkspace: function(req, res) {
 	var string_opts = JSON.stringify(opts);
 	console.log('Rendering options:');
 	console.log(string_opts);
-	res.send(this_page.replace('\'{0}\'', string_opts));
+	self.res.send(this_page.replace('\'{0}\'', string_opts));
+	next(null);
 },
 
 
