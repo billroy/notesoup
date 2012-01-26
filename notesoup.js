@@ -339,8 +339,16 @@ acl_checklist: {
 	'setfolderacl': 	'to'
 },
 
+
+// characters valid in user and folder names
+validchars: /[^A-z0-9\-._]/g,
+
 isvalidfoldername: function(foldername) {
-	if (foldername.split('/').length != 2) return false;
+	var self = NoteSoup;
+	var parts = foldername.split('/');
+	if (parts.length != 2) return false;
+	if (self.validchars.test(parts[0])) return false;
+	if (self.validchars.test(parts[1])) return false;
 	return true;
 },
 
@@ -903,6 +911,7 @@ api_createuser: function() {
 	var self = this;
 	async.series([
 			self.checksignup,
+			self.validateusername,
 			self.checkuserexists,
 			self.inituser
 		],
@@ -917,6 +926,12 @@ checksignup: function(next) {
 		(!self.req.session.loggedin || (self.effectiveuser() != self.systemuser))) {
 		next('Signups are closed.  Please contact the system administrator to create a new user.');
 	}
+	else next(null);
+},
+
+validateusername: function(next) {
+	var self = NoteSoup;
+	if (self.validchars.test(self.req.body.params.username)) next('Invalid character.');
 	else next(null);
 },
 

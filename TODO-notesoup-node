@@ -8,8 +8,7 @@ Notesoup/Node/Redis TODO list
 1/26/12 -br
 
 ===
-- bug: createuser should check / not overwrite existing user unless systemuser
-	- need api_updateuser to update password
+
 
 ===
 Elvis?
@@ -29,8 +28,8 @@ ACL support
 
 - bugs: other acl checks
 	- double check the "prelogin" command roster for issues
-	- createuser/deleteuser
-	- some commands require systemuser 'us'?
+	- deleteuser
+	- some commands require systemuser 'us'? (or special privs like opensignup)
 	-  *** no acl check for api: knockknock
 	- *** no acl check for api: createuser
 
@@ -39,12 +38,16 @@ Notification plumbing issues
 
 - bug: note color change doesn't go on notify bus, waits for sync instead
 	- notify plumbing (tofolder...)
+====
+Sessions
 
 - bug: need better handling for expired sessions
 	- server restart kills sessions 
 	- they can time out anyway
 	- client thinks it's logged in
 	- ...
+
+- test the redis session store
 
 ===
 widget issues
@@ -88,13 +91,10 @@ http://api.flickr.com/services/feeds/photos_public.gne?tags=sunset&format=json
 	html5 div hack
 
 ===
-
 - client mtime handling needs review
 	- widgets use it
 	- dragdrop uses it
 	- updatenote uses it
-
-
 ===
 Folder management
 
