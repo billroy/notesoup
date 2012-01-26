@@ -56,7 +56,13 @@ var fs = require('fs');
 
 var NoteSoup = {
 
-enablePush: true,
+// Server configuration
+//
+opensignup: true,		// when true, anyone, not just 'system', can add a user
+enablepush: true,		// true to enable the interworkspace transporter
+locked:		false,		// true to disable all access to the soup
+wideopen:	false,		// true to disable all access control
+
 
 connect: function(redis_url) {
 	var self = this;
@@ -76,7 +82,7 @@ connect: function(redis_url) {
 	self.initdatabase();
 
 	// init socket.io
-	if (self.enablePush) {
+	if (self.enablepush) {
 		self.io = require('socket.io').listen(self.app);
 		self.io.sockets.on('connection', function(socket) {
 			console.log('Socket connection accepted.');
@@ -104,6 +110,11 @@ load_workspace_template: function() {
 renderworkspace: function(req, res) {
 	var self = NoteSoup;
 	console.log('Render folder ' + req.params.user + ' ' + req.params.folder);
+
+	if (self.locked) {
+		res.redirect('Service unavailable.  Please try again later.', 503);
+		return;
+	}
 
 	// marshall like an api call so we can use the API's ACL-check pipeline handlers
 	self.req = req;
@@ -249,9 +260,14 @@ loadfolderacl: function(fieldname, next) {
 validateaccess: function(next) {
 	var self = NoteSoup;
 
-	//next(null, 'Everybody has root!');		// enable this for wide-open soup
-	//next('No soup for you');				// enable this for closed soup
-	//return;
+	if (self.wideopen) {
+		next(null, 'Everybody has root!');
+		return;
+	}
+	if (self.locked) {
+		next('System locked.');
+		return;
+	}
 
 	var aclcheck = self.acl_checklist[self.req.body.method];
 	if (!aclcheck) {
@@ -885,6 +901,13 @@ passwordattr: 'password',
 
 api_createuser: function() {
 	var self = this;
+
+	if (!self.opensignup &&
+		(!self.req.session.loggedin || (self.effectiveuser() != self.systemuser))) {
+		self.senderror('Signups are closed.  Please contact the system administrator to create a new user.');
+		return;
+	}
+
 	self.initsessiondata();
 	self.save_password_hash(this.req.body.params.username, this.req.body.params.password, 
 		function(err, reply) {

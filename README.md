@@ -19,8 +19,19 @@ Note Soup is a live, multi-user sticky note organizer and dashboard factory base
 - A redis server, either:
 
 	- Redis server running on your local host or server
-		- This is the most common case
-		- Download and [install redis for your platform](http://redis.io/)
+		- This is the most tractable and common case
+		- On OS X: you must first install XCode from the App Store
+		- Download and [install redis for your platform](http://redis.io/download)
+			- On OS X: note that wget is not installed by default (oy)
+				- download with your browser, or...
+				- use curl instead of wget (and substitute the latest redis version):
+~~~
+	$ curl -o redis.tgz http:////redis.googlecode.com/files/redis-2.4.6.tar.gz
+	$ tar xzf redis.tgz
+	$ cd redis-2.4.6
+	$ make
+	$ redis-server
+~~~
 	-or-
 	- Third party remote redis server, 
 		- For example, [RedisToGo provides free 5MB servers](http://redistogo.com)

@@ -25,8 +25,7 @@ ACL support
 		- trash/
 	- need initial folder content
 
-- bug: createuser should require systemuser OR opensignup
-	- bug: should not overwrite existing user unless systemuser
+- bug: createuser should not overwrite existing user unless systemuser
 	- need api_updateuser to update password
 
 - bugs: other acl checks
@@ -34,6 +33,7 @@ ACL support
 	- createuser/deleteuser
 	- some commands require systemuser 'us'?
 	-  *** no acl check for api: knockknock
+	- *** no acl check for api: createuser
 
 ===
 Notification plumbing issues

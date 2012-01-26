@@ -35,15 +35,29 @@ ssh -i ~/.ssh/notesoup.pem ubuntu@ec2-67-202-59-193.compute-1.amazonaws.com
 
 sudo apt-get update
 sudo apt-get upgrade
-sudo apt-get install git nodejs redis-server g++
+sudo apt-get install git redis-server g++ curl libssl-dev sshd
 
-# NPM via apt-get is too old - 0.2.19 - let's install clean 1.0.106
+# Build node.js from source
+# Download and unpack the latest nodejs source from http://nodejs.org
+$ cd (where you unpacked nodejs)
+$ ./configure
+$ make
+$ sudo make install
+
+# Build redis from source (recommended even though we install it above)
+# Download and unpack the latest redis source
+$ cd (where you unpacked redis)
+$ make
+$ sudo make install
+
+# NPM via apt-get is too old - 0.2.19 - let's install clean/latest (>=1.0.106)
 curl http://npmjs.org/install.sh | sudo sh
 
 # install note soup
 cd ~
 git clone ssh://talky@bitlash.net/~/notesoup-node.git
 cd notesoup-node
+npm install
 
 # run the server for a quick test
 node soup.js
@@ -55,11 +69,11 @@ node soup.js
 
 # install 'forever' to run the server ...needs C compiler, see above
 #apt-get install g++
-#apt-get install g++
-sudo npm install -g forever
+#
+sudo npm install forever -g
 
 # run the server until reboot and dump logs to ~/.forever:
-forever start -o out.log -e err.log -l forever.log soup.js
+forever daemon soup.js
 
 - Give the server a name like "alpha.notesoup.net"
 	- sign in to DNS provider
