@@ -9,29 +9,24 @@ Notesoup/Node/Redis TODO list
 
 ===
 
+- acl errors in the API shouldn't go to accesserror
+	- (done) send failure message
+	- direct navigation to an un-permitted url should get accesserror
 
-- bug: crash on access denied to widgets:race?
+	/folder handler needs to move to notesoup.js
+	/folder handler needs its own pipeline, navigates out on error
+	api_openfolder navigates out on error
 
 - bug: change note color in commandbar and make new note.  refresh.  color is gone.
 	defaultbackgroundcolor issue.
-
-- bug: Open Folder -> list is not populated with all folders??
-
-- acl errors in the API shouldn't go to accesserror
-	- (done) send failure message
-	- acl failure in openfolder should navigate, though?
-	- direct navigation to an un-permitted url should get accesserror
-
-	1. api_openfolder needs a way to control what happens on failed access?
-	2. /folder handler should call api_openfolder?
-	nope
-	/folder handler needs its own pipeline, navigates out on error
-	api_openfolder navigates out on error
 
 - client mtime handling needs review
 	- widgets use it
 	- dragdrop uses it
 	- updatenote uses it
+
+- bug: Open Folder -> list is not populated with all folders??
+- bug: crash on access denied to widgets:race?
 
 ===
 ACL support

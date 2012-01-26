@@ -453,12 +453,13 @@ checkid: function(next) {
 
 	if (!self.req.body.params.thenote.id) {
 		self.redis.incr(self.key_nextid(self.req.body.params.tofolder), function(err, id) {
+			if (err) next(err);
 			self.req.body.params.thenote.id = id.toString();
 			next(null, 1);
 		});
 	}
 	else next(null, 2);
-	self.log('Leaving checkid');
+	//self.log('Leaving checkid');
 },
 
 addupdate: function(update) {
@@ -716,15 +717,20 @@ api_gettemplatelist: function() {
 api_getnotes: function() {
 	var self = this;
 	self.redis.hgetall(self.key_note(self.req.body.params.fromfolder), function(err, jsonnotes) {
-		if (!jsonnotes) return;
-		//self.log("Got notes from " + req.body.params.fromfolder);
-		//self.dir(json_notes);
-		var parsed_notes = {};
-		for (var n in jsonnotes) {
-			var note = JSON.parse(jsonnotes[n]);
-			parsed_notes[note.id] = note;
-		}	
-		self.addupdate(['notes', parsed_notes]);
+		if (err) {
+			self.senderror(err);
+			return;
+		}
+		else if (jsonnotes) {
+			//self.log("Got notes from " + req.body.params.fromfolder);
+			//self.dir(json_notes);
+			var parsed_notes = {};
+			for (var n in jsonnotes) {
+				var note = JSON.parse(jsonnotes[n]);
+				parsed_notes[note.id] = note;
+			}	
+			self.addupdate(['notes', parsed_notes]);
+		}
 		self.sendreply();
 	});
 },
@@ -736,12 +742,18 @@ key_folderquery: function(user) {
 api_getfolderlist: function() {
 	var self = this;
 	self.redis.keys(self.key_folderquery(self.effectiveuser()), function(err, keylist) {
-		var folderlist = [];
-		keylist.forEach(function(key) {
-			folderlist.push(key.substr(6));	// prune off 'notes/'
-		});
-		folderlist.sort();
-		self.addupdate(['folderlist', folderlist]);
+		if (err) {
+			self.senderror(err);
+			return;
+		}
+		if (keylist.length) {
+			var folderlist = [];
+			keylist.forEach(function(key) {
+				folderlist.push(key.substr(6));	// prune off 'notes/'
+			});
+			folderlist.sort();
+			self.addupdate(['folderlist', folderlist]);
+		}
 		self.sendreply();
 	});
 },
@@ -773,7 +785,7 @@ navigatehome: function() {
 	else self.addupdate(['navigateto', '/']);
 },
 
-deletefolder: function(folder, execfunc) {
+deletefolder: function(folder, next) {
 	var self = this;
 	// BUG: need that evil filename character check here!
 	self.redis.multi()
@@ -781,22 +793,30 @@ deletefolder: function(folder, execfunc) {
 		.del(self.key_mtime(folder))
 		.del(self.key_nextid(folder))
 		.del(self.key_foldermeta(folder))
-		.exec(execfunc());
+		.exec(function(err, reply) {
+			next(err, reply);
+		});
 },
 
 api_deletefolder: function() {
 	var self = this;
-	self.deletefolder(self.req.body.params.fromfolder, function(err, replies) {
-		self.navigatehome();
-		self.sendreply();
+	self.deletefolder(self.req.body.params.fromfolder, function(err, reply) {
+		if (err) self.senderror(err);
+		else {
+			self.navigatehome();
+			self.sendreply();
+		}
 	});
 },
 
 api_emptytrash: function() {
 	var self = this;
-	self.deletefolder(self.effectiveuser() + '/trash', function(err, replies) {
-		self.addupdate(['say', 'The trash is empty.']);
-		self.sendreply();
+	self.deletefolder(self.effectiveuser() + '/trash', function(err, reply) {
+		if (err) self.senderror(err);
+		else {
+			self.addupdate(['say', 'The trash is empty.']);
+			self.sendreply();
+		}
 	});
 },
 
@@ -881,8 +901,11 @@ api_setfolderacl: function() {
 	self.dir(acl);
 
 	self.redis.hmset(self.key_foldermeta(self.req.body.params.tofolder), acl, function(err, reply) {
-		self.addupdate(['say','Folder permissions updated.']);
-		self.sendreply();
+		if (err) self.senderror(err);
+		else {
+			self.addupdate(['say','Folder permissions updated.']);
+			self.sendreply();
+		}
 	});
 },
 
@@ -893,35 +916,46 @@ api_knockknock: function() {
 	self.sendreply();
 },
 
+
+badlogin: function() {
+	var self = this;
+	self.clearsessiondata();
+	self.senderror('Invalid login.');
+},
+
 api_login: function() {
 	var self = this;
 	self.redis.hget(self.key_usermeta(self.req.body.params.username), 
 		self.passwordattr, function(err, passwordhash) {
 
+		if (err) {
+			self.log('Login hget error: ' + err);
+			self.badlogin();
+			return;
+		}
+
 		self.log('login: ' + self.req.body.params.username);
 		self.dir(passwordhash);
 
 		if (!passwordhash) {
-			self.clearsessiondata();
-			self.senderror('Invalid login.');
+			self.badlogin();
 			return;
 		}
 
 		var salted_hash = crypto.createHash('sha1')
 							.update(passwordhash + self.req.session.nonce)
 							.digest('hex');
-		self.log('Login: saved  hash ' + passwordhash);
-		self.log('Login: saved nonce ' + self.req.session.nonce);
-		self.log('Login: salted hash ' + salted_hash);
-		self.log('Login: client hash ' + self.req.body.params.passwordhash);
+		//self.log('Login: saved  hash ' + passwordhash);
+		//self.log('Login: saved nonce ' + self.req.session.nonce);
+		//self.log('Login: salted hash ' + salted_hash);
+		//self.log('Login: client hash ' + self.req.body.params.passwordhash);
 		if (salted_hash == self.req.body.params.passwordhash) {
 			self.initsessiondata();
 			self.navigatehome();
 			self.sendreply();
 		}
 		else {
-			self.clearsessiondata();
-			self.senderror('Invalid login.');
+			self.badlogin();
 		}
 	});
 },
@@ -1004,7 +1038,10 @@ loadfile: function(fromdirectory, filename, tofolder, next) {
 	// Map fields to new squeezenote format
 
 	self.redis.incr(self.key_nextid(tofolder), function(err, id) {
-
+		if (err) {
+			next(err);
+			return;
+		}
 		note.id = id.toString();
 		//note.mtime = new Date().getTime();
 		var mtime = new Date().getTime();
@@ -1036,8 +1073,11 @@ loadfolder: function(foldername, nextfolder) {
 
 			self.redis.hset(self.key_usermeta(self.load.fromuser), self.passwordattr, filetext, 
 				function(err, reply) {
-					self.log('password set');
-					nextfolder(null, foldername);
+					if (err) nextfolder(err);
+					else {
+						self.log('password set');
+						nextfolder(null, foldername);
+					}
 				}
 			);
 			return;
@@ -1089,9 +1129,12 @@ loaduser: function(user, next) {
 			});
 		},
 		function(err, reply) {
-			self.log('Loaduser complete.');
-			self.dir(reply);
-			next(null);
+			if (err) next(err);
+			else {
+				self.log('Loaduser complete.');
+				self.dir(reply);
+				next(null);
+			}
 		}
 	);
 },
@@ -1118,7 +1161,7 @@ getsystempassword: function(next) {
 					// per recipe from nodejs readline doc
 					i.close();
 					process.stdin.destroy();
-					next(null);
+					next(err);
 				}
 			);
 
@@ -1144,7 +1187,10 @@ initdatabase: function() {
 	var self = this;
 	self.log('Checking for database...');
 	self.redis.get(self.key_dbcreated(), function(err, created) {
-		if (err) self.log('Error checking database.');
+		if (err) {
+			self.log('Init: Error reading database.  Is redis running?');
+			process.exit(1);
+		}
 		else if (created) self.log('Using database created ' + created);
 		else {
 			self.log('Initializing database.');
