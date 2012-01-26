@@ -7,23 +7,25 @@ Note Soup is a live, multi-user sticky note organizer and dashboard factory base
 
 ### Requirements
 
-- Git (http://git-scm.com)
+- Git
+	- Download and [install Git for your platform](http://git-scm.com)
 
-- Node.js 0.6.6+ ish
-	http://nodejs.org for doc/downloads
-	http://blog.nodejs.org/2011/12/15/node-v0-6-6/
+- Node.js 0.6.6 or later
+	- Download and [install node.js for your platform](http://nodejs.org)
 
 - npm
-	http://npmjs.org
+	- Download and [install npm for your platform](http://npmjs.org)
 
 - A redis server, either:
 
-	- Redis server running on the server host
-		See http://redis.io/ for download/install instructions
+	- Redis server running on your local host or server
+		- This is the most common case
+		- Download and [install redis for your platform](http://redis.io/)
 	-or-
-	- Remote redis server (http://redistogo.com, for example)
-		Start a server and copy the server URL from the config page for REDIS_URL
-		
+	- Third party remote redis server, 
+		- For example, [RedisToGo provides free 5MB servers](http://redistogo.com)
+		- Start a server and copy the server URL from the config page for REDIS_URL
+
 
 ### Install Options
 
@@ -37,10 +39,13 @@ Below are generic install instructions tested on OS X and several flavors of Lin
 
 Get notesoup using git:
 
-	$ git clone https://github.com/billroy/notesoup.git
+	$ git clone git://github.com/billroy/notesoup.git
 	$ cd notesoup
 
-Alternatively, download the .zip file and unpack it somewhere.
+Alternatively:
+	- download the .zip file
+	- unpack it somewhere to install
+	- open a terminal and cd to the install directory
 
 ### Redis configuration
 
@@ -61,23 +66,27 @@ To make sure your redis server is running:
 
 	$ redis-cli info
 
-To start a local redis server:
+If it isn't, start a local redis server like this, and let it spew:
 
 	$ redis-server
 
+Continue in another terminal window.
 
 
 ### Test Run
 
 Start the server:
 
+	$ cd (install directory)
 	$ node soup.js
 
 The database will auto-initialize the first time you run it.
 
 When asked, specify a password for the "system" user; see below for more.
 
-Browse to http://localhost:3000.
+[Browse to the app at http://localhost:3000.](http://localhost:3000)
+
+(Replace localhost with the server address if required.)
 
 Create a user account and play.
 
@@ -99,7 +108,7 @@ You must manually restart upon reboot.
 
 ### Refresh the code
 
-	$ cd (wherever notesoup is)
+	$ cd (install directory)
 	$ forever stop soup.js
 	$ git pull
 	$ forever start soup.js
