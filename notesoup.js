@@ -818,11 +818,15 @@ key_usermeta: function(user) {
 passwordattr: 'password',
 
 api_createuser: function() {
-	this.initsessiondata();
-	this.save_password_hash(this.req.body.params.username, this.req.body.params.password, 
+	var self = this;
+	self.initsessiondata();
+	self.save_password_hash(this.req.body.params.username, this.req.body.params.password, 
 		function(err, reply) {
-			this.navigatehome();
-			this.sendreply();
+			if (err) self.senderror(err);
+			else {
+				self.navigatehome();
+				self.sendreply();
+			}
 		}
 	);
 },
