@@ -56,42 +56,42 @@ var fs = require('fs');
 
 var NoteSoup = {
 
-enablePush: false,
+enablePush: true,
 
 connect: function(redis_url) {
-
+	var self = this;
 	if (redis_url) {
-		this.log("Connecting to Redis at " + redis_url);
-		this.redis = require('redis-url').connect(redis_url);
+		self.log("Connecting to Redis at " + redis_url);
+		self.redis = require('redis-url').connect(redis_url);
 	}
 	else {
-		this.log("Connecting to local Redis");
-		this.redis = require("redis").createClient();		// port, host, options
+		self.log("Connecting to local Redis");
+		self.redis = require("redis").createClient();		// port, host, options
 	}
 	
-	this.redis.on("error", function (err) {
+	self.redis.on("error", function (err) {
 		console.log("Redis Error: " + err);
 	});
 
-	this.initdatabase();
+	self.initdatabase();
 
 	// init socket.io
-	if (this.enablePush) {
-		this.io = require('socket.io').listen(this.app);
-		this.io.sockets.on('connection', function(socket) {
+	if (self.enablePush) {
+		self.io = require('socket.io').listen(self.app);
+		self.io.sockets.on('connection', function(socket) {
 			console.log('Socket connection accepted.');
 			//console.log(util.inspect(socket, 3));
 			socket.on('subscribe', function(request) {
 				console.log('Subscription request:');
 				console.dir(request);
 				socket.on(request.channel, function(msg) {
-					this.io.sockets.emit(request.channel, msg);
+					self.io.sockets.emit(request.channel, msg);
 				});
 			});
 		});
 	}
 
-	return this;
+	return self;
 },
 
 workspace_template: null,
@@ -937,13 +937,19 @@ api_getfolderacl: function() {
 api_setfolderacl: function() {
 	var self = this;
 	var acl = {};
-	if (self.req.body.params.editors) acl.editors = self.req.body.params.editors;
-	if (self.req.body.params.readers) acl.readers = self.req.body.params.readers;
-	if (self.req.body.params.senders) acl.senders = self.req.body.params.senders;
-	if (self.req.body.params.password) acl.password = self.req.body.params.password;
-
-	self.log("SetACL " + self.req.body.params.tofolder);
-	self.dir(acl);
+	async.forEachSeries(
+		['readers','senders', 'editors', 'password'],
+		function(fieldname, next) {
+			console.log('checking ' + fieldname);
+			if (self.req.body.params.hasOwnProperty(fieldname)) {
+				console.log('hit ' + fieldname);
+				acl[fieldname] = self.req.body.params[fieldname];
+			}
+		},
+		function(err, reply) {
+			self.log("SetACL " + self.req.body.params.tofolder);
+			self.dir(acl);
+		});
 
 	self.redis.hmset(self.key_foldermeta(self.req.body.params.tofolder), acl, function(err, reply) {
 		if (err) self.senderror(err);
