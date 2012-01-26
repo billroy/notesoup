@@ -111,6 +111,8 @@ renderworkspace: function(req, res) {
 	self.req.body.method = 'openfolder';
 	if (!self.req.body.params) self.req.body.params = {};
 	self.req.body.params.fromfolder = req.params.user + '/' + req.params.folder;
+	self.res.updatelist = [];
+	self.req.starttime = new Date().getTime();
 
 	async.series([
 			self.loadfromacl, 
@@ -118,7 +120,7 @@ renderworkspace: function(req, res) {
 			self.sendworkspace
 		],
 		function(err, reply) {
-			if (err) self.senderror(err);
+			if (err) res.redirect('/folder/system/accesserror');
 		});
 },
 
