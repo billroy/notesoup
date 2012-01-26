@@ -530,7 +530,6 @@ api_appendtonote: function() {
 },
 
 api_sync: function() {
-
 	var self = this;
 	self.res.newlastupdate = new Date().getTime();
 
@@ -659,7 +658,7 @@ sendnote: function(noteid, next) {
 },
 
 api_postevent: function() {
-	this.log('PostEvent via api:');
+	this.log('PostEvent via api: (DROPPED)');
 	this.dir(this.req.body.params);
 	//io.socket.send(this.res.body.params.
 	return this.sendreply();
@@ -748,13 +747,15 @@ api_getfolderlist: function() {
 },
 
 api_createfolder: function() {
-	this.req.body.params.fromfolder = this.req.body.params.tofolder;
-	this.api_openfolder();
+	var self = this;
+	self.req.body.params.fromfolder = self.req.body.params.tofolder;
+	self.api_openfolder();
 },
 
 api_openfolder: function() {
-	this.res.updatelist.push(['navigateto', '/folder/' + this.req.body.params.fromfolder]);
-	this.sendreply();
+	var self = this;
+	self.res.updatelist.push(['navigateto', '/folder/' + self.req.body.params.fromfolder]);
+	self.sendreply();
 },
 
 effectiveuser: function() {
@@ -869,7 +870,6 @@ api_getfolderacl: function() {
 },
 
 api_setfolderacl: function() {
-
 	var self = this;
 	var acl = {};
 	if (self.req.body.params.editors) acl.editors = self.req.body.params.editors;
@@ -887,13 +887,13 @@ api_setfolderacl: function() {
 },
 
 api_knockknock: function() {
-	this.req.session.nonce = this.randomName(32);	// save login nonce
-	this.res.updatelist.push(['whosthere', this.req.session.nonce]);
-	this.sendreply();
+	var self = this;
+	self.req.session.nonce = self.randomName(32);	// save login nonce
+	self.res.updatelist.push(['whosthere', self.req.session.nonce]);
+	self.sendreply();
 },
 
 api_login: function() {
-	// fetch username passwordhash
 	var self = this;
 	self.redis.hget(self.key_usermeta(self.req.body.params.username), 
 		self.passwordattr, function(err, passwordhash) {
@@ -933,15 +933,17 @@ initsessiondata: function() {
 },
 
 clearsessiondata: function() {
-	delete this.req.session.loggedin;
-	delete this.req.session.username;
-	delete this.req.session.nonce;
+	var self = this;
+	delete self.req.session.loggedin;
+	delete self.req.session.username;
+	delete self.req.session.nonce;
 },
 
 api_logout: function() {
-	this.clearsessiondata();
-	this.addupdate(['navigateto', '/']);
-	this.sendreply();
+	var self = this;
+	self.clearsessiondata();
+	self.addupdate(['navigateto', '/']);
+	self.sendreply();
 },
 
 
