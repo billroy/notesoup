@@ -940,11 +940,10 @@ api_setfolderacl: function() {
 	async.forEachSeries(
 		['readers','senders', 'editors', 'password'],
 		function(fieldname, next) {
-			console.log('checking ' + fieldname);
 			if (self.req.body.params.hasOwnProperty(fieldname)) {
-				console.log('hit ' + fieldname);
 				acl[fieldname] = self.req.body.params[fieldname];
 			}
+			next(null);
 		},
 		function(err, reply) {
 			self.log("SetACL " + self.req.body.params.tofolder);
