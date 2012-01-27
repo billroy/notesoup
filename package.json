@@ -5,7 +5,7 @@
   "author": "Bill Roy <bill@bitlash.net>",
   "description": "Note Soup: sticky note web organizer and dashboard factory",
   "scripts": {
-    "start": "forever start -a -o soup.log -e soup-error.log -l forever.log soup.js",
+    "start": "forever start soup.js",
     "stop": "forever stop soup.js",
     "postinstall": "echo NoteSoup installed.  Next: npm install and npm start"
   }, 
