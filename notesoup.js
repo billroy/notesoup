@@ -1269,6 +1269,10 @@ loaduser: function(user, next) {
 
 getsystempassword: function(next) {
 	var self = NoteSoup;
+	
+	// Don't try to get the system password if we have no console (Heroku, for example)
+	if (self.argv.n) next(null);
+	
 	var i = rl.createInterface(process.stdin, process.stdout, null);
 	i.question('Enter a password for the "system" user:', function(password) {
 		i.question('Enter it again:', function(password2) {

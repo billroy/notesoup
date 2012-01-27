@@ -154,6 +154,7 @@ Forever keeps logs and configuration in ~/.forever/
 	$ cd (install directory)
 	$ forever stop soup.js
 	$ git pull
+	$ npm install
 	$ forever start soup.js
 
 ### About the System user

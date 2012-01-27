@@ -8,6 +8,11 @@ Notesoup/Node/Redis TODO list
 1/27/12 -br
 
 ===
+- bug: heroku - no console for sytem password query, hangs?
+- need setpassword
+
+===
+
 API completeness
 
 - deleteuser
@@ -22,7 +27,6 @@ command line options
 ===
 INSTALL-OSX
 ===
-- bug: security: lock system/inbox by default
 - shred
 ===
 

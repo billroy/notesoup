@@ -14,8 +14,17 @@ var express = require('express');
 var app = module.exports = express.createServer();
 var util = require('util');
 
+var argv = require('optimist')
+	.usage('Usage: $0 [flags]')
+	.alias('p', 'port')
+	.describe('p', 'port for the http server')
+	.alias('n', 'no-console')
+	.describe('n', 'no console, e.g., running on heroku')
+	.argv;
+
 var soup = require('./notesoup.js');
 soup.app = app;
+soup.argv = argv;
 soup.connect(process.env.REDISTOGO_URL);
 
 // Configuration
@@ -102,5 +111,5 @@ app.get('/geturl', function(req, res) {
 });
 
 
-app.listen(process.env.PORT || 3000);
+app.listen(process.env.PORT || argv.port || 3000);
 console.log("NoteSoup listening on port %d in %s mode", app.address().port, app.settings.env);

@@ -1,1 +1,1 @@
-web: node soup.js
+web: node soup.js --no-console
