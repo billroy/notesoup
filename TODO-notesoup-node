@@ -8,24 +8,22 @@ Notesoup/Node/Redis TODO list
 1/27/12 -br
 
 ===
-- bug: heroku - no console for sytem password query, hangs?
-- need setpassword
-
-===
-
 API completeness
 
+- updateuser api for system password on heroky
 - deleteuser
 - copyfolder
 - postevent
+
 ===
-command line options
--p 	port
--n	no-socketserver
--l	locked
+- createFolder: add "created" to folder hash on create
+	- getfolderlist should use fldr/ attribute
+	- deletefolder should delete fldr/attribute
+	(problem? or feature? this allows for hidden folders... in other words, lost folders.)
 
 ===
 INSTALL-OSX
+INSTALL-Heroku: system password update
 ===
 - shred
 ===
@@ -48,9 +46,6 @@ ACL support
 - check: other acl checks
 	- double check the "prelogin" command roster for issues
 	- deleteuser
-	- some commands require systemuser 'us'? (or special privs like opensignup)
-	-  *** no acl check for api: knockknock
-	- *** no acl check for api: createuser
 
 ===
 Notification plumbing issues
@@ -67,7 +62,6 @@ Sessions
 	- ...
 
 - test the redis session store
-
 ===
 widget issues
 
@@ -89,7 +83,6 @@ http://api.flickr.com/services/feeds/photos_public.gne?tags=sunset&format=json
 	geturl from server on laptop gets json and it all works
 	fetching the url in the browser works
 
-
 - broken widgets
 	- BUG: avatar: clicking the icon sends you to accesserror
 	- porthole needs getnote
@@ -110,20 +103,10 @@ http://api.flickr.com/services/feeds/photos_public.gne?tags=sunset&format=json
 	html5 div hack
 
 ===
-- client mtime handling needs review
+- review client mtime handling
 	- widgets use it
 	- dragdrop uses it
 	- updatenote uses it
-===
-Folder management
-
-- createFolder: add "created" to folder hash on create
-	- getfolderlist should use fldr/ attribute
-	- deletefolder should delete fldr/attribute
-	(problem? or feature? this allows for hidden folders... in other words, lost folders.)
-
-- folder.defaultcolor should be in the attributes too?
-
 ===
 
 API buildout 
@@ -149,7 +132,6 @@ Production
 
 - alpha server
 	- todo: run nodejs at boot time
-	- todo: server logs???
 	- todo: backup .db
 		- script to copy db to dbbackups/db-date
 		- cron to run it
@@ -159,9 +141,6 @@ Production
 
 ====
 Feature candidates
-
-- startup: command line option for push server on/off
-	- npm install optimist
 
 - multi-tenancy via Host: header / database index map
 
@@ -209,6 +188,3 @@ note slinging
 	free: abdefgjklmopqrsuv
 	
 	meta: id, mtime, folder, permissions
-
-Ext v99?  Touch?  Mac?
-

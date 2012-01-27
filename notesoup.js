@@ -83,6 +83,11 @@ wideopen:	false,		// true to disable all access control
 
 connect: function(redis_url) {
 	var self = this;
+
+	// handle command line options
+	if (self.argv.nopush) self.enablepush = false;
+	if (self.argv.nosignup) self.opensignup = false;
+
 	if (redis_url) {
 		self.log("Connecting to Redis at " + redis_url);
 		self.redis = require('redis-url').connect(redis_url);
@@ -945,6 +950,11 @@ checksignup: function(next) {
 
 validateusername: function(next) {
 	var self = NoteSoup;
+	var min_length = 1;
+	var max_length = 50;
+	if (!self.req.body.params.username || 
+		(self.req.body.params.username.length < min_length) ||
+		(self.req.body.params.username.length > max_length)) next('Invalid name.');
 	if (self.invalidchars.test(self.req.body.params.username)) next('Invalid character.');
 	else next(null);
 },
@@ -1271,7 +1281,7 @@ getsystempassword: function(next) {
 	var self = NoteSoup;
 	
 	// Don't try to get the system password if we have no console (Heroku, for example)
-	if (self.argv.n) next(null);
+	if (self.argv.noconsole) next(null);
 	
 	var i = rl.createInterface(process.stdin, process.stdout, null);
 	i.question('Enter a password for the "system" user:', function(password) {

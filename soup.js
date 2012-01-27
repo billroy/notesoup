@@ -6,21 +6,23 @@
 
 *****/
 
-/**
- * Module dependencies.
- */
+var opt = require('optimist');
+var argv = opt.usage('Usage: $0 [flags]')
+	.alias('p', 'port')
+	.describe('p', 'port for the http server')
+	.describe('noconsole', 'no console, e.g., running on heroku')
+	.describe('nopush', 'do not start push services')
+	.describe('nosignup', 'only the system user can create accounts')
+	.argv;
+
+if (argv.help) {
+	opt.showHelp();
+	process.exit();
+}
 
 var express = require('express');
 var app = module.exports = express.createServer();
 var util = require('util');
-
-var argv = require('optimist')
-	.usage('Usage: $0 [flags]')
-	.alias('p', 'port')
-	.describe('p', 'port for the http server')
-	.alias('n', 'no-console')
-	.describe('n', 'no console, e.g., running on heroku')
-	.argv;
 
 var soup = require('./notesoup.js');
 soup.app = app;
