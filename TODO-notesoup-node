@@ -5,12 +5,27 @@ _____       _         _____
                                        |_|  
                                        
 Notesoup/Node/Redis TODO list
-1/26/12 -br
+1/27/12 -br
 
 ===
+API completeness
 
+- deleteuser
+- copyfolder
+- postevent
+===
+command line options
+-p 	port
+-n	no-socketserver
+-l	locked
 
 ===
+INSTALL-OSX
+===
+- bug: security: lock system/inbox by default
+- shred
+===
+
 Elvis?
 
 - bug: Open Folder -> list is not populated with all folders??
@@ -26,7 +41,7 @@ ACL support
 		- trash/
 	- need initial folder content
 
-- bugs: other acl checks
+- check: other acl checks
 	- double check the "prelogin" command roster for issues
 	- deleteuser
 	- some commands require systemuser 'us'? (or special privs like opensignup)
@@ -123,7 +138,6 @@ API buildout
 
 	if method == 'copyfolder': return apicopyfolder(params)
 	if method == 'deleteuser': return apideleteuser(params)
-
 	if method == 'postevent': return apipostevent(params)
 
 ===

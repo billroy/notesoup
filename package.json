@@ -5,14 +5,13 @@
   "author": "Bill Roy <bill@bitlash.net>",
   "description": "Note Soup: sticky note web organizer and dashboard factory",
   "scripts": {
-    "start": "forever start soup.js", 
+    "start": "forever start -a -o soup.log -e soup-error.log -l forever.log soup.js",
     "stop": "forever stop soup.js",
-    "daemon": "forever start -o out.log -e err.log -l forever.log soup.js"
+    "postinstall": "echo NoteSoup installed.  Next: npm install and npm start"
   }, 
   "dependencies": {
     "async": "0.1.15", 
     "express": "2.5.2", 
-    "forever": "0.7.5", 
     "jade": ">= 0.0.1", 
     "redis": ">=0.7.1", 
     "redis-url": "0.1.0", 

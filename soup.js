@@ -11,8 +11,6 @@
  */
 
 var express = require('express');
-var routes = require('./routes');
-
 var app = module.exports = express.createServer();
 var util = require('util');
 
@@ -55,15 +53,6 @@ app.get('/status', function(req, res) {
 
 app.get('/folder/:user/:folder', function(req, res) {
 	soup.renderworkspace(req, res);
-});
-
-app.get('/json/:user/:folder', function(req, res) {
-	req.body.params = {};
-	req.body.params.fromfolder = req.params.user + '/' + req.params.folder;
-	soup.req = req;
-	soup.res = res;
-	soup.res.updatelist = [];
-	soup.api_getnotes();
 });
 
 app.post('/api', function(req, res) {

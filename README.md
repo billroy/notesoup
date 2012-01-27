@@ -30,12 +30,28 @@ Note Soup is a live, multi-user sticky note organizer and dashboard factory base
 	$ tar xzf redis.tgz
 	$ cd redis-2.4.6
 	$ make
+	$ sudo make install
 	$ redis-server
 ~~~
 	-or-
 	- Third party remote redis server, 
 		- For example, [RedisToGo provides free 5MB servers](http://redistogo.com)
 		- Start a server and copy the server URL from the config page for REDIS_URL
+
+### OS X Lion Note
+
+You need to set the NODE_PATH environment variable to make 'forever' happy.
+
+There is a bug in Lion's ~/.bashrc handling.  See [this tip for a fix.](http://stackoverflow.com/questions/7780030/how-to-fix-terminal-not-loading-bashrc-on-os-x-lion)
+
+My ~/.bashrc:
+
+	NODE_PATH="/usr/local/lib/node_modules"
+	export NODE_PATH
+
+My ~/.bash_profile per the tip above:
+
+	[[ -s ~/.bashrc ]] && source ~/.bashrc
 
 
 ### Install Options
@@ -48,6 +64,8 @@ Below are generic install instructions tested on OS X and several flavors of Lin
 
 ### Generic Install Instructions
 
+Install the dependencies above.
+
 Get notesoup using git:
 
 	$ git clone git://github.com/billroy/notesoup.git
@@ -57,6 +75,11 @@ Alternatively:
 	- download the .zip file
 	- unpack it somewhere to install
 	- open a terminal and cd to the install directory
+
+Install the node modules notesoup dependends on:
+
+	$ npm install
+
 
 ### Redis configuration
 
@@ -106,18 +129,27 @@ Hint: Create a note by typing in the command bar at the top
 ^C to quit the server
 
 
-### Run as a daemon
+
+### Run as a daemon (in the background)
+
+Install the npm package 'forever' for global use:
+
+	$ sudo npm install forever -g
+
+Start the server:
 
 	$ forever start soup.js
 
 You must manually restart upon reboot.
+
+Forever keeps logs and configuration in ~/.forever/
 
 
 ### Stop the daemon
 
 	$ forever stop soup.js
 
-### Refresh the code
+### Refresh the notesoup code
 
 	$ cd (install directory)
 	$ forever stop soup.js

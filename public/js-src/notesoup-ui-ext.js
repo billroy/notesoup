@@ -253,8 +253,10 @@ notesoup.ui = {
 				{text: 'Make Folder Public', handler: function() {notesoup.makeFolderPublic(notesoup.foldername);},
 					icon: notesoup.imageHost + 'images/famfamfam.com/lock_open.png'},
 				'-',
+/***
 				{text: 'Set Folder Password...', handler: function() {notesoup.setFolderPassword(notesoup.foldername);},
 					icon: notesoup.imageHost + 'images/famfamfam.com/lock.png'},
+***/
 				{text: 'Folder Access Control', handler: function() {
 					//notesoup.ui.createNoteFromTemplate('Folder Access Control');
 					return notesoup.saveNote({
