@@ -7,20 +7,40 @@ _____       _         _____
 Notesoup/Node/Redis TODO list
 1/27/12 -br
 
+
+===
+
+- updateuser api for system password on heroku
+
 ===
 API completeness
 
-- updateuser api for system password on heroky
+- updateuser
 - deleteuser
 - copyfolder
 - postevent
 
 ===
-- createFolder: add "created" to folder hash on create
-	- getfolderlist should use fldr/ attribute
-	- deletefolder should delete fldr/attribute
-	(problem? or feature? this allows for hidden folders... in other words, lost folders.)
+Folder existence bugs
+- bug: disallow navigation to nonexistent folder
+- bug: getfolderlist should use fldr/ key
 
+- bug: deletefolder 
+	- requires owner permission
+	- should refuse to delete a folder with notes in it (mtime/ or notes/ not empty)
+	- should then delete fldr/
+
+- solution: use fldr/ key as definitive for existence of folder
+- fix: createFolder sets fldr/u/f key
+- fix: getaccess disallow invalid folder (?)	
+
+===
+factor the server into
+	user
+	folder
+	note
+	acl
+	load
 ===
 INSTALL-OSX
 INSTALL-Heroku: system password update

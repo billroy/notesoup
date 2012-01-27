@@ -848,6 +848,7 @@ api_getfolderlist: function() {
 
 api_createfolder: function() {
 	var self = this;
+	// todo: write the fldr/ hash
 	self.req.body.params.fromfolder = self.req.body.params.tofolder;
 	self.api_openfolder();
 },
@@ -875,7 +876,6 @@ navigatehome: function() {
 
 deletefolder: function(folder, next) {
 	var self = this;
-	// BUG: need that evil filename character check here!
 	self.redis.multi()
 		.del(self.key_note(folder))
 		.del(self.key_mtime(folder))
