@@ -326,6 +326,9 @@ notesoup.ui = {
 				{text: 'Show Debug Console', handler: function() {Ext.log('debugger here...');},
 					icon: notesoup.imageHost + 'images/famfamfam.com/bug.png'},
 				'-',
+				{text: 'Change Password', handler: function() {notesoup.setPassword();},
+					icon: notesoup.imageHost + 'images/famfamfam.com/lock_edit.png'},
+				'-',
 				{text: 'Logout', handler: function() {notesoup.logout();},
 					icon: notesoup.imageHost + 'images/famfamfam.com/disconnect.png'}
 			]
