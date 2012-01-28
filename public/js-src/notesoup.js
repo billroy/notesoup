@@ -1428,14 +1428,9 @@ var notesoup = {
 		Post a request to the server:
 		Start with the callbacks
 	*/
-	onSuccess: function(response, opts) {
+	onSuccess_old: function(response, opts) {
 		//try {
 			notesoup.processServerResponse(response, opts);
-		//} catch (e) {
-		//	// FWIW, Safari traps here on server not found
-		//	notesoup.onFailure(t);
-		//	return;
-		//}
 
 		// call the client success proc if there is one
 		// this fails horribly in Safari and Firefox if done synchronously here
@@ -1448,6 +1443,10 @@ var notesoup = {
 			opts.successProc.defer(20, opts.successProcScope, [response, opts]);
 		}
 
+	},
+	onSuccess: function(response, opts) {
+		if (opts.successProc) opts.successProc.defer(20, opts.successProcScope, [response, opts]);
+		else notesoup.processServerResponse(response, opts);
 	},
 	onException: function(err) {
 		// FWIW, Firefox traps here on server not found
@@ -1463,7 +1462,7 @@ var notesoup = {
 	/*
 		The main entry point to post a request
 	*/
-	postRequest: function(request, options) {
+	postRequest: function(request, options, rawfetch) {
 
 		if (this.debugmode) {
 			this.debug('> ' + request['method']);
@@ -1531,7 +1530,7 @@ var notesoup = {
 		}
 
 		// NODE patch: set correct Content-Type for json ajax request body
-		Ext.lib.Ajax.defaultPostHeader = 'application/json';
+		if (!rawfetch) Ext.lib.Ajax.defaultPostHeader = 'application/json';
 
 		var a = Ext.Ajax.request(opt);
 

@@ -889,7 +889,7 @@ soupnote.prototype.xtrack = function(event) {
 *	=$n('alpha').geturl('http://slashdot.org');
 *	=$n('fonx').geturl('http://pingdog.net/countdown/cd.html')
 */
-soupnote.prototype.geturl = function(url) {
+soupnote.prototype.geturl_old = function(url) {
 	Ext.Ajax.request({
 		method: 'GET',
 		url: '/geturl',
@@ -904,13 +904,33 @@ soupnote.prototype.geturl = function(url) {
 	}
 };
 
+/**
+*	Fetch a URL into the note.
+*	@params	url	the url to fetch
+*	=$n('alpha').geturl('http://slashdot.org');
+*	=$n('fonx').geturl('http://pingdog.net/countdown/cd.html')
+*/
+soupnote.prototype.geturl = function(url) {
+	var request = {
+		method:"geturl",
+		params:{ 
+			url: url
+		}
+	};
+	
+	notesoup.postRequest(request, {
+		successProc: this.getURLHandler,
+		successProcScope: this,
+		failureMessage: 'Could not fetch url.'
+	}, true);		// true to force raw fetch
+};
 
 /**
 *	Handler for geturl: process incoming data.  Override this for interesting fun.
 */
 soupnote.prototype.getURLHandler = function(response, success, options) {
 	if (success) {
-		//notesoup.say('Fetch complete.');
+		notesoup.say('Fetch complete.');
 		this.text = response.responseText;
 	} else {
 		notesoup.say('Error fetching url.', 'error');

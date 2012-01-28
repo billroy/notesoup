@@ -67,6 +67,8 @@ var util = require('util');
 var async = require('async');
 var rl = require('readline');
 var fs = require('fs');
+var url = require('url');
+var http = require('http');
 
 
 var NoteSoup = {
@@ -836,9 +838,7 @@ api_getfolderlist: function() {
 		}
 		if (keylist.length) {
 			var folderlist = [];
-			keylist.forEach(function(key) {
-				folderlist.push(key.substr(6));	// prune off 'notes/'
-			});
+			for (var i=0; i<keylist.length; i++) folderlist.push(keylist[i].substr(6));
 			folderlist.sort();
 			self.addupdate(['folderlist', folderlist]);
 		}
@@ -1149,6 +1149,51 @@ api_logout: function() {
 	self.addupdate(['navigateto', '/']);
 	self.sendreply();
 },
+
+
+api_geturl: function() {
+	var self = this;
+	console.log('Geturl: ' + self.req.body.params.url);
+	var options = url.parse(self.req.body.params.url);
+
+	// handle local '/path' fetches as static
+	if (!options.host) {
+		console.log('Geturl: static ' + options.pathname);
+		self.res.sendfile(__dirname + '/public' + options.pathname);
+		return;
+	}
+
+	// Fetching a remote url requires being logged in
+	if (!self.req.session.loggedin) {
+		self.senderror('Log in please.');
+		return;
+	}
+
+	// fetch a remote url
+	options.headers = {
+		//'Accept': '*/*'
+		'Accept': 'application/x-javascript; charset=utf-8'
+	};
+	options.agent = false;	// prevent Connection-Keepalive in the framework
+	var httpreq = http.get(options, function(httpres) {
+		httpres.on('data', function (chunk) {
+			console.log('Geturl body: ' + chunk.length);
+			self.res.write(chunk);
+		});
+		httpres.on('end', function (chunk) {
+			console.log('Geturl done.');
+			self.res.end();
+		});
+		//console.log("Geturl response: " + httpres.statusCode);
+		//console.log("Geturl response: " + httpres.responseText);		
+		//console.dir(httpres);
+		console.dir(httpres.headers);
+	}).on('error', function(e) {
+		console.log('Geturl error: ' + e.message);
+		self.senderror('error: ' + e.message);
+	});
+},
+
 
 
 // File Import
