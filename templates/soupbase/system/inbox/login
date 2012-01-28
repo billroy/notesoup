@@ -1,7 +1,7 @@
 {
 	"height": 145, 
 	"imports": "/js-src/js-widgets/loginform.js", 
-	"notename": "Log In Here", 
+	"notename": "Create a User", 
 	"width": 250, 
 	"xPos": 20, 
 	"yPos": 55
