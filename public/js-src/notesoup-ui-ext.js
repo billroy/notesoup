@@ -263,7 +263,7 @@ notesoup.ui = {
 						notename: 'Folder Access Control',
 						imports: 'system/widgets/@Folder Access Control'
 					});
-				},	icon: notesoup.imageHost + 'images/famfamfam.com/lock.png'},
+				},	icon: notesoup.imageHost + 'images/famfamfam.com/lock_edit.png'},
 				'-',
 				{text: 'Make Folder Private', handler: function() {notesoup.makeFolderPrivate(notesoup.foldername);},
 					icon: notesoup.imageHost + 'images/famfamfam.com/lock.png'},
