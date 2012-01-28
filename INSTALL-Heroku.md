@@ -24,14 +24,10 @@ Be aware this free level of service does not include backup, and provides only 5
 
 	$ git clone http://bitlash.net/git/notesoup.git
 	$ cd notesoup
-	$ heroku create --stack cedar
-	$ heroku addons:add redistogo
-	$ git push heroku master
-	$ heroku ps:scale web=1
-	
-The console output will contain the name of your new server.  Open a browser on that url and you should see the system/welcome page.
+	$ ./scripts/heroku-start.sh 
 
-If you get an application error in the browser, the first thing to check is to ensure you added redistogo.  Add it and push again, if not.  Else see below re: logs.
+
+The console output will contain the name of your new server.  Open a browser on that url and you should see the system/welcome page.
 
 ### Change the 'System' user password!!!
 
@@ -44,6 +40,8 @@ Now go read README.md and see all the work you saved.
 And read about locking down the guest user, too.
 
 ### Administration
+
+Manage your app from the [Heroku app console](https://api.heroku.com/myapps) or using the heroku command line tool.
 
 Nuke your app and database, gone in an instant:
 
