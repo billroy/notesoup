@@ -1421,29 +1421,12 @@ var notesoup = {
 	},
 	
 
-
 	/*
 		Notesoup AJAX interface
 
 		Post a request to the server:
 		Start with the callbacks
 	*/
-	onSuccess_old: function(response, opts) {
-		//try {
-			notesoup.processServerResponse(response, opts);
-
-		// call the client success proc if there is one
-		// this fails horribly in Safari and Firefox if done synchronously here
-		// since we are deep in the event handler for the onreadystate change for
-		// the response to an ajax request.
-		// so we queue it for 20 ms from now.  sue me.
-		//if (opts.successProc) window.setTimeout(opts.successProc, 20);
-
-		if (opts.successProc) {
-			opts.successProc.defer(20, opts.successProcScope, [response, opts]);
-		}
-
-	},
 	onSuccess: function(response, opts) {
 		if (opts.successProc) opts.successProc.defer(20, opts.successProcScope, [response, opts]);
 		else notesoup.processServerResponse(response, opts);

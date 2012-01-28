@@ -9,14 +9,13 @@ Notesoup/Node/Redis TODO list
 
 
 ===
-postupdate hook for update_server_info
 - bug: +Inf in sync 
 
 - bug: xPos, yPos saved as strings, wasting space
 	x y z w h
 -bug: note needs both xpos and ypos else it's repositioned
+
 - gitweb
-- bug: geturl -> api_geturl.  sheesh.
 
 ===
 Folder existence bugs

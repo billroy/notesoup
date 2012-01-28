@@ -644,7 +644,7 @@ api_sync: function() {
 	}
 	else {
 		self.redis.zrangebyscore(self.key_mtime(self.req.body.params.fromfolder), 
-			self.req.body.params.lastupdate, self.res.newlastupdate, function(err, noteids) {
+			self.req.body.params.lastupdate, '+inf', function(err, noteids) {
 				if (err) {
 					self.senderror(err);
 					return;
@@ -1060,13 +1060,12 @@ api_getfolderacl: function() {
 api_setfolderacl: function() {
 	var self = this;
 	var acl = {};
-	['readers','senders', 'editors', 'password'].forEach(
-		function(fieldname, index) {
-			if (self.req.body.params.hasOwnProperty(fieldname)) {
-				acl[fieldname] = self.req.body.params[fieldname];
-			}
-		});
-
+	var fields = ['readers','senders', 'editors', 'password'];
+	for (var i=0; i < fields.length; i++) {
+		if (self.req.body.params.hasOwnProperty(fields[i])) {
+			acl[fields[i]] = self.req.body.params[fields[i]];
+		}
+	}
 	self.log("SetACL " + self.req.body.params.tofolder);
 	self.dir(acl);
 
@@ -1160,12 +1159,6 @@ api_geturl: function() {
 	if (!options.host) {
 		console.log('Geturl: static ' + options.pathname);
 		self.res.sendfile(__dirname + '/public' + options.pathname);
-		return;
-	}
-
-	// Fetching a remote url requires being logged in
-	if (!self.req.session.loggedin) {
-		self.senderror('Log in please.');
 		return;
 	}
 

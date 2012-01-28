@@ -889,27 +889,6 @@ soupnote.prototype.xtrack = function(event) {
 *	=$n('alpha').geturl('http://slashdot.org');
 *	=$n('fonx').geturl('http://pingdog.net/countdown/cd.html')
 */
-soupnote.prototype.geturl_old = function(url) {
-	Ext.Ajax.request({
-		method: 'GET',
-		url: '/geturl',
-		params: {url: url},
-		disableCaching: false,
-		success: this.getURLHandler,
-		scope: this
-	});
-	if (this.getUrlHandler == soupnote.prototype.getURLHandler) {
-		notesoup.say('Fetching data from ' + url);
-		this.showLoading();
-	}
-};
-
-/**
-*	Fetch a URL into the note.
-*	@params	url	the url to fetch
-*	=$n('alpha').geturl('http://slashdot.org');
-*	=$n('fonx').geturl('http://pingdog.net/countdown/cd.html')
-*/
 soupnote.prototype.geturl = function(url) {
 	var request = {
 		method:"geturl",
