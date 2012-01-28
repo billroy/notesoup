@@ -5,5 +5,6 @@
   "imports": "/js-src/js-widgets/loginform.js",
   "width": "250", 
   "xPos": 215, 
-  "yPos": 175 
+  "yPos": 175,
+  "zIndex": 10
 }
