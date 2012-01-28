@@ -18,3 +18,12 @@ Before you do your first:
 
 	git push heroku master
 	
+### Change the 'System' user password!!!
+
+Please log in at once as user 'system' with the default password 'frobozz88', 
+and change the password to something else using the Change Password menu item, 
+or the Change Password widget.
+
+Now go read README.md and see all the work you saved.
+
+And read about locking down the guest user, too.

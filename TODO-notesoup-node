@@ -10,15 +10,6 @@ Notesoup/Node/Redis TODO list
 
 ===
 
-- updateuser api for system password on heroku
-
-===
-API completeness
-
-- updateuser
-- deleteuser
-- copyfolder
-- postevent
 
 ===
 Folder existence bugs
@@ -44,6 +35,13 @@ factor the server into
 ===
 INSTALL-OSX
 INSTALL-Heroku: system password update
+===
+API completeness
+
+- deleteuser
+- copyfolder
+- postevent
+
 ===
 - shred
 ===
@@ -71,6 +69,7 @@ ACL support
 
 ===
 Notification plumbing issues
+- bug: postEvent is a stub
 
 - bug: note color change doesn't go on notify bus, waits for sync instead
 	- notify plumbing (tofolder...)
