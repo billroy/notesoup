@@ -5,12 +5,13 @@ _____       _         _____
                                        |_|  
                                        
 Notesoup/Node/Redis TODO list
-1/27/12 -br
+1/28/12 -br
 
 
 ===
 postupdate hook for update_server_info
-
+- bug: +Inf in sync 
+	
 ===
 Folder existence bugs
 - bug: disallow navigation to nonexistent folder

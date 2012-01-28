@@ -23,7 +23,9 @@ var argv = require('optimist')
 var crypto = require('crypto');
 var passwordhash = crypto.createHash('sha1').update(argv.p).digest('hex');
 
-var soup = require('./notesoup.js').connect(process.env.REDIS_URL);
+var soup = require('./notesoup.js');
+soup.argv = argv;
+soup.connect(process.env.REDISTOGO_URL);
 soup.save_password_hash(argv.u, passwordhash, function(err, reply) {
 	process.exit();
 });
