@@ -11,7 +11,11 @@ Notesoup/Node/Redis TODO list
 ===
 postupdate hook for update_server_info
 - bug: +Inf in sync 
-	
+
+- bug: xPos, yPos saved as strings, wasting space
+	x y z w h
+-bug: note needs both xpos and ypos else it's repositioned
+
 ===
 Folder existence bugs
 - bug: disallow navigation to nonexistent folder
