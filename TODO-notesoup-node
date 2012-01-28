@@ -9,13 +9,8 @@ Notesoup/Node/Redis TODO list
 
 
 ===
-- bug: +Inf in sync 
-
-- bug: xPos, yPos saved as strings, wasting space
-	x y z w h
--bug: note needs both xpos and ypos else it's repositioned
-
-- gitweb
+- postEvent was dropped...
+	- send plumbing seems inactive?
 
 ===
 Folder existence bugs
@@ -40,7 +35,6 @@ factor the server into
 	load
 ===
 INSTALL-OSX
-INSTALL-Heroku: system password update
 ===
 API completeness
 
@@ -50,13 +44,6 @@ API completeness
 
 ===
 - shred
-===
-
-Elvis?
-
-- bug: Open Folder -> list is not populated with all folders??
-- bug: crash on access denied to widgets:race?
-
 ===
 ACL support
 
@@ -135,6 +122,8 @@ http://api.flickr.com/services/feeds/photos_public.gne?tags=sunset&format=json
 	- dragdrop uses it
 	- updatenote uses it
 ===
+-bug: note needs both xpos and ypos else it's repositioned
+===
 
 API buildout 
 
@@ -162,6 +151,10 @@ Production
 	- todo: backup .db
 		- script to copy db to dbbackups/db-date
 		- cron to run it
+
+- test the redis session store
+	- heroku
+	- ec2
 
 - Redis 32 bit vs 64 bit
 	- next server rebuild use 32 bit

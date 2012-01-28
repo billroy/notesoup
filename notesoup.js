@@ -245,18 +245,18 @@ loadfolderacl: function(fieldname, next) {
 	var self = NoteSoup;
 	if (!self.req.acl) self.req.acl = {};
 
-	self.log('loadfolderacl: ' + fieldname + ' ' + self.req.body.params[fieldname]);
+	//self.log('loadfolderacl: ' + fieldname + ' ' + self.req.body.params[fieldname]);
 	//self.dir(self.req.body.params);
 
 	if (typeof(self.req.body.params[fieldname]) == 'undefined') {
-		self.log('no arg ' + fieldname);
+		//self.log('no arg ' + fieldname);
 		next(null);
 		return;
 	}
 
 	var folder = self.req.body.params[fieldname];	// fetch fromfolder or tofolder
 	
-	self.log('Loadfolderacl: ' + fieldname + ' ' + folder);
+	//self.log('Loadfolderacl: ' + fieldname + ' ' + folder);
 
 	if (!self.isvalidfoldername(folder)) {
 		next('Invalid folder name.');
@@ -292,12 +292,10 @@ validateaccess: function(next) {
 
 	var aclcheck = self.acl_checklist[self.req.body.method];
 	if (!aclcheck) {
-		self.log('validateaccess: *** no acl check for api: ' + self.req.body.method);
+		self.log('note: no acl check for api: ' + self.req.body.method);
 		next(null);		// 'No acl check string?!');
 		return;
 	}
-
-	self.log('aclcheck: ' + aclcheck);
 
 	while (aclcheck.length) {
 
@@ -324,7 +322,7 @@ validateaccess: function(next) {
 			return;
 		}
 	}
-	self.log('Access granted.');
+	//self.log('Access granted.');
 	next(null);
 },
 
@@ -749,9 +747,11 @@ sendnote: function(noteid, next) {
 },
 
 api_postevent: function() {
-	this.log('PostEvent via api: (DROPPED)');
-	this.dir(this.req.body.params);
+	var self = this;
+	self.log('PostEvent via api: (DROPPED)');
+	self.dir(this.req.body.params);
 	//io.socket.send(this.res.body.params.
+	self.addupdate(['say', 'PostEvent was dropped.']);
 	return this.sendreply();
 },
 

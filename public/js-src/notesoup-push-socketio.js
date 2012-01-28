@@ -290,7 +290,7 @@ notesoup.set({
 			//notesoup.say('Notification sent.');
 ***/
 			notesoup.push.send(channel, request);
-			return;
+			//return;
 		}
 
 		notesoup.postRequest({
