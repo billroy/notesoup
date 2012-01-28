@@ -6,26 +6,25 @@
 
 * You need an account at [Heroku](http://www.heroku.com/).  The free tier is suitable for testing and personal use.
 
-### Local Workstation Setup
-
-See the [Heroku NodeJS Cookbook](http://devcenter.heroku.com/articles/node-js) and perform the section "Local Workstation Setup".  After installing the appropriate package for your system, log in to Heroku:
+* You need the heroku command line tools.  See the [Heroku NodeJS Cookbook](http://devcenter.heroku.com/articles/node-js) and perform the section "Local Workstation Setup".  After installing the appropriate tools package for your system, log in to Heroku:
 
 	$ heroku login
 
 Once you are logged in, continue with the deployment procedure here.
 
-### RedisToGo nano.
+### Where the notes go: RedisToGo nano.
 
-RedisToGo provides a free "nano" tier of service that is suitable for experimentation and personal use.  Instructions on configuring this tier of service are below.
+RedisToGo provides a free "nano" tier of service that is suitable for experimentation and personal use.
 
 Be aware this free level of service does not include backup, and provides only 5MB storage.  If you use more than a couple hundred folders, you'll exceed the capacity of the nano tier.  [Consider a paid plan](http://addons.heroku.com/redistogo), or a local soup.
+
+The scripts/heroku-start.sh script configures the nano tier of service; edit it if required.
 
 ### Deployment procedure
 
 	$ git clone http://bitlash.net/git/notesoup.git
 	$ cd notesoup
 	$ ./scripts/heroku-start.sh 
-
 
 The console output will contain the name of your new server.  Open a browser on that url and you should see the system/welcome page.
 
