@@ -4,23 +4,17 @@
 
 * You need [git.](http://git-scm.com)
 
-* You need an account at [Heroku](http://www.heroku.com/).  The free tier is suitable for testing and personal use.
+* You need an account at [Heroku](http://www.heroku.com/).  You only need an email address to sign up for the free tier, which is suitable for testing and personal use.  Click through on the confirmation email and provide a password.
 
 * You need the heroku command line tools.  See the [Heroku NodeJS Cookbook](http://devcenter.heroku.com/articles/node-js) and perform the section "Local Workstation Setup".  After installing the appropriate tools package for your system, log in to Heroku:
 
 	$ heroku login
 
-Once you are logged in, continue with the deployment procedure here.
-
-### Where the notes go: RedisToGo nano.
-
-RedisToGo provides a free "nano" tier of service that is suitable for experimentation and personal use.
-
-Be aware this free level of service does not include backup, and provides only 5MB storage.  If you use more than a couple hundred folders, you'll exceed the capacity of the nano tier.  [Consider a paid plan](http://addons.heroku.com/redistogo), or a local soup.
-
-The scripts/heroku-start.sh script configures the nano tier of service; edit it if required.
+Once you are logged into Heroku and the credential formalities are complete, continue with the deployment procedure here.
 
 ### Deployment procedure
+
+Three line install:
 
 	$ git clone http://bitlash.net/git/notesoup.git
 	$ cd notesoup
@@ -38,15 +32,27 @@ Now go read README.md and see all the work you saved.
 
 And read about locking down the guest user, too.
 
+### Where the notes go: RedisToGo nano.
+
+RedisToGo provides a free "nano" tier of service that is suitable for experimentation and personal use.
+
+Be aware this free level of service does not include backup, and provides only 5MB storage.  If you use more than a couple hundred folders, you'll exceed the capacity of the nano tier.  [Consider a paid plan](http://addons.heroku.com/redistogo), or a local soup.
+
+The scripts/heroku-start.sh script configures the nano tier of service; edit it if required.
+
 ### Administration
 
 Manage your app from the [Heroku app console](https://api.heroku.com/myapps) or using the heroku command line tool.
+
+You must be in the notesoup directory for the heroku command line tools to know which application to control:
+
+	$ cd notesoup
 
 Nuke your app and database, gone in an instant:
 
 	$ heroku destroy
 	
-Your site is popular.  Add additional web workers:
+Your site is popular.  Add additional web workers, for a fee:
 
 	$ heroku ps:scale web=2
 
