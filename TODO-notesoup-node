@@ -56,6 +56,8 @@ Elvis?
 ===
 ACL support
 
+- logged-in vs. not-logged-in api points
+
 - feat: createuser from skeleton
 	- need to set up folders with permissions:
 		- inbox/senders/*

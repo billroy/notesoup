@@ -1272,6 +1272,40 @@ var notesoup = {
 		});
 	},
 
+	/*
+	*	create a new user account and configure it for operation
+	*	@param {string} username the new username; an account with this name must not exist
+	*	@param {string} password the new password for the account (plain text)
+	*/
+	setPassword: function(username, password) {
+
+		if (!username) {
+			username = prompt('Change password for user:', '');
+			if (!username) return;
+		}
+		
+		if (!password) {
+			password = prompt('Enter new password:', '');
+			if (!password) return;
+		}
+
+		var passwordhash = hex_sha1(password);
+		password = '';
+
+		// Create a new user
+		notesoup.postRequest({
+			method:"setpassword",
+			params:{
+				username:username,
+				password:passwordhash
+			}
+		},{
+			requestMessage: 'Setting password for ' + username + '...',
+			successMessage: 'Password updated.',
+			failureMessage: 'Could not update password.'
+		});
+	},
+
 
 
 	//	Notesoup timer chain management

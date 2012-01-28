@@ -863,6 +863,11 @@ effectiveuser: function() {
 	return this.req.session.loggedin ? this.req.session.username : this.guestuser;
 },
 
+isroot: function() {
+	var self = this;
+	return (self.req.session.loggedin && (self.effectiveuser() === self.systemuser));
+},
+
 navigatehome: function() {
 	var self = this;
 	if (self.req.session.loggedin) {
@@ -879,7 +884,7 @@ deletefolder: function(folder, next) {
 	self.redis.multi()
 		.del(self.key_note(folder))
 		.del(self.key_mtime(folder))
-		.del(self.key_nextid(folder))
+//		.del(self.key_nextid(folder))
 		.del(self.key_foldermeta(folder))
 		.exec(function(err, reply) {
 			next(err, reply);
@@ -931,8 +936,29 @@ api_createuser: function() {
 	async.series([
 			self.checksignup,
 			self.validateusername,
-			self.checkuserexists,
-			self.inituser
+			self.failifuserexists,
+			self.setpassword
+		],
+		function(err, reply) {
+			if (err) self.senderror(err);
+		});
+},
+
+api_setpassword: function() {
+	var self = this;
+	if (!self.req.session.loggedin) {
+		self.senderror('Log in to set a password.');
+		return;
+	}
+	if ((self.req.body.params.username != self.effectiveuser()) && !self.isroot()) {
+		self.senderror('Invalid password.');
+		return;		
+	}
+
+	async.series([
+			self.validateusername,
+			self.ensureuserexists,
+			self.setpassword
 		],
 		function(err, reply) {
 			if (err) self.senderror(err);
@@ -941,8 +967,7 @@ api_createuser: function() {
 
 checksignup: function(next) {
 	var self = NoteSoup;
-	if (!self.opensignup &&
-		(!self.req.session.loggedin || (self.effectiveuser() != self.systemuser))) {
+	if (!self.opensignup && !self.isroot()) {
 		next('Signups are closed.  Please contact the system administrator to create a new user.');
 	}
 	else next(null);
@@ -959,7 +984,7 @@ validateusername: function(next) {
 	else next(null);
 },
 
-checkuserexists: function(next) {
+failifuserexists: function(next) {
 	var self = NoteSoup;
 	self.redis.hget(self.key_usermeta(self.req.body.params.username), 
 		self.passwordattr, function(err, passwordhash) {
@@ -968,17 +993,27 @@ checkuserexists: function(next) {
 		});
 },
 
-inituser: function(next) {
+ensureuserexists: function(next) {
+	var self = NoteSoup;
+	self.redis.hget(self.key_usermeta(self.req.body.params.username), 
+		self.passwordattr, function(err, passwordhash) {
+			if (err || !passwordhash) next('Invalid input.');
+			else next(null);
+		});
+},
+
+setpassword: function(next) {
 	var self = NoteSoup;
 	self.save_password_hash(self.req.body.params.username, self.req.body.params.password, 
 		function(err, reply) {
 			if (err) self.senderror(err);
 			else {
 				// if it's not admin creating a new user we log in and go there
-				if (self.effectiveuser() != self.systemuser) {
+				if (!self.isroot()) {
 					self.initsessiondata();
 					self.navigatehome();
 				}
+				self.addupdate(['say','Credentials saved.']);
 				self.sendreply();
 			}
 		}
