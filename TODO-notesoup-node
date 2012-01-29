@@ -5,18 +5,13 @@ _____       _         _____
                                        |_|  
                                        
 Notesoup/Node/Redis TODO list
-1/28/12 -br
+1/29/12 -br
 
 ===
-- bug: CRASH: getfolderlist/geturl race
-
-
 - bug: ACL: getfolderlist acl leak
 	- currently happy to return anyone's folder list
 	- a user's folder list should be visible only to the user, and system
 	- fix: logged in and user==proposeduser || isroot
-- geturl: 
-	- check for .. in path
 
 ===
 - postEvent was dropped...
@@ -152,7 +147,10 @@ http://api.flickr.com/services/feeds/photos_public.gne?tags=sunset&format=json
 	- dragdrop uses it
 	- updatenote uses it
 ===
--bug: note needs both xpos and ypos else it's repositioned
+- bug: note needs both xpos and ypos else it's repositioned
+- bug: if you're fast, you can drop a menu before the folder list is ready.
+- bug? geturl: check for .. in path
+
 ===
 
 API buildout 
