@@ -705,7 +705,7 @@ api_sync: function() {
 						}
 						self.addupdate(['endupdate','']);
 					}
-					self.addupdate(['setupdatetime', self.res.newlastupdate.toString()]);
+					self.addupdate(['setupdatetime', newlastupdate]);
 					self.sendreply();
 				});
 		});
@@ -869,6 +869,12 @@ key_folderquery: function(user) {
 
 api_getfolderlist: function() {
 	var self = this;
+
+	if (!self.req.session.loggedin) {
+		self.addupdate(['folderlist', []]);
+		self.sendreply();
+		return;
+	}
 	self.redis.keys(self.key_folderquery(self.effectiveuser()), function(err, keylist) {
 		if (err) {
 			self.senderror(err);

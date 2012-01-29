@@ -1504,7 +1504,8 @@ var notesoup = {
 		}
 
 		// NODE patch: set correct Content-Type for json ajax request body
-		if (!rawfetch) Ext.lib.Ajax.defaultPostHeader = 'application/json';
+		if (!rawfetch) 
+			Ext.lib.Ajax.defaultPostHeader = 'application/json';
 
 		var a = Ext.Ajax.request(opt);
 

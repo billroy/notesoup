@@ -1,0 +1,6 @@
+{
+  "imports": "/js-src/js-widgets/folderacl.js", 
+  "notename": "Folder Access Control",
+  "xPos": 290,
+  "yPos": 55
+}

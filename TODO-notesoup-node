@@ -8,10 +8,7 @@ Notesoup/Node/Redis TODO list
 1/29/12 -br
 
 ===
-- bug: ACL: getfolderlist acl leak
-	- currently happy to return anyone's folder list
-	- a user's folder list should be visible only to the user, and system
-	- fix: logged in and user==proposeduser || isroot
+- bug: heroku install crashed?
 
 ===
 - postEvent was dropped...
@@ -20,12 +17,11 @@ Notesoup/Node/Redis TODO list
 ===
 preloadnotes
 
-- bug: with preloadnotes enabled, geturl barfs on a reliable race condition
+- bug: geturl race/headers bug
 	- geturl appears to be called twice
 	- interleaved with getfolderlist
 	- + 4 widgets
-===
-- messages stack
+
 ===
 Folder existence bugs
 - bug: disallow navigation to nonexistent folder
@@ -63,18 +59,9 @@ API completeness
 - postevent
 
 ===
-- shred
-===
 ACL support
 
 - logged-in vs. not-logged-in api points
-
-- feat: createuser from skeleton
-	- need to set up folders with permissions:
-		- inbox/senders/*
-		- public/readers/*
-		- trash/
-	- need initial folder content
 
 - check: other acl checks
 	- double check the "prelogin" command roster for issues
@@ -87,20 +74,104 @@ Notification plumbing issues
 - bug: note color change doesn't go on notify bus, waits for sync instead
 	- notify plumbing (tofolder...)
 
-- besides socket.io:
-	now.js
-	http://sharejs.org/
 
-====
-Sessions
+===
+- review client mtime handling
+	- widgets use it
+	- dragdrop uses it
+	- updatenote uses it
 
+===
+API buildout 
+
+- bug: unimplemented API:
+	if method == 'getfeed': return apigetfeed(params)
+	if method == 'getnote': return apigetnote(params)
+		- needed for portable hole
+		- can't it check the cache first?
+
+	# Command below this point are only allowed for logged-in requestors
+
+	if method == 'setfolderpassword': return apisetfolderpassword(params)
+		- use api_setfolderacl {password: password}
+		- checking the password requires http auth or equiv - how in node?
+
+	if method == 'copyfolder': return apicopyfolder(params)
+	if method == 'deleteuser': return apideleteuser(params)
+	if method == 'postevent': return apipostevent(params)
+
+===
+- bug: note needs both xpos and ypos else it's repositioned
+- bug: if you're fast, you can drop a menu before the folder list is ready.
+- bug? geturl: check for .. in path
 - bug: need better handling for expired sessions
 	- server restart kills sessions 
 	- they can time out anyway
 	- client thinks it's logged in
 	- ...
+====
+Feature candidates
+
+- backup
+	- per folder 'download this folder'
+	- system 'download all'
+		- but could use redis replication
+
+- messages stack
+
+- feat: createuser from skeleton
+	- set up folders with permissions:
+		- inbox/senders/*
+		- public/readers/*
+		- trash/
+	- initial welcome-folder content
+
+- multi-tenancy via Host: header / database index map
+
+- auto-expire the trash
+
+- notesoup time machine
+	- move deleted notes somewhere 'magic'
+	- infinite undo/redo
+	- pushbutton backup/restore
+	- privacy nightmare
+
+- locked/static cached workspace
+	- caching
+	- publish/expire controls
+
+- besides socket.io:
+	now.js
+	http://sharejs.org/
+
+- publish-folder-to
+	- url, user, password, tofolder
+	- push contents vs. replace?
+	- destination public or private?
+===
+Production 
+
+- alpha server
+	- todo: run nodejs at boot time
+	- todo: backup .db
+		- script to copy db to dbbackups/db-date
+		- cron to run it
 
 - test the redis session store
+	- heroku
+	- ec2
+
+- Redis 32 bit vs 64 bit
+	- next server rebuild use 32 bit
+
+
+===
+Note Content and Import/Export
+
+- guest user: content in template/soupbase/guest
+	- welcome/help
+	- feat: auto-refresh every 15 minutes
+
 ===
 widget issues
 
@@ -141,89 +212,6 @@ http://api.flickr.com/services/feeds/photos_public.gne?tags=sunset&format=json
 		http://www.jplayer.org/
 	html5 div hack
 
-===
-- review client mtime handling
-	- widgets use it
-	- dragdrop uses it
-	- updatenote uses it
-===
-- bug: note needs both xpos and ypos else it's repositioned
-- bug: if you're fast, you can drop a menu before the folder list is ready.
-- bug? geturl: check for .. in path
-
-===
-
-API buildout 
-
-- bug: unimplemented API:
-	if method == 'getfeed': return apigetfeed(params)
-	if method == 'getnote': return apigetnote(params)
-		- needed for portable hole
-		- can't it check the cache first?
-
-	# Command below this point are only allowed for logged-in requestors
-
-	if method == 'setfolderpassword': return apisetfolderpassword(params)
-		- use api_setfolderacl {password: password}
-		- checking the password requires http auth or equiv - how in node?
-
-	if method == 'copyfolder': return apicopyfolder(params)
-	if method == 'deleteuser': return apideleteuser(params)
-	if method == 'postevent': return apipostevent(params)
-
-===
-Production 
-
-- alpha server
-	- todo: run nodejs at boot time
-	- todo: backup .db
-		- script to copy db to dbbackups/db-date
-		- cron to run it
-
-- test the redis session store
-	- heroku
-	- ec2
-
-- Redis 32 bit vs 64 bit
-	- next server rebuild use 32 bit
-
-- backup
-	- per folder 'download this folder'
-	- system 'download all'
-		- but could use redis replication
-
-====
-Feature candidates
-
-- multi-tenancy via Host: header / database index map
-
-- auto-expire the trash
-
-- notesoup time machine
-	- move deleted notes somewhere 'magic'
-	- infinite undo/redo
-	- pushbutton backup/restore
-	- privacy nightmare
-
-- locked/static cached workspace
-	- caching
-	- publish/expire controls
-
-- publish-folder-to
-	- url, user, password, tofolder
-	- push contents vs. replace?
-	- destination public or private?
-
-===
-
-Note Content and Import/Export
-
-- guest user: content in template/soupbase/guest
-	- welcome/help
-	- feat: auto-refresh every 15 minutes
-
-- new user: content to copy in template/soupbase/newuser
-	- folder permissions
 
 ===
 note slinging
