@@ -126,7 +126,7 @@ connect: function(redis_url) {
 						// onleave
 						var msg = {
 							method: 'notify',
-							sender: request.sender,
+							sender: self.systemuser,
 							channel: request.channel,
 							op: 'say',
 							data: '' + request.sender + ' has left.'
@@ -137,7 +137,7 @@ connect: function(redis_url) {
 					// onjoin
 					var msg = {
 						method: 'notify',
-						sender: request.sender,
+						sender: self.systemuser,
 						channel: request.channel,
 						op: 'say',
 						data: '' + request.sender + ' has joined.'
