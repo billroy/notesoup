@@ -91,26 +91,6 @@ var notesoup = {
 		if (this.username) this.say('Hello, ' + this.username + '.');
 		this.say('Opening ' + notesoup.foldername + '...');
 
-		// handle initial note pre-load
-		if (this.serveropts.initnotes) {
-			for (var i=0; i < this.serveropts.initnotes.length; i++) {
-				var r = this.serveropts.initnotes[i];
-				//alert('RAW NOTE STRING: ' + r);
-				var n = unescape(r);
-				//alert('UNESCAPED: ' + n);
-				var z1 = n.replace(/&lt;/g, '<');
-				//alert('Z1: ' + z1);
-				var z2 = z1.replace(/&gt;/g, '>');
-				var z3 = z2.replace(/&amp;/g, '&');
-				//alert('Z2: ' + z2);
-				var thenote = Ext.util.JSON.decode(z3);
-				//alert('DECODED NOTE DUMPED: ' + this.dump(thenote));
-
-				this.updateNote(thenote);
-				//if (thenote.mtime > this.lastupdate) this.lastupdate = thenote.mtime;
-			}
-		}
-
 		this.oneHertzCallback();	// call this late; it triggers sync
 
 		if (this.serveropts.ispublic) notesoup.say('This folder is public.', 'warning');
@@ -128,6 +108,15 @@ var notesoup = {
 		notesoup.frontstage.init();
 
 		this.initialized = true;
+/***
+		for (var i=0; i < this.serveropts.initnotes.length; i++) {
+				//var thenote = Ext.util.JSON.decode(this.serveropts.initnotes[i]);
+				notesoup.say(notesoup.dump(thenote), 'tell');
+				this.updateNote(thenote);
+				//if (thenote.mtime > this.lastupdate) this.lastupdate = thenote.mtime;
+			}
+		}
+***/
 		return true;
 	},
 	

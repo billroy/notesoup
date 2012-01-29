@@ -7,10 +7,13 @@ _____       _         _____
 Notesoup/Node/Redis TODO list
 1/28/12 -br
 
-
 ===
 - postEvent was dropped...
 	- send plumbing seems inactive?
+	- nothing shows up on push bus
+
+- initnotes
+	- barfs on embedded script tags in note text (ugh)
 
 ===
 Folder existence bugs
@@ -22,12 +25,16 @@ Folder existence bugs
 	- should refuse to delete a folder with notes in it (mtime/ or notes/ not empty)
 	- should then delete fldr/
 
+- bug? does sync handle nonexistent mtime/ or notes/ properly?
+
 - solution: use fldr/ key as definitive for existence of folder
 - fix: createFolder sets fldr/u/f key
 - fix: getaccess disallow invalid folder (?)	
 
 ===
 factor the server into
+	- what folder?
+	- linked how? (study express?)
 	user
 	folder
 	note
@@ -66,6 +73,11 @@ Notification plumbing issues
 
 - bug: note color change doesn't go on notify bus, waits for sync instead
 	- notify plumbing (tofolder...)
+
+- besides socket.io:
+	now.js
+	http://sharejs.org/
+
 ====
 Sessions
 
@@ -158,6 +170,11 @@ Production
 
 - Redis 32 bit vs 64 bit
 	- next server rebuild use 32 bit
+
+- backup
+	- per folder 'download this folder'
+	- system 'download all'
+		- but could use redis replication
 
 ====
 Feature candidates

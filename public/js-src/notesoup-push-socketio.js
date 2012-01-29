@@ -52,7 +52,7 @@ notesoup.push = {
 //			clientid: notesoup.pushClientID,
 			channel: channel
 		};
-		if (notesoup.loggedin) request.authtoken = document.cookie.split('=')[1];
+		//if (notesoup.loggedin) request.authtoken = document.cookie.split('=')[1];
 
 		notesoup.push.send('subscribe', request);
 	},
@@ -66,7 +66,7 @@ notesoup.push = {
 
 	handleNotification: function(request) {
 
-		if (notesoup.debugmode > 2)
+		//if (notesoup.debugmode > 2)
 			notesoup.say('Notification:' + notesoup.dump(request));
 
 		if (!((request.channel == '/folder/' + notesoup.foldername) || 
@@ -277,18 +277,19 @@ notesoup.set({
 		if (notesoup.push.connected) {
 			var request = {
 				method: 'notify',
+				sender: notesoup.username,
 //				clientid: notesoup.pushClientID,
 				channel: channel,
 				op: opstring,
 				data: arg
 			};
-			if (notesoup.loggedin) request.authtoken = document.cookie.split('=')[1];
-/***
+			//if (notesoup.loggedin) request.authtoken = document.cookie.split('=')[1];
+
 			var jsonrequest = Ext.util.JSON.encode(request);
-			//notesoup.say('Sending notification...' + jsonrequest);
-			notesoup.push.send(jsonrequest);
+			notesoup.say('Sending notification...' + jsonrequest);
+			//notesoup.push.send(jsonrequest);
 			//notesoup.say('Notification sent.');
-***/
+
 			notesoup.push.send(channel, request);
 			//return;
 		}

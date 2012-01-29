@@ -152,6 +152,7 @@ renderworkspace: function(req, res) {
 	async.series([
 			self.loadfromacl, 
 			self.validateaccess,
+			//self.preloadnotes,
 			self.sendworkspace
 		],
 		function(err, reply) {
@@ -159,6 +160,25 @@ renderworkspace: function(req, res) {
 		});
 },
 
+preloadnotes: function(next) {
+	var self = NoteSoup;
+	var updatetime = new Date().getTime();
+	self.redis.hgetall(self.key_note(self.req.body.params.fromfolder), function(err, notes) {
+		if (err) {
+			next(err);
+			return;
+		}
+		console.log('preload:');
+		self.res.initnotes = [];
+		for (var id in notes) {
+			self.res.initnotes.push(JSON.parse(notes[id]));
+		}
+		if (self.res.initnotes.length) self.res.lastupdate = updatetime;
+		console.dir(self.res.initnotes);
+
+		next(null);
+	});
+},
 
 sendworkspace: function(next) {
 	var self = NoteSoup;
@@ -170,12 +190,14 @@ sendworkspace: function(next) {
 		username:	self.req.session.username || 'guest',
 		foldername:	self.req.params.user + '/' + self.req.params.folder,
 		isowner:	self.req.session.loggedin && (self.req.session.username == self.req.params.user)
-		//iseditor:	true,
-		//isreader:	true,
-		//issender:	true,
-		//ispublic:	true
-		//initnotes:{}
 	};
+	opts.ispublic = self.hasaccess('*', opts.foldername, self.readers);
+	opts.iseditor = self.hasaccess(self.effectiveuser(), opts.foldername, self.editors);
+	
+	if (self.res.initnotes) {
+		opts.initnotes = self.res.initnotes;
+		opts.lastupdate = self.res.lastupdate;
+	}
 
 	// render index.html as a template with these options
 	if (!self.workspace_template) self.load_workspace_template();
@@ -226,9 +248,9 @@ validatemethod: function(next) {
 	}
 	else if (!self.req.body.method in self.acl_checklist) {
 		self.log('No acl for method: ' + self.req.body.method);
-		next('ACL error');
+		//next('ACL error');
 	}
-	else next(null);
+	next(null);
 },
 
 loadfromacl: function(next) {
