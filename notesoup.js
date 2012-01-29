@@ -789,7 +789,7 @@ api_postevent: function() {
 	self.log('PostEvent via api: (DROPPED)');
 	self.dir(this.req.body.params);
 	//io.socket.send(this.res.body.params.
-	self.addupdate(['say', 'PostEvent was dropped.']);
+	//self.addupdate(['say', 'PostEvent was dropped.']);
 	return this.sendreply();
 },
 

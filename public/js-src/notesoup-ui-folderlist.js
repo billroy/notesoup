@@ -80,3 +80,5 @@ notesoup.ui.set({
 		}
 	}
 });
+
+window.setTimeout('notesoup.ui.populateFolderList();', 2000);

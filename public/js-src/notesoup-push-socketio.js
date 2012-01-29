@@ -66,7 +66,7 @@ notesoup.push = {
 
 	handleNotification: function(request) {
 
-		//if (notesoup.debugmode > 2)
+		if (notesoup.debugmode > 2)
 			notesoup.say('Notification:' + notesoup.dump(request));
 
 		if (!((request.channel == '/folder/' + notesoup.foldername) || 
@@ -286,7 +286,7 @@ notesoup.set({
 			//if (notesoup.loggedin) request.authtoken = document.cookie.split('=')[1];
 
 			var jsonrequest = Ext.util.JSON.encode(request);
-			notesoup.say('Sending notification...' + jsonrequest);
+//			notesoup.say('Sending notification...' + jsonrequest);
 			//notesoup.push.send(jsonrequest);
 			//notesoup.say('Notification sent.');
 

@@ -1621,7 +1621,7 @@ var notesoup = {
 								notesoup.initialLoadComplete = true;
 								if (!notesoup.countNotes()) notesoup.say('There are no notes here.');
 							}
-							notesoup.ui.populateFolderList();
+							//notesoup.ui.populateFolderList();
 							break;
 		
 						case 'updatenote':

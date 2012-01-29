@@ -3,7 +3,7 @@
   "version": "0.0.2",
   "private": true, 
   "author": "Bill Roy <bill@bitlash.net>",
-  "description": "Note Soup: sticky note web organizer and dashboard factory",
+  "description": "The Note Soup sticky note web organizer and dashboard factory for node.js/redis",
   "scripts": {
     "start": "forever start soup.js",
     "stop": "forever stop soup.js",
