@@ -9,18 +9,19 @@ Notesoup/Node/Redis TODO list
 
 ===
 - bug: heroku install crashed?
+	watching
 
 ===
 - postEvent was dropped...
 	- send plumbing seems inactive?
 	- nothing shows up on push bus
 ===
-preloadnotes
 
 - bug: geturl race/headers bug
-	- geturl appears to be called twice
 	- interleaved with getfolderlist
 	- + 4 widgets
+
+- preloadnotes
 
 ===
 Folder existence bugs

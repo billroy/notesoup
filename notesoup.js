@@ -120,6 +120,30 @@ connect: function(redis_url) {
 				socket.on(request.channel, function(msg) {
 					self.io.sockets.emit(request.channel, msg);
 				});
+
+				if (request.channel.split('/')[1] == 'folder') {
+					socket.on('disconnect', function() {
+						// onleave
+						var msg = {
+							method: 'notify',
+							sender: request.sender,
+							channel: request.channel,
+							op: 'say',
+							data: '' + request.sender + ' has left.'
+						};
+						self.io.sockets.emit(request.channel, msg);
+					});
+	
+					// onjoin
+					var msg = {
+						method: 'notify',
+						sender: request.sender,
+						channel: request.channel,
+						op: 'say',
+						data: '' + request.sender + ' has joined.'
+					};
+					self.io.sockets.emit(request.channel, msg);
+				}
 			});
 		});
 	}
@@ -904,7 +928,8 @@ api_openfolder: function() {
 },
 
 effectiveuser: function() {
-	return this.req.session.loggedin ? this.req.session.username : this.guestuser;
+	var self = NoteSoup;
+	return self.req.session.loggedin ? self.req.session.username : self.guestuser;
 },
 
 isroot: function() {
