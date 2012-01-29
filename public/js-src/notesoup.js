@@ -109,13 +109,15 @@ var notesoup = {
 
 		this.initialized = true;
 
-		for (var i=0; i < this.serveropts.initnotes.length; i++) {
-			var thenote = this.serveropts.initnotes[i];
-			if (thenote.hasOwnProperty('text')) {
-				thenote.text = thenote.text.replace(/&lt;/g, '<');
+		if (this.serveropts.initnotes) {
+			for (var i=0; i < this.serveropts.initnotes.length; i++) {
+				var thenote = this.serveropts.initnotes[i];
+				if (thenote.hasOwnProperty('text')) {
+					thenote.text = thenote.text.replace(/&lt;/g, '<');
+				}
+				this.updateNote(thenote);
+				//if (thenote.mtime > this.lastupdate) this.lastupdate = thenote.mtime;
 			}
-			this.updateNote(thenote);
-			//if (thenote.mtime > this.lastupdate) this.lastupdate = thenote.mtime;
 		}
 		return true;
 	},

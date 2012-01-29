@@ -8,12 +8,27 @@ Notesoup/Node/Redis TODO list
 1/28/12 -br
 
 ===
+- bug: CRASH: getfolderlist/geturl race
+
+
+- bug: ACL: getfolderlist acl leak
+	- currently happy to return anyone's folder list
+	- a user's folder list should be visible only to the user, and system
+	- fix: logged in and user==proposeduser || isroot
+- geturl: 
+	- check for .. in path
+
+===
 - postEvent was dropped...
 	- send plumbing seems inactive?
 	- nothing shows up on push bus
+===
+preloadnotes
 
-- initnotes
-	- barfs on embedded script tags in note text (ugh)
+- bug: with preloadnotes enabled, geturl barfs on a reliable race condition
+	- geturl appears to be called twice
+	- interleaved with getfolderlist
+	- + 4 widgets
 ===
 - messages stack
 ===
@@ -43,6 +58,8 @@ factor the server into
 	load
 ===
 INSTALL-OSX
+Install-nodester
+Install-nodejitsu
 ===
 API completeness
 
@@ -189,6 +206,15 @@ Feature candidates
 	- infinite undo/redo
 	- pushbutton backup/restore
 	- privacy nightmare
+
+- locked/static cached workspace
+	- caching
+	- publish/expire controls
+
+- publish-folder-to
+	- url, user, password, tofolder
+	- push contents vs. replace?
+	- destination public or private?
 
 ===
 

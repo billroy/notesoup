@@ -90,6 +90,9 @@ connect: function(redis_url) {
 	if (self.argv.nopush) self.enablepush = false;
 	if (self.argv.nosignup) self.opensignup = false;
 
+	// socket storm on openfolder...
+	//http.Agent.defaultMaxSockets = 10;
+
 	if (redis_url) {
 		self.log("Connecting to Redis at " + redis_url);
 		self.redis = require('redis-url').connect(redis_url);
@@ -238,6 +241,7 @@ dispatch: function(req, res) {
 		],
 		function(err, reply) {
 			if (err) {
+				console.log('API EXEC ERROR: ' + err);
 				self.senderror(err);
 				//self.addupdate(['navigateto', '/folder/system/accesserror']);
 				//self.sendreply();
@@ -498,6 +502,12 @@ dir: function(thing) {
 	console.log(util.inspect(thing, false, 5, true));
 },
 
+logdt: function() {
+	this.req.endtime = new Date().getTime();
+	this.req.time = this.req.endtime - this.req.starttime;
+	this.log('dt=' + this.req.time + 'ms');
+},
+
 senderror: function(errormessage) {
 	var reply = {
 		result: '',
@@ -508,7 +518,7 @@ senderror: function(errormessage) {
 
 	this.log('Error:');
 	this.dir(reply);
-	this.log('dt=' + this.req.time + 'ms');
+	this.logdt();
 
 	this.res.send(reply);
 },
@@ -522,11 +532,9 @@ sendreply: function() {
 		command: this.res.updatelist
 	};
 
-	this.req.endtime = new Date().getTime();
-	this.req.time = this.req.endtime - this.req.starttime;
 	this.log('Reply:');
 	this.dir(reply);
-	this.log('dt=' + this.req.time + 'ms');
+	this.logdt();
 
 	this.res.send(reply);
 },
@@ -1134,7 +1142,7 @@ api_login: function() {
 		}
 
 		self.log('login: ' + self.req.body.params.username);
-		self.dir(passwordhash);
+		//self.dir(passwordhash);
 
 		if (!passwordhash) {
 			self.badlogin();
@@ -1182,14 +1190,14 @@ api_logout: function() {
 
 api_geturl: function() {
 	var self = this;
-	console.log('Geturl: ' + self.req.body.params.url);
+	self.log('Geturl: ' + self.req.body.params.url);
 	var options = url.parse(self.req.body.params.url);
-	console.dir(options);
 
 	// handle local '/path' fetches as static
 	if (!options.host) {
-		console.log('Geturl: static ' + options.pathname);
+		self.log('Geturl: static ' + options.pathname);
 		self.res.sendfile(__dirname + '/public' + options.pathname);
+		self.logdt();
 		return;
 	}
 
@@ -1202,17 +1210,19 @@ api_geturl: function() {
 	self.res.data = [];
 	var httpreq = http.get(options, function(httpres) {
 		httpres.on('data', function (chunk) {
-			console.log('Geturl body: ' + chunk.length);
+			self.log('Geturl body: ' + chunk.length);
 			self.res.data.push(chunk);
 		});
 		httpres.on('end', function (chunk) {
-			console.log('Geturl done.');
+			console.log('Geturl finishing...');
 			self.res.data.push(chunk);
 			self.res.write(self.res.data.join(''));
 			self.res.end();
+			self.log('Geturl done.');
+			self.logdt();
 		});
 	}).on('error', function(e) {
-		console.log('Geturl error: ' + e.message);
+		self.log('Geturl error: ' + e.message);
 		self.senderror('error: ' + e.message);
 	});
 },

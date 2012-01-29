@@ -1,18 +1,26 @@
 ## Deploying Note Soup on Heroku
 
-### Requirements
+### Installing the Requirements
 
-* You need [git.](http://git-scm.com)
+#### Git
 
-* You need an account at [Heroku](http://www.heroku.com/).  You only need an email address to sign up for the free tier, which is suitable for testing and personal use.  Click through on the confirmation email and provide a password.
+Download and install [git.](http://git-scm.com)
 
-* You need the heroku command line tools.  See the [Heroku NodeJS Cookbook](http://devcenter.heroku.com/articles/node-js) and perform the section "Local Workstation Setup".  After installing the appropriate tools package for your system, log in to Heroku:
+#### Verified Heroku Account
+
+Create a verified account at [Heroku](http://www.heroku.com/).  This means you will have to provide a credit card and email address.  There should be no charges to the card, unless you specifically configure more resources.  [Sign up for an account here.](https://api.heroku.com/signup)
+
+Once you have received the signup email and configured a password, [verify your account here.](http://www.heroku.com/verify)
+
+#### Heroku Command Line Tools
+
+Install the heroku command line tools.  See the [Heroku NodeJS Cookbook](http://devcenter.heroku.com/articles/node-js) and perform the section "Local Workstation Setup".  After installing the appropriate tools package for your system, log in to Heroku:
 
 	$ heroku login
 
 Once you are logged into Heroku and the credential formalities are complete, continue with the deployment procedure here.
 
-### Deployment procedure
+### Deploying Note Soup to Heroku
 
 Three line install:
 

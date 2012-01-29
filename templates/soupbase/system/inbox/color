@@ -1,0 +1,11 @@
+{
+  "bgcolor": "#000000", 
+  "height": 69, 
+  "notename": "set desktop color", 
+  "opacity": 0.1, 
+  "text": "<script type='text/javascript'>document.body.style.background='#000000';</script>This note sets the desktop background color.", 
+  "width": 250, 
+  "xPos": 17, 
+  "yPos": 387, 
+  "zIndex": 7
+}
