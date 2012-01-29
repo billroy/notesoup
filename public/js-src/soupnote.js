@@ -890,6 +890,8 @@ soupnote.prototype.xtrack = function(event) {
 *	=$n('fonx').geturl('http://pingdog.net/countdown/cd.html')
 */
 soupnote.prototype.geturl = function(url) {
+
+	//notesoup.say('Fetching url: ' + url);
 	var request = {
 		method:"geturl",
 		params:{ 

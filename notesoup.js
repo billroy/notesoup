@@ -171,7 +171,13 @@ preloadnotes: function(next) {
 		console.log('preload:');
 		self.res.initnotes = [];
 		for (var id in notes) {
-			self.res.initnotes.push(JSON.parse(notes[id]));
+			var thenote = JSON.parse(notes[id]);
+			if (thenote.hasOwnProperty('text')) {
+				console.log('Text before: ' + thenote.text);
+				thenote.text = thenote.text.replace(/</g, '&lt;');
+				console.log('Text after:  ' + thenote.text);	
+			}
+			self.res.initnotes.push(thenote);
 		}
 		if (self.res.initnotes.length) self.res.lastupdate = updatetime;
 		console.dir(self.res.initnotes);
@@ -642,7 +648,9 @@ api_appendtonote: function() {
 
 api_sync: function() {
 	var self = this;
-	self.res.newlastupdate = new Date().getTime();
+	newlastupdate = new Date().getTime().toString();
+	console.log('Last sync: ' + self.req.body.params.lastupdate);
+	console.log('Sync mark: ' + newlastupdate);
 
 	if (self.req.body.params.lastupdate == 0) {
 		self.redis.hgetall(self.key_note(self.req.body.params.fromfolder), function(err, notes) {
@@ -658,7 +666,7 @@ api_sync: function() {
 				self.addupdate(['updatenote', note]);
 			}
 			self.addupdate(['endupdate','']);
-			self.addupdate(['setupdatetime', self.res.newlastupdate.toString()]);
+			self.addupdate(['setupdatetime', newlastupdate]);
 			self.sendreply();
 		});
 	}
@@ -670,7 +678,7 @@ api_sync: function() {
 					return;
 				}
 				if (!noteids.length) {
-					self.addupdate(['setupdatetime', self.res.newlastupdate.toString()]);
+					self.addupdate(['setupdatetime', newlastupdate]);
 					self.sendreply();
 					return;
 				}
@@ -1176,6 +1184,7 @@ api_geturl: function() {
 	var self = this;
 	console.log('Geturl: ' + self.req.body.params.url);
 	var options = url.parse(self.req.body.params.url);
+	console.dir(options);
 
 	// handle local '/path' fetches as static
 	if (!options.host) {
@@ -1190,19 +1199,18 @@ api_geturl: function() {
 		'Accept': 'application/x-javascript; charset=utf-8'
 	};
 	options.agent = false;	// prevent Connection-Keepalive in the framework
+	self.res.data = [];
 	var httpreq = http.get(options, function(httpres) {
 		httpres.on('data', function (chunk) {
 			console.log('Geturl body: ' + chunk.length);
-			self.res.write(chunk);
+			self.res.data.push(chunk);
 		});
 		httpres.on('end', function (chunk) {
 			console.log('Geturl done.');
+			self.res.data.push(chunk);
+			self.res.write(self.res.data.join(''));
 			self.res.end();
 		});
-		//console.log("Geturl response: " + httpres.statusCode);
-		//console.log("Geturl response: " + httpres.responseText);		
-		//console.dir(httpres);
-		console.dir(httpres.headers);
 	}).on('error', function(e) {
 		console.log('Geturl error: ' + e.message);
 		self.senderror('error: ' + e.message);

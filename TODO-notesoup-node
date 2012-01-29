@@ -14,7 +14,8 @@ Notesoup/Node/Redis TODO list
 
 - initnotes
 	- barfs on embedded script tags in note text (ugh)
-
+===
+- messages stack
 ===
 Folder existence bugs
 - bug: disallow navigation to nonexistent folder

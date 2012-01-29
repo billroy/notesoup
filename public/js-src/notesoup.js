@@ -108,15 +108,15 @@ var notesoup = {
 		notesoup.frontstage.init();
 
 		this.initialized = true;
-/***
+
 		for (var i=0; i < this.serveropts.initnotes.length; i++) {
-				//var thenote = Ext.util.JSON.decode(this.serveropts.initnotes[i]);
-				notesoup.say(notesoup.dump(thenote), 'tell');
-				this.updateNote(thenote);
-				//if (thenote.mtime > this.lastupdate) this.lastupdate = thenote.mtime;
+			var thenote = this.serveropts.initnotes[i];
+			if (thenote.hasOwnProperty('text')) {
+				thenote.text = thenote.text.replace(/&lt;/g, '<');
 			}
+			this.updateNote(thenote);
+			//if (thenote.mtime > this.lastupdate) this.lastupdate = thenote.mtime;
 		}
-***/
 		return true;
 	},
 	
@@ -654,7 +654,7 @@ var notesoup = {
 			return;
 		}
 
-		this.debug('saveNote: thenote=' + thenote.toString());
+		//this.debug('saveNote: thenote=' + thenote.toString());
 
 		tofolder = tofolder || this.foldername;
 
