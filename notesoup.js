@@ -222,8 +222,8 @@ sendworkspace: function(req, res, next) {
 		foldername:	req.params.user + '/' + req.params.folder,
 		isowner:	req.session.loggedin && (req.session.username == req.params.user)
 	};
-	opts.ispublic = self.hasaccess('*', opts.foldername, self.readers);
-	opts.iseditor = self.hasaccess(self.effectiveuser(req, res), opts.foldername, self.editors);
+	opts.ispublic = self.hasaccess(req, res, '*', opts.foldername, self.readers);
+	opts.iseditor = self.hasaccess(req, res, self.effectiveuser(req, res), opts.foldername, self.editors);
 	
 	if (res.initnotes) {
 		opts.initnotes = res.initnotes;
@@ -261,9 +261,8 @@ dispatch: function(req, res) {
 		function(next) {self.execute(req, res, next);}
 	],
 	function(err, reply) {
-		if (err) next(err);
-		else next(null);
-		}
+		if (err) self.senderror(req, res, err);
+		else self.sendreply(req, res);
 	});
 },
 
@@ -509,11 +508,11 @@ key_mtime: function(folder) 	{ return 'mtime/' + folder; },
 key_nextid:  function(folder)	{ return 'stats/notes_created'; },
 
 log: function(text) {
-	self.log(text);
+	console.log(text);
 },
 
 dir: function(thing) {
-	self.log(util.inspect(thing, false, 5, true));
+	console.log(util.inspect(thing, false, 5, true));
 },
 
 logdt: function(req, res) {
@@ -549,7 +548,7 @@ sendreply: function(req, res) {
 
 	this.log('Reply:');
 	this.dir(reply);
-	this.logdt();
+	this.logdt(req, res);
 
 	res.send(reply);
 },
@@ -1148,7 +1147,7 @@ api_knockknock: function(req, res, next) {
 
 badlogin: function(req, res, next) {
 	var self = this;
-	self.clearsessiondata();
+	self.clearsessiondata(req, res);
 	next('Invalid login.');
 },
 
@@ -1195,22 +1194,22 @@ initsessiondata: function(req, res) {
 	delete req.session.nonce;
 },
 
-clearsessiondata: function() {
+clearsessiondata: function(req, res) {
 	var self = this;
 	delete req.session.loggedin;
 	delete req.session.username;
 	delete req.session.nonce;
 },
 
-api_logout: function() {
+api_logout: function(req, res, next) {
 	var self = this;
-	self.clearsessiondata();
+	self.clearsessiondata(req, res);
 	self.addupdate(req, res, ['navigateto', '/']);
 	next(null);
 },
 
 
-api_geturl: function() {
+api_geturl: function(req, res, next) {
 	var self = this;
 	self.log('Geturl: ' + req.body.params.url);
 	var options = url.parse(req.body.params.url);
@@ -1219,7 +1218,7 @@ api_geturl: function() {
 	if (!options.host) {
 		self.log('Geturl: static ' + options.pathname);
 		res.sendfile(__dirname + '/public' + options.pathname);
-		self.logdt();
+		self.logdt(req, res);
 		return;
 	}
 
@@ -1241,11 +1240,12 @@ api_geturl: function() {
 			res.write(res.data.join(''));
 			res.end();
 			self.log('Geturl done.');
-			self.logdt();
+			self.logdt(req, res);
+			next(null);
 		});
 	}).on('error', function(e) {
 		self.log('Geturl error: ' + e.message);
-		self.senderror(req, res, 'error: ' + e.message);
+		next('Geturl error: ' + e.message);
 	});
 },
 
