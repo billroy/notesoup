@@ -202,7 +202,7 @@ preloadnotes: function(req, res, next) {
 			res.initnotes.push(thenote);
 		}
 		if (res.initnotes.length) res.lastupdate = updatetime;
-		self.dir(res.initnotes);
+		//self.dir(res.initnotes);
 
 		next(null);
 	});
