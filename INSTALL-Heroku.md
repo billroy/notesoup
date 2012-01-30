@@ -10,7 +10,7 @@ Download and install [git.](http://git-scm.com)
 
 Create a verified account at [Heroku](http://www.heroku.com/).  This means you will have to provide a credit card and email address.  There should be no charges to the card, unless you specifically configure more resources.  [Sign up for an account here.](https://api.heroku.com/signup)
 
-Once you have received the signup email and configured a password, [verify your account here.](http://www.heroku.com/verify)
+Once you have received the signup email and configured a password, [verify your account here.](http://www.heroku.com/verify)  (If you skip this step, the install will fail because you need a verified account to use the Redis add-on.)
 
 #### Heroku Command Line Tools
 
@@ -24,11 +24,17 @@ Once you are logged into Heroku and the credential formalities are complete, con
 
 Copy/paste these lines into a terminal shell:
 
-	git clone http://bitlash.net/git/notesoup.git
+	git clone git://github.com/billroy/notesoup.git
 	cd notesoup
 	./scripts/heroku-start.sh 
 
-The console output will contain the name of your new server.  Open a browser on that url and you should see the system/welcome page.
+Examine the server output about three lines from the bottom and you will find your (randomly generated) application server url, something like this:
+
+	http://falling-night-9439.herokuapp.com deployed to Heroku
+
+In this case the application can be found at http://falling-night-9439.herokuapp.com
+
+Paste that url in your browser and you should see the system/welcome page.
 
 ### Change the 'System' user password!!!
 
