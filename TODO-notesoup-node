@@ -11,6 +11,11 @@ Notesoup/Node/Redis TODO list
 - bug: heroku install crashed?
 	watching
 ===
+RACE CONDITION FIX
+
+- (req, res...)
+- sweep for 'console'
+
 
 - postEvent was dropped...
 	- send plumbing seems inactive?

@@ -103,7 +103,7 @@ connect: function(redis_url) {
 	}
 	
 	self.redis.on("error", function (err) {
-		console.log("Redis Error: " + err);
+		self.log("Redis Error: " + err);
 	});
 
 	self.initdatabase();
@@ -112,11 +112,11 @@ connect: function(redis_url) {
 	if (self.enablepush) {
 		self.io = require('socket.io').listen(self.app);
 		self.io.sockets.on('connection', function(socket) {
-			console.log('Socket connection accepted.');
-			//console.log(util.inspect(socket, 3));
+			self.log('Socket connection accepted.');
+			//self.log(util.inspect(socket, 3));
 			socket.on('subscribe', function(request) {
-				console.log('Subscription request:');
-				console.dir(request);
+				self.log('Subscription request:');
+				self.dir(request);
 				socket.on(request.channel, function(msg) {
 					self.io.sockets.emit(request.channel, msg);
 				});
@@ -160,7 +160,7 @@ load_workspace_template: function() {
 
 renderworkspace: function(req, res) {
 	var self = NoteSoup;
-	console.log('Render folder ' + req.params.user + ' ' + req.params.folder);
+	self.log('Render folder ' + req.params.user + ' ' + req.params.folder);
 
 	if (self.locked) {
 		res.redirect('Service unavailable.  Please try again later.', 503);
@@ -168,68 +168,66 @@ renderworkspace: function(req, res) {
 	}
 
 	// marshall like an api call so we can use the API's ACL-check pipeline handlers
-	self.req = req;
-	self.res = res;
-	self.req.body.method = 'openfolder';
-	if (!self.req.body.params) self.req.body.params = {};
-	self.req.body.params.fromfolder = req.params.user + '/' + req.params.folder;
-	self.res.updatelist = [];
-	self.req.starttime = new Date().getTime();
-
+	req.body.method = 'openfolder';
+	if (!req.body.params) req.body.params = {};
+	req.body.params.fromfolder = req.params.user + '/' + req.params.folder;
+	res.updatelist = [];
+	req.starttime = new Date().getTime();
 	async.series([
-			self.loadfromacl, 
-			self.validateaccess,
-			//self.preloadnotes,
-			self.sendworkspace
-		],
-		function(err, reply) {
-			if (err) res.redirect('/folder/system/accesserror');
-		});
+		function(next) {self.loadfromacl(req, res, next);}, 
+		function(next) {self.validateaccess(req, res, next);},
+		//function(next) {self.preloadnotes(req, res, next);},
+		function(next) {self.sendworkspace(req, res, next);},
+	],
+	function(err, reply) {
+		if (err) res.redirect('/folder/system/accesserror');
+	});
 },
 
-preloadnotes: function(next) {
+preloadnotes: function(req, res, next) {
 	var self = NoteSoup;
 	var updatetime = new Date().getTime();
-	self.redis.hgetall(self.key_note(self.req.body.params.fromfolder), function(err, notes) {
+	self.redis.hgetall(self.key_note(req.body.params.fromfolder), function(err, notes) {
 		if (err) {
 			next(err);
 			return;
 		}
-		console.log('preload:');
-		self.res.initnotes = [];
+		self.log('preload:');
+		res.initnotes = [];
 		for (var id in notes) {
 			var thenote = JSON.parse(notes[id]);
 			if (thenote.hasOwnProperty('text')) {
-				console.log('Text before: ' + thenote.text);
+				self.log('Text before: ' + thenote.text);
 				thenote.text = thenote.text.replace(/</g, '&lt;');
-				console.log('Text after:  ' + thenote.text);	
+				self.log('Text after:  ' + thenote.text);	
 			}
-			self.res.initnotes.push(thenote);
+			res.initnotes.push(thenote);
 		}
-		if (self.res.initnotes.length) self.res.lastupdate = updatetime;
-		console.dir(self.res.initnotes);
+		if (res.initnotes.length) res.lastupdate = updatetime;
+		self.dir(res.initnotes);
 
 		next(null);
 	});
 },
 
-sendworkspace: function(next) {
+sendworkspace: function(req, res, next) {
 	var self = NoteSoup;
+	req.starttime = new Date().getTime();
 
 	// provision the client options	
 	// TODO: hook up real ACL
 	var opts = {
-		loggedin:	self.req.session.loggedin || false,
-		username:	self.req.session.username || 'guest',
-		foldername:	self.req.params.user + '/' + self.req.params.folder,
-		isowner:	self.req.session.loggedin && (self.req.session.username == self.req.params.user)
+		loggedin:	req.session.loggedin || false,
+		username:	req.session.username || 'guest',
+		foldername:	req.params.user + '/' + req.params.folder,
+		isowner:	req.session.loggedin && (req.session.username == req.params.user)
 	};
 	opts.ispublic = self.hasaccess('*', opts.foldername, self.readers);
-	opts.iseditor = self.hasaccess(self.effectiveuser(), opts.foldername, self.editors);
+	opts.iseditor = self.hasaccess(self.effectiveuser(req, res), opts.foldername, self.editors);
 	
-	if (self.res.initnotes) {
-		opts.initnotes = self.res.initnotes;
-		opts.lastupdate = self.res.lastupdate;
+	if (res.initnotes) {
+		opts.initnotes = res.initnotes;
+		opts.lastupdate = res.lastupdate;
 	}
 
 	// render index.html as a template with these options
@@ -237,19 +235,18 @@ sendworkspace: function(next) {
 	var this_page = self.workspace_template;
 
 	var string_opts = JSON.stringify(opts);
-	console.log('Rendering options:');
-	console.log(string_opts);
-	self.res.send(this_page.replace('\'{0}\'', string_opts));
+	self.log('Rendering options:');
+	self.log(string_opts);
+	res.send(this_page.replace('\'{0}\'', string_opts));
+	self.logdt(req, res);
 	next(null);
 },
 
 
 dispatch: function(req, res) {
 	var self = this;
-	this.req = req;
-	this.res = res;
-	self.res.updatelist = [];
-	self.req.starttime = new Date().getTime();
+	res.updatelist = [];
+	req.starttime = new Date().getTime();
 	
 	self.log('*********************************************************************');
 	self.log('dispatching api req: ' + req.body.method);
@@ -257,84 +254,81 @@ dispatch: function(req, res) {
 	self.dir(req.body.params);
 
 	async.series([
-			self.validatemethod, 
-			self.loadfromacl, 
-			self.loadtoacl, 
-			self.validateaccess, 
-			self.execute
-		],
-		function(err, reply) {
-			if (err) {
-				console.log('API EXEC ERROR: ' + err);
-				self.senderror(err);
-				//self.addupdate(['navigateto', '/folder/system/accesserror']);
-				//self.sendreply();
-			}
-		});
+		function(next) {self.validatemethod(req, res, next);}, 
+		function(next) {self.loadfromacl(req, res, next);}, 
+		function(next) {self.loadtoacl(req, res, next);}, 
+		function(next) {self.validateaccess(req, res, next);}, 
+		function(next) {self.execute(req, res, next);}
+	],
+	function(err, reply) {
+		if (err) next(err);
+		else next(null);
+		}
+	});
 },
 
-validatemethod: function(next) {
+validatemethod: function(req, res, next) {
 	var self = NoteSoup;
-	if (typeof(self['api_' + self.req.body.method]) != 'function') {
+	if (typeof(self['api_' + req.body.method]) != 'function') {
 		self.log('No method for request: ');
-		self.dir(self.req.body);
-		next('The server does not know how to ' + self.req.body.method);
+		self.dir(req.body);
+		next('The server does not know how to ' + req.body.method);
 	}
-	else if (!self.req.body.method in self.acl_checklist) {
-		self.log('No acl for method: ' + self.req.body.method);
+	else if (!req.body.method in self.acl_checklist) {
+		self.log('No acl for method: ' + req.body.method);
 		//next('ACL error');
 	}
 	next(null);
 },
 
-loadfromacl: function(next) {
+loadfromacl: function(req, res, next) {
 	var self = NoteSoup;
-	self.loadfolderacl('fromfolder', next);
+	self.loadfolderacl(req, res, 'fromfolder', next);
 },
 
-loadtoacl: function(next) {
+loadtoacl: function(req, res, next) {
 	var self = NoteSoup;
-	self.loadfolderacl('tofolder', next);
+	self.loadfolderacl(req, res, 'tofolder', next);
 },
 
-loadfolderacl: function(fieldname, next) {
+loadfolderacl: function(req, res, fieldname, next) {
 	var self = NoteSoup;
-	if (!self.req.acl) self.req.acl = {};
+	if (!req.acl) req.acl = {};
 
-	//self.log('loadfolderacl: ' + fieldname + ' ' + self.req.body.params[fieldname]);
-	//self.dir(self.req.body.params);
+	//self.log('loadfolderacl: ' + fieldname + ' ' + req.body.params[fieldname]);
+	//self.dir(req.body.params);
 
-	if (typeof(self.req.body.params[fieldname]) == 'undefined') {
+	if (typeof(req.body.params[fieldname]) == 'undefined') {
 		//self.log('no arg ' + fieldname);
 		next(null);
 		return;
 	}
 
-	var folder = self.req.body.params[fieldname];	// fetch fromfolder or tofolder
+	var folder = req.body.params[fieldname];	// fetch fromfolder or tofolder
 	
 	//self.log('Loadfolderacl: ' + fieldname + ' ' + folder);
 
 	if (!self.isvalidfoldername(folder)) {
 		next('Invalid folder name.');
 	}
-	else if (folder in self.req.acl) next(null);	// if we already have it, don't reread it
+	else if (folder in req.acl) next(null);	// if we already have it, don't reread it
 	else if (folder) {
-		self.redis.hgetall(self.key_foldermeta(folder), function (err, folderdata) {
+		self.redis.hgetall(self.key_foldermeta(folder), function(err, folderdata) {
 			if (err) {
 				self.log('Error fetching folder acl: ' + folder);
 				next('Error fetching folder acl.');
 				return;
 			}
-			self.req.acl[folder] = folderdata;
+			req.acl[folder] = folderdata;
 			self.log('loadfolderacl: ');
-			self.dir(self.req.acl);
+			self.dir(req.acl);
 			next(null);
 		});
 	}
 	else next(null);
 },
 
-validateaccess: function(next) {
+validateaccess: function(req, res, next) {
 	var self = NoteSoup;
 
 	if (self.wideopen) {
@@ -346,9 +340,9 @@ validateaccess: function(next) {
 		return;
 	}
 
-	var aclcheck = self.acl_checklist[self.req.body.method];
+	var aclcheck = self.acl_checklist[req.body.method];
 	if (!aclcheck) {
-		self.log('note: no acl check for api: ' + self.req.body.method);
+		self.log('note: no acl check for api: ' + req.body.method);
 		next(null);		// 'No acl check string?!');
 		return;
 	}
@@ -364,15 +358,15 @@ validateaccess: function(next) {
 
 		// now determine whether we're checking tofolder or fromfolder
 		var folder;
-		if (aclcheck[0] == 't') folder = self.req.body.params.tofolder;
-		else if (aclcheck[0] == 'f') folder = self.req.body.params.fromfolder;
+		if (aclcheck[0] == 't') folder = req.body.params.tofolder;
+		else if (aclcheck[0] == 'f') folder = req.body.params.fromfolder;
 		else next('bad acl spec');
 
 		self.log('validateaccess: folder ' + folder + ' ' + accessmode);
-		//self.dir(self.req.body.params);
+		//self.dir(req.body.params);
 		aclcheck = aclcheck.substring(2);	// prune off what we handled
 
-		if (!self.hasaccess(self.effectiveuser(), folder, accessmode)) {
+		if (!self.hasaccess(req, res, self.effectiveuser(req, res), folder, accessmode)) {
 			self.log('Access denied.');
 			next("Access denied.");
 			return;
@@ -382,12 +376,8 @@ validateaccess: function(next) {
 	next(null);
 },
 
-execute: function(next) {
-	var self = NoteSoup;
-	//this['api_'+req.body.method]();
-	//self.call(self['api_' + self.req.body.method]);
-	NoteSoup['api_' + self.req.body.method]();
-	next(null);
+execute: function(req, res, next) {
+	NoteSoup['api_' + req.body.method](req, res, next);
 },
 
 
@@ -437,22 +427,22 @@ senders: 'senders',
 owners: 'owners',
 
 
-hasaccess: function (requestor, tofolder, accessmode) {
+hasaccess: function (req, res, requestor, tofolder, accessmode) {
 	var self = this;
 	//self.log('hasaccess: requestor ' + requestor);
 	//self.log('hasaccess: tofolder ' + tofolder);
 	//self.log('hasaccess: accessmode ' + accessmode);
-	var result = self.getaccess(requestor, tofolder, accessmode);
+	var result = self.getaccess(req, res, requestor, tofolder, accessmode);
 
 	// read and append inherit from edit so appeal a "no" to the higher priv
 	if (!result && ((accessmode == this.readers) || (accessmode == this.senders))) {
-		result = self.getaccess(requestor, tofolder, this.editors);
+		result = self.getaccess(req, res, requestor, tofolder, this.editors);
 	}
 	self.log("hasAccess: " + requestor + ' ' + tofolder + ' ' + accessmode + ' ' + result);
 	return result;
 },
 
-getaccess: function(requestor, tofolder, accessmode) {
+getaccess: function(req, res, requestor, tofolder, accessmode) {
 	var self = this;
 	if (!self.isvalidfoldername(tofolder)) return false;
 	
@@ -468,12 +458,12 @@ getaccess: function(requestor, tofolder, accessmode) {
 
 	// Accessing another user's data - check the permissions
 	//accessstring = self.getAccess(tofolder, accessmode)
-	if (!self.req.acl[tofolder]) {
+	if (!req.acl[tofolder]) {
 		self.log('getaccess: folder not in acl cache: ' + tofolder);
 		return false;
 	}
 
-	var accessstring = self.req.acl[tofolder][accessmode];	// get access string from acl{}
+	var accessstring = req.acl[tofolder][accessmode];	// get access string from acl{}
 	if (!accessstring) accessstring = '';	// act like -*, deny below
 	accessstring = accessstring.trim();
 	self.log('getaccess: ' + accessmode + ' [' + accessstring + ']');
@@ -519,90 +509,87 @@ key_mtime: function(folder) 	{ return 'mtime/' + folder; },
 key_nextid:  function(folder)	{ return 'stats/notes_created'; },
 
 log: function(text) {
-	console.log(text);
+	self.log(text);
 },
 
 dir: function(thing) {
-	console.log(util.inspect(thing, false, 5, true));
+	self.log(util.inspect(thing, false, 5, true));
 },
 
-logdt: function() {
-	this.req.endtime = new Date().getTime();
-	this.req.time = this.req.endtime - this.req.starttime;
-	this.log('dt=' + this.req.time + 'ms');
+logdt: function(req, res) {
+	var self = NoteSoup;
+	req.endtime = new Date().getTime();
+	req.time = req.endtime - req.starttime;
+	self.log('dt=' + req.time + 'ms');
 },
 
-senderror: function(errormessage) {
+senderror: function(req, res, errormessage) {
 	var reply = {
 		result: '',
 		error: errormessage,
-		id: this.req.body.id,
+		id: req.body.id,
 		command: []		
 	};
 
 	this.log('Error:');
 	this.dir(reply);
-	this.logdt();
+	this.logdt(req, res);
 
-	this.res.send(reply);
+	res.send(reply);
 },
 
-sendreply: function() {
+sendreply: function(req, res) {
 
 	var reply = {
 		result: '',
 		error: null,
-		id: this.req.body.id,
-		command: this.res.updatelist
+		id: req.body.id,
+		command: res.updatelist
 	};
 
 	this.log('Reply:');
 	this.dir(reply);
 	this.logdt();
 
-	this.res.send(reply);
+	res.send(reply);
 },
 
-
-// generic end-of-api-call result handler
-simpleReply: function(err, reply) {
-	var self = NoteSoup;
-	if (err) self.senderror(err);
-	else self.sendreply();
-},
-
-
-api_savenote: function() {
+api_savenote: function(req, res, next) {
 	var self = this;
 
 	// convert a single note to an array for the forEach construct
-	if (typeof(self.req.body.params.note[0]) == 'undefined') {	// a single note, not an array
-		self.req.body.params.note = [self.req.body.params.note];
+	if (typeof(req.body.params.note[0]) == 'undefined') {	// a single note, not an array
+		req.body.params.note = [req.body.params.note];
 	}
 	// todo: test this without Series
-	async.forEachSeries(self.req.body.params.note,
+	async.forEachSeries(req.body.params.note,
 		function(note, next) {
-			self.req.body.params.thenote = note;
-			async.series([self.checkid, self.savenote], function(err, reply) {
+			req.body.params.thenote = note;
+			async.series([
+				function(next) {self.checkid(req, res, next);}, 
+				function(next) {self.savenote(req, res, next);}
+			], 
+			function(err, reply) {
 				next(err);
 			});
 		},
-		self.simpleReply);
+		function(err, reply) { next(err); }
+	);
 },
 
-checkid: function(next) {
+checkid: function(req, res, next) {
 	var self = NoteSoup;
 
-	//console.log('Checkid: this');
-	//console.dir(this);
+	//self.log('Checkid: this');
+	//self.dir(this);
 	
 	self.log('Checkid: params');
-	self.dir(self.req.body.params);	
+	self.dir(req.body.params);	
 
-	if (!self.req.body.params.thenote.id) {
-		self.redis.incr(self.key_nextid(self.req.body.params.tofolder), function(err, id) {
+	if (!req.body.params.thenote.id) {
+		self.redis.incr(self.key_nextid(req.body.params.tofolder), function(err, id) {
 			if (err) next(err);
-			self.req.body.params.thenote.id = id.toString();
+			req.body.params.thenote.id = id.toString();
 			next(null, 1);
 		});
 	}
@@ -610,35 +597,35 @@ checkid: function(next) {
 	//self.log('Leaving checkid');
 },
 
-addupdate: function(update) {
+addupdate: function(req, res, update) {
 	var self = this;
 	self.log("addupdate:");
 	self.dir(update);
-	self.res.updatelist.push(update);
-	//self.notifychange(self.req.body.params.tofolder, update);
+	res.updatelist.push(update);
+	//self.notifychange(req.body.params.tofolder, update);
 },
 
-savenote: function(next) {
+savenote: function(req, res, next) {
 	var self = NoteSoup;
 	var now = new Date().getTime();
-	var jsonnote = JSON.stringify(self.req.body.params.thenote);
+	var jsonnote = JSON.stringify(req.body.params.thenote);
 
 	self.log('Savenote: params');
-	self.dir(self.req.body.params);	
+	self.dir(req.body.params);	
 
-	if (!self.req.body.params.thenote.id) {
+	if (!req.body.params.thenote.id) {
 		self.log('savenote without id');
 		next(null, 3);
 		return;
 	}
 
-	var update = ['updatenote', self.req.body.params.thenote];
-	self.addupdate(update);
-	self.notifychange(self.req.body.params.tofolder, update);
+	var update = ['updatenote', req.body.params.thenote];
+	self.addupdate(req, res, update);
+	self.notifychange(req, res, req.body.params.tofolder, update);
 
 	self.redis.multi()
-		.hset(self.key_note(self.req.body.params.tofolder), self.req.body.params.thenote.id, jsonnote)
-		.zadd(self.key_mtime(self.req.body.params.tofolder), now, self.req.body.params.thenote.id)
+		.hset(self.key_note(req.body.params.tofolder), req.body.params.thenote.id, jsonnote)
+		.zadd(self.key_mtime(req.body.params.tofolder), now, req.body.params.thenote.id)
 	 	.exec(function (err, replies) {
 			self.log("SaveNote got " + replies.length + " replies");
 			replies.forEach(function (reply, index) {
@@ -650,117 +637,118 @@ savenote: function(next) {
 	self.log('Leaving savenote');
 },
 
-notifychange: function(tofolder, update) {
+notifychange: function(req, res, tofolder, update) {
 	var self = this;
 	self.log("Notify: ");
 	self.dir(update);
 	if (self.io) self.io.sockets.emit(tofolder, update);
 },
 
-api_appendtonote: function() {
+api_appendtonote: function(req, res, next) {
 	var self = this;
-	self.redis.hget(self.key_note(self.req.body.params.tofolder), 
-		self.req.body.params.noteid, function(err, notetext) {
+	self.redis.hget(self.key_note(req.body.params.tofolder), 
+		req.body.params.noteid, function(err, notetext) {
 
-		if (err) self.senderror(err);
-		else if (!notetext) self.senderror('Note?');
+		if (err) next(err);
+		else if (!notetext) next('Note?');
 		else {
 			var note = JSON.parse(notetext);
 			self.log('Append: note ' + typeof(note));
 			self.dir(note);
 
-			if (note.text) note.text = note.text + self.req.body.params.text;
-			else note.text = self.req.body.params.text;
+			if (note.text) note.text = note.text + req.body.params.text;
+			else note.text = req.body.params.text;
 			
-			self.req.body.params.note = note;
-			self.api_savenote();
+			req.body.params.note = note;
+			self.api_savenote(req, res, next);
 		}
 	});
 },
 
-api_sync: function() {
+api_sync: function(req, res, next) {
 	var self = this;
 	newlastupdate = new Date().getTime().toString();
-	console.log('Last sync: ' + self.req.body.params.lastupdate);
-	console.log('Sync mark: ' + newlastupdate);
+	self.log('Last sync: ' + req.body.params.lastupdate);
+	self.log('Sync mark: ' + newlastupdate);
 
-	if (self.req.body.params.lastupdate == 0) {
-		self.redis.hgetall(self.key_note(self.req.body.params.fromfolder), function(err, notes) {
+	if (req.body.params.lastupdate == 0) {
+		self.redis.hgetall(self.key_note(req.body.params.fromfolder), function(err, notes) {
 			if (err) {
-				self.senderror(err);
+				next(err);
 				return;
 			}
 			self.log('First sync:');
 			self.dir(notes);
-			self.addupdate(['beginupdate','']);
+			self.addupdate(req, res, ['beginupdate','']);
 			for (var id in notes) {
 				var note = JSON.parse(notes[id]);
-				self.addupdate(['updatenote', note]);
+				self.addupdate(req, res, ['updatenote', note]);
 			}
-			self.addupdate(['endupdate','']);
-			self.addupdate(['setupdatetime', newlastupdate]);
-			self.sendreply();
+			self.addupdate(req, res, ['endupdate','']);
+			self.addupdate(req, res, ['setupdatetime', newlastupdate]);
+			next(null);
 		});
 	}
 	else {
-		self.redis.zrangebyscore(self.key_mtime(self.req.body.params.fromfolder), 
-			self.req.body.params.lastupdate, '+inf', function(err, noteids) {
+		self.redis.zrangebyscore(self.key_mtime(req.body.params.fromfolder), 
+			req.body.params.lastupdate, '+inf', function(err, noteids) {
 				if (err) {
-					self.senderror(err);
+					next(err);
 					return;
 				}
 				if (!noteids.length) {
-					self.addupdate(['setupdatetime', newlastupdate]);
-					self.sendreply();
+					self.addupdate(req, res, ['setupdatetime', newlastupdate]);
+					next(null);
 					return;
 				}
-				self.redis.hmget(self.key_note(self.req.body.params.fromfolder), noteids, function(err, notes) {
+				self.redis.hmget(self.key_note(req.body.params.fromfolder), noteids, function(err, notes) {
 					if (err) {
-						self.senderror(err);
+						next(err);
 						return;
 					}
 					self.log('Syncing updated notes:');
 					self.dir(notes);
 					if (notes) {
-						self.addupdate(['beginupdate','']);
+						self.addupdate(req, res, ['beginupdate','']);
 						for (var i=0; i<notes.length; i++) {
 							var note = JSON.parse(notes[i]);
-							self.addupdate(['updatenote', note]);
+							self.addupdate(req, res, ['updatenote', note]);
 						}
-						self.addupdate(['endupdate','']);
+						self.addupdate(req, res, ['endupdate','']);
 					}
-					self.addupdate(['setupdatetime', newlastupdate]);
-					self.sendreply();
+					self.addupdate(req, res, ['setupdatetime', newlastupdate]);
+					next(null);
 				});
 		});
 	}
 },
 
-api_sendnote: function() {
+api_sendnote: function(req, res, next) {
 	var self = this;
 
 	self.log("apisendnote:");
-	self.dir(self.req.body.params);
+	self.dir(req.body.params);
 
 	// if a single id was passed in, coerce it to a list
-	if (typeof(self.req.body.params.noteid) == 'string')
-		self.req.body.params.noteid = [self.req.body.params.noteid];
+	if (typeof(req.body.params.noteid) == 'string')
+		req.body.params.noteid = [req.body.params.noteid];
 
-	//self.dir(self.req.body.params);
-	
-	async.forEachSeries(self.req.body.params.noteid,
+	async.forEachSeries(req.body.params.noteid,
 		function(noteid, next) {
-			self.sendnote(noteid, function(err, reply) {
+			self.sendnote(req, res, noteid, 
+			function(err, reply) {
 				next(err);
 			});
-		}, self.simpleReply);
+		}, 
+		function(err, reply) { next(err); }
+	);
 },
 
-sendnote: function(noteid, next) {
+sendnote: function(req, res, noteid, next) {
 	var self = NoteSoup;
 	self.redis.multi()
-		.hget(self.key_note(self.req.body.params.fromfolder), noteid)
-		.incr(self.key_nextid(self.req.body.params.tofolder))
+		.hget(self.key_note(req.body.params.fromfolder), noteid)
+		.incr(self.key_nextid(req.body.params.tofolder))
 		.exec(function(err, reply) {
 
 			if (err) {
@@ -776,8 +764,8 @@ sendnote: function(noteid, next) {
 			var now = new Date().getTime();
 
 			self.redis.multi()
-				.hset(self.key_note(self.req.body.params.tofolder), note.id, JSON.stringify(note))
-				.zadd(self.key_mtime(self.req.body.params.tofolder), now, note.id)
+				.hset(self.key_note(req.body.params.tofolder), note.id, JSON.stringify(note))
+				.zadd(self.key_mtime(req.body.params.tofolder), now, note.id)
 				.exec(function(err, reply) {
 
 					if (err) {
@@ -785,39 +773,39 @@ sendnote: function(noteid, next) {
 						return;
 					}
 
-					if (self.req.body.params.tofolder == self.req.body.params.notifyfolder)
-						self.addupdate(['updatenote', note]);
+					if (req.body.params.tofolder == req.body.params.notifyfolder)
+						self.addupdate(req, res, ['updatenote', note]);
 
-					if (!('deleteoriginal' in self.req.body.params) || self.req.body.params.deleteoriginal) {
+					if (!('deleteoriginal' in req.body.params) || req.body.params.deleteoriginal) {
 						self.redis.multi()
-							.hdel(self.key_note(self.req.body.params.fromfolder), noteid)
-							.zrem(self.key_mtime(self.req.body.params.fromfolder), noteid)
+							.hdel(self.key_note(req.body.params.fromfolder), noteid)
+							.zrem(self.key_mtime(req.body.params.fromfolder), noteid)
 							.exec(function(err, reply) {
 								if (err) {
 									next(err);
 									return;
 								}
 
-								if (self.req.body.params.fromfolder == self.req.body.params.notifyfolder)
-									self.addupdate(['deletenote', noteid]);
-								next(null, noteid);
+								if (req.body.params.fromfolder == req.body.params.notifyfolder)
+									self.addupdate(req, res, ['deletenote', noteid]);
+								next(null);
 							});
 					}
-					else next(null, noteid);
+					else next(null);
 				});
 		});
 },
 
-api_postevent: function() {
+api_postevent: function(req, res, next) {
 	var self = this;
 	self.log('PostEvent via api: (DROPPED)');
-	self.dir(this.req.body.params);
-	//io.socket.send(this.res.body.params.
-	//self.addupdate(['say', 'PostEvent was dropped.']);
-	return this.sendreply();
+	self.dir(req.body.params);
+	//io.socket.send(res.body.params.
+	//self.addupdate(req, res, ['say', 'PostEvent was dropped.']);
+	next(null);
 },
 
-getTemplates: function(folder, next) {
+getTemplates: function(req, res, folder, next) {
 	var self = this;
 	self.redis.hgetall(self.key_note(folder), function(err, jsonnotes) {
 
@@ -832,10 +820,10 @@ getTemplates: function(folder, next) {
 		}
 		for (var n in jsonnotes) {
 			var note = JSON.parse(jsonnotes[n]);
-			self.res.templatelist.push([folder, note, note.notename || 'untitled']);
+			res.templatelist.push([folder, note, note.notename || 'untitled']);
 		}
 		// sort by item[2], the notename
-		self.res.templatelist.sort(function(a,b) {
+		res.templatelist.sort(function(a,b) {
 			if (a[2] > b[2]) return 1;
 			if (a[2] == b[2]) return 0;
 			if (a[2] < b[2]) return -1;
@@ -846,31 +834,31 @@ getTemplates: function(folder, next) {
 
 templatefolder: 'templates',
 
-api_gettemplatelist: function() {
+api_gettemplatelist: function(req, res, next) {
 	var self = this;
-	self.res.templatelist = [];
+	res.templatelist = [];
 
 	// the portable hole uses the fromfolder form
-	if (!self.req.body.params.includesystemtemplates) {
-		self.getTemplates(self.req.body.params.fromfolder, function() {
-			self.addupdate(['templatelist', self.res.templatelist]);
-			self.sendreply();
+	if (!req.body.params.includesystemtemplates) {
+		self.getTemplates(req, res, req.body.params.fromfolder, function() {
+			self.addupdate(req, res, ['templatelist', res.templatelist]);
+			next(null);
 		});
 	}
 
-	else self.getTemplates(self.systemuser + '/' + self.templatefolder, function() {
-		self.getTemplates(self.effectiveuser() + '/' + self.templatefolder, function() {
-			self.addupdate(['templatelist', self.res.templatelist]);
-			self.sendreply();
+	else self.getTemplates(req, res, self.systemuser + '/' + self.templatefolder, function() {
+		self.getTemplates(req, res, self.effectiveuser(req, res) + '/' + self.templatefolder, function() {
+			self.addupdate(req, res, ['templatelist', res.templatelist]);
+			next(null);
 		});
 	});
 },
 
-api_getnotes: function() {
+api_getnotes: function(req, res, next) {
 	var self = this;
-	self.redis.hgetall(self.key_note(self.req.body.params.fromfolder), function(err, jsonnotes) {
+	self.redis.hgetall(self.key_note(req.body.params.fromfolder), function(err, jsonnotes) {
 		if (err) {
-			self.senderror(err);
+			next(err);
 			return;
 		}
 		else if (jsonnotes) {
@@ -881,9 +869,9 @@ api_getnotes: function() {
 				var note = JSON.parse(jsonnotes[n]);
 				parsed_notes[note.id] = note;
 			}	
-			self.addupdate(['notes', parsed_notes]);
+			self.addupdate(req, res, ['notes', parsed_notes]);
 		}
-		self.sendreply();
+		next(null);
 	});
 },
 
@@ -891,61 +879,61 @@ key_folderquery: function(user) {
 	return this.key_note(user + '/*');
 },
 
-api_getfolderlist: function() {
+api_getfolderlist: function(req, res, next) {
 	var self = this;
 
-	if (!self.req.session.loggedin) {
-		self.addupdate(['folderlist', []]);
-		self.sendreply();
+	if (!req.session.loggedin) {
+		self.addupdate(req, res, ['folderlist', []]);
+		next(null);
 		return;
 	}
-	self.redis.keys(self.key_folderquery(self.effectiveuser()), function(err, keylist) {
+	self.redis.keys(self.key_folderquery(self.effectiveuser(req, res)), function(err, keylist) {
 		if (err) {
-			self.senderror(err);
+			next(err);
 			return;
 		}
 		if (keylist.length) {
 			var folderlist = [];
 			for (var i=0; i<keylist.length; i++) folderlist.push(keylist[i].substr(6));
 			folderlist.sort();
-			self.addupdate(['folderlist', folderlist]);
+			self.addupdate(req, res, ['folderlist', folderlist]);
 		}
-		self.sendreply();
+		next(null);
 	});
 },
 
-api_createfolder: function() {
+api_createfolder: function(req, res, next) {
 	var self = this;
 	// todo: write the fldr/ hash
-	self.req.body.params.fromfolder = self.req.body.params.tofolder;
-	self.api_openfolder();
+	req.body.params.fromfolder = req.body.params.tofolder;
+	self.api_openfolder(req, res, next);
 },
 
-api_openfolder: function() {
+api_openfolder: function(req, res, next) {
 	var self = this;
-	self.res.updatelist.push(['navigateto', '/folder/' + self.req.body.params.fromfolder]);
-	self.sendreply();
+	res.updatelist.push(['navigateto', '/folder/' + req.body.params.fromfolder]);
+	next(null);
 },
 
-effectiveuser: function() {
+effectiveuser: function(req, res) {
 	var self = NoteSoup;
-	return self.req.session.loggedin ? self.req.session.username : self.guestuser;
+	return req.session.loggedin ? req.session.username : self.guestuser;
 },
 
-isroot: function() {
+isroot: function(req, res) {
 	var self = this;
-	return (self.req.session.loggedin && (self.effectiveuser() === self.systemuser));
+	return (req.session.loggedin && (self.effectiveuser(req, res) === self.systemuser));
 },
 
-navigatehome: function() {
+navigatehome: function(req, res) {
 	var self = this;
-	if (self.req.session.loggedin) {
-		self.addupdate([
+	if (req.session.loggedin) {
+		self.addupdate(req, res, [
 			'navigateto', 
-			'/folder/' + self.effectiveuser() + '/' + self.inboxfolder
+			'/folder/' + self.effectiveuser(req, res) + '/' + self.inboxfolder
 		]);
 	}
-	else self.addupdate(['navigateto', '/']);
+	else self.addupdate(req, res, ['navigateto', '/']);
 },
 
 deletefolder: function(folder, next) {
@@ -960,24 +948,24 @@ deletefolder: function(folder, next) {
 		});
 },
 
-api_deletefolder: function() {
+api_deletefolder: function(req, res, next) {
 	var self = this;
-	self.deletefolder(self.req.body.params.fromfolder, function(err, reply) {
-		if (err) self.senderror(err);
+	self.deletefolder(req.body.params.fromfolder, function(err, reply) {
+		if (err) next(err);
 		else {
-			self.navigatehome();
-			self.sendreply();
+			self.navigatehome(req, res);
+			next(null);
 		}
 	});
 },
 
-api_emptytrash: function() {
+api_emptytrash: function(req, res, next) {
 	var self = this;
-	self.deletefolder(self.effectiveuser() + '/trash', function(err, reply) {
-		if (err) self.senderror(err);
+	self.deletefolder(self.effectiveuser(req, res) + '/trash', function(err, reply) {
+		if (err) next(err);
 		else {
-			self.addupdate(['say', 'The trash is empty.']);
-			self.sendreply();
+			self.addupdate(req, res, ['say', 'The trash is empty.']);
+			next(null);
 		}
 	});
 },
@@ -1000,27 +988,28 @@ key_usermeta: function(user) {
 },
 passwordattr: 'password',
 
-api_createuser: function() {
+api_createuser: function(req, res, next) {
 	var self = this;
 	async.series([
-			self.checksignup,
-			self.validateusername,
-			self.failifuserexists,
-			self.setpassword
-		],
-		function(err, reply) {
-			if (err) self.senderror(err);
-		});
+		function(next) {self.checksignup(req, res, next);},
+		function(next) {self.validateusername(req, res, next);},
+		function(next) {self.failifuserexists(req, res, next);},
+		function(next) {self.setpassword(req, res, next);}
+	],
+	function(err, reply) {
+		if (err) next(err);
+		else next(null);
+	});
 },
 
-api_setpassword: function() {
+api_setpassword: function(req, res, next) {
 	var self = this;
-	if (!self.req.session.loggedin) {
-		self.senderror('Log in to set a password.');
+	if (!req.session.loggedin) {
+		next('Log in to set a password.');
 		return;
 	}
-	if ((self.req.body.params.username != self.effectiveuser()) && !self.isroot()) {
-		self.senderror('Invalid password.');
+	if ((req.body.params.username != self.effectiveuser(req, res)) && !self.isroot(req, res)) {
+		next('Invalid password.');
 		return;		
 	}
 
@@ -1030,60 +1019,60 @@ api_setpassword: function() {
 			self.setpassword
 		],
 		function(err, reply) {
-			if (err) self.senderror(err);
+			if (err) next(err);
 		});
 },
 
-checksignup: function(next) {
+checksignup: function(req, res, next) {
 	var self = NoteSoup;
-	if (!self.opensignup && !self.isroot()) {
+	if (!self.opensignup && !self.isroot(req, res)) {
 		next('Signups are closed.  Please contact the system administrator to create a new user.');
 	}
 	else next(null);
 },
 
-validateusername: function(next) {
+validateusername: function(req, res, next) {
 	var self = NoteSoup;
 	var min_length = 1;
 	var max_length = 50;
-	if (!self.req.body.params.username || 
-		(self.req.body.params.username.length < min_length) ||
-		(self.req.body.params.username.length > max_length)) next('Invalid name.');
-	if (self.invalidchars.test(self.req.body.params.username)) next('Invalid character.');
+	if (!req.body.params.username || 
+		(req.body.params.username.length < min_length) ||
+		(req.body.params.username.length > max_length)) next('Invalid name.');
+	if (self.invalidchars.test(req.body.params.username)) next('Invalid character.');
 	else next(null);
 },
 
-failifuserexists: function(next) {
+failifuserexists: function(req, res, next) {
 	var self = NoteSoup;
-	self.redis.hget(self.key_usermeta(self.req.body.params.username), 
+	self.redis.hget(self.key_usermeta(req.body.params.username), 
 		self.passwordattr, function(err, passwordhash) {
 			if (err || passwordhash) next('That name is not available.');
 			else next(null);
 		});
 },
 
-ensureuserexists: function(next) {
+ensureuserexists: function(req, res, next) {
 	var self = NoteSoup;
-	self.redis.hget(self.key_usermeta(self.req.body.params.username), 
+	self.redis.hget(self.key_usermeta(req.body.params.username), 
 		self.passwordattr, function(err, passwordhash) {
 			if (err || !passwordhash) next('Invalid input.');
 			else next(null);
 		});
 },
 
-setpassword: function(next) {
+setpassword: function(req, res, next) {
 	var self = NoteSoup;
-	self.save_password_hash(self.req.body.params.username, self.req.body.params.password, 
+	self.save_password_hash(req.body.params.username, req.body.params.password, 
 		function(err, reply) {
-			if (err) self.senderror(err);
+			if (err) next(err);
 			else {
 				// if it's not admin creating a new user we log in and go there
-				if (!self.isroot()) {
-					self.initsessiondata();
-					self.navigatehome();
+				if (!self.isroot(req, res)) {
+					self.initsessiondata(req, res);
+					self.navigatehome(req, res);
 				}
-				self.addupdate(['say','Credentials saved.']);
-				self.sendreply();
+				self.addupdate(req, res, ['say','Credentials saved.']);
+				next(null);
 			}
 		}
 	);
@@ -1112,122 +1101,124 @@ key_foldermeta: function(folder) {
 	return 'fldr/' + folder;
 },
 
-api_getfolderacl: function() {
+api_getfolderacl: function(req, res, next) {
 	var self = this;
-	self.redis.hgetall(self.key_foldermeta(self.req.body.params.tofolder), function(err, acl) {
+	self.redis.hgetall(self.key_foldermeta(req.body.params.tofolder), function(err, acl) {
 		if (err) {
+			// why doesn't this next(err); ?
 			self.log('getfolderacl: error');
 			self.dir(err);
+			next(err);
 			return;
 		}
-		acl.folder = self.req.body.params.tofolder;
-		self.addupdate(['folderacl', acl]);
-		self.sendreply();
+		acl.folder = req.body.params.tofolder;
+		self.addupdate(req, res, ['folderacl', acl]);
+		next(null);
 	});
 },
 
-api_setfolderacl: function() {
+api_setfolderacl: function(req, res, next) {
 	var self = this;
 	var acl = {};
 	var fields = ['readers','senders', 'editors', 'password'];
 	for (var i=0; i < fields.length; i++) {
-		if (self.req.body.params.hasOwnProperty(fields[i])) {
-			acl[fields[i]] = self.req.body.params[fields[i]];
+		if (req.body.params.hasOwnProperty(fields[i])) {
+			acl[fields[i]] = req.body.params[fields[i]];
 		}
 	}
-	self.log("SetACL " + self.req.body.params.tofolder);
+	self.log("SetACL " + req.body.params.tofolder);
 	self.dir(acl);
 
-	self.redis.hmset(self.key_foldermeta(self.req.body.params.tofolder), acl, function(err, reply) {
-		if (err) self.senderror(err);
+	self.redis.hmset(self.key_foldermeta(req.body.params.tofolder), acl, function(err, reply) {
+		if (err) next(err);
 		else {
-			self.addupdate(['say','Folder permissions updated.']);
-			self.sendreply();
+			self.addupdate(req, res, ['say','Folder permissions updated.']);
+			next(null);
 		}
 	});
 },
 
-api_knockknock: function() {
+api_knockknock: function(req, res, next) {
 	var self = this;
-	self.req.session.nonce = self.randomName(32);	// save login nonce
-	self.res.updatelist.push(['whosthere', self.req.session.nonce]);
-	self.sendreply();
+	req.session.nonce = self.randomName(32);	// save login nonce
+	res.updatelist.push(['whosthere', req.session.nonce]);
+	next(null);
 },
 
 
-badlogin: function() {
+badlogin: function(req, res, next) {
 	var self = this;
 	self.clearsessiondata();
-	self.senderror('Invalid login.');
+	next('Invalid login.');
 },
 
-api_login: function() {
+api_login: function(req, res, next) {
 	var self = this;
-	self.redis.hget(self.key_usermeta(self.req.body.params.username), 
+	self.redis.hget(self.key_usermeta(req.body.params.username), 
 		self.passwordattr, function(err, passwordhash) {
 
 		if (err) {
 			self.log('Login hget error: ' + err);
-			self.badlogin();
+			self.badlogin(req, req, next);
 			return;
 		}
 
-		self.log('login: ' + self.req.body.params.username);
+		self.log('login: ' + req.body.params.username);
 		//self.dir(passwordhash);
 
 		if (!passwordhash) {
-			self.badlogin();
+			self.badlogin(req, res, next);
 			return;
 		}
 
 		var salted_hash = crypto.createHash('sha1')
-							.update(passwordhash + self.req.session.nonce)
+							.update(passwordhash + req.session.nonce)
 							.digest('hex');
 		//self.log('Login: saved  hash ' + passwordhash);
-		//self.log('Login: saved nonce ' + self.req.session.nonce);
+		//self.log('Login: saved nonce ' + req.session.nonce);
 		//self.log('Login: salted hash ' + salted_hash);
-		//self.log('Login: client hash ' + self.req.body.params.passwordhash);
-		if (salted_hash == self.req.body.params.passwordhash) {
-			self.initsessiondata();
-			self.navigatehome();
-			self.sendreply();
+		//self.log('Login: client hash ' + req.body.params.passwordhash);
+		if (salted_hash == req.body.params.passwordhash) {
+			self.initsessiondata(req, res);
+			self.navigatehome(req, res);
+			next(null);
 		}
 		else {
-			self.badlogin();
+			self.badlogin(req, res, next);
 		}
 	});
 },
 
-initsessiondata: function() {
-	this.req.session.loggedin = true;
-	this.req.session.username = this.req.body.params.username;
-	delete this.req.session.nonce;
+initsessiondata: function(req, res) {
+	req.session.loggedin = true;
+	req.session.username = req.body.params.username;
+	delete req.session.nonce;
 },
 
 clearsessiondata: function() {
 	var self = this;
-	delete self.req.session.loggedin;
-	delete self.req.session.username;
-	delete self.req.session.nonce;
+	delete req.session.loggedin;
+	delete req.session.username;
+	delete req.session.nonce;
 },
 
 api_logout: function() {
 	var self = this;
 	self.clearsessiondata();
-	self.addupdate(['navigateto', '/']);
-	self.sendreply();
+	self.addupdate(req, res, ['navigateto', '/']);
+	next(null);
 },
 
 
 api_geturl: function() {
 	var self = this;
-	self.log('Geturl: ' + self.req.body.params.url);
-	var options = url.parse(self.req.body.params.url);
+	self.log('Geturl: ' + req.body.params.url);
+	var options = url.parse(req.body.params.url);
 
 	// handle local '/path' fetches as static
 	if (!options.host) {
 		self.log('Geturl: static ' + options.pathname);
-		self.res.sendfile(__dirname + '/public' + options.pathname);
+		res.sendfile(__dirname + '/public' + options.pathname);
 		self.logdt();
 		return;
 	}
@@ -1238,23 +1229,23 @@ api_geturl: function() {
 		'Accept': 'application/x-javascript; charset=utf-8'
 	};
 	options.agent = false;	// prevent Connection-Keepalive in the framework
-	self.res.data = [];
+	res.data = [];
 	var httpreq = http.get(options, function(httpres) {
 		httpres.on('data', function (chunk) {
 			self.log('Geturl body: ' + chunk.length);
-			self.res.data.push(chunk);
+			res.data.push(chunk);
 		});
 		httpres.on('end', function (chunk) {
-			console.log('Geturl finishing...');
-			self.res.data.push(chunk);
-			self.res.write(self.res.data.join(''));
-			self.res.end();
+			self.log('Geturl finishing...');
+			res.data.push(chunk);
+			res.write(res.data.join(''));
+			res.end();
 			self.log('Geturl done.');
 			self.logdt();
 		});
 	}).on('error', function(e) {
 		self.log('Geturl error: ' + e.message);
-		self.senderror('error: ' + e.message);
+		self.senderror(req, res, 'error: ' + e.message);
 	});
 },
 
