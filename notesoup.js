@@ -1011,13 +1011,13 @@ api_setpassword: function(req, res, next) {
 	}
 
 	async.series([
-			self.validateusername,
-			self.ensureuserexists,
-			self.setpassword
-		],
-		function(err, reply) {
-			if (err) next(err);
-		});
+		function(next) {self.validateusername(req, res, next);},
+		function(next) {self.ensureuserexists(req, res, next);},
+		function(next) {self.setpassword(req, res, next);}
+	],
+	function(err, reply) {
+		next(err);
+	});
 },
 
 checksignup: function(req, res, next) {
