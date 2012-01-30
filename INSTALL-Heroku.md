@@ -55,6 +55,11 @@ Manage your app from the [Heroku app console](https://api.heroku.com/myapps) or 
 You must be in the notesoup directory for the heroku command line tools to know which application to control:
 
 	$ cd notesoup
+	
+Update the Note Soup code and restart the server:
+
+	$ git pull
+	$ git push heroku master
 
 Nuke your app and database, gone in an instant:
 

@@ -5,6 +5,8 @@
 *	Copyright 2007, 2008 Bill Roy
 *	This file is licensed under the Note Soup Client License
 *	See http://notesoup.net/js/LICENSE
+*
+*	{imports: '/js-src/js-widgets/projectron.js'}
 */
 note.set({
 	init: function() {

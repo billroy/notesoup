@@ -3,6 +3,7 @@
 *	player.js - Note Soup command player widget
 *	Copyright 2011 by Bill Roy
 *	All rights reserved.
+*	{imports: '/js-src/js-widgets/player.js'}
 */
 note.set({
 

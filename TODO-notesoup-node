@@ -10,12 +10,13 @@ Notesoup/Node/Redis TODO list
 ===
 - bug: heroku install crashed?
 	watching
-
 ===
+
 - postEvent was dropped...
 	- send plumbing seems inactive?
 	- nothing shows up on push bus
 ===
+- bug: deletions don't sync
 
 - bug: geturl race/headers bug
 	- interleaved with getfolderlist
