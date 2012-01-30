@@ -176,7 +176,7 @@ renderworkspace: function(req, res) {
 	async.series([
 		function(next) {self.loadfromacl(req, res, next);}, 
 		function(next) {self.validateaccess(req, res, next);},
-		//function(next) {self.preloadnotes(req, res, next);},
+		function(next) {self.preloadnotes(req, res, next);},
 		function(next) {self.sendworkspace(req, res, next);},
 	],
 	function(err, reply) {
@@ -197,9 +197,7 @@ preloadnotes: function(req, res, next) {
 		for (var id in notes) {
 			var thenote = JSON.parse(notes[id]);
 			if (thenote.hasOwnProperty('text')) {
-				self.log('Text before: ' + thenote.text);
 				thenote.text = thenote.text.replace(/</g, '&lt;');
-				self.log('Text after:  ' + thenote.text);	
 			}
 			res.initnotes.push(thenote);
 		}
