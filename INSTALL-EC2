@@ -55,8 +55,8 @@ curl http://npmjs.org/install.sh | sudo sh
 
 # install note soup
 cd ~
-git clone ssh://talky@bitlash.net/~/notesoup-node.git
-cd notesoup-node
+git clone git://github.com/billroy/notesoup.git
+cd notesoup
 npm install
 
 # run the server for a quick test
@@ -73,7 +73,7 @@ node soup.js
 sudo npm install forever -g
 
 # run the server until reboot and dump logs to ~/.forever:
-forever daemon soup.js
+forever start soup.js
 
 - Give the server a name like "alpha.notesoup.net"
 	- sign in to DNS provider
@@ -95,7 +95,7 @@ You can flush and start over like this:
 !!! CAUTION THIS "FLUSHDB" IS THROWS AWAY ALL EXISTING CONTENT !!!
 !!! CAUTION THIS "FLUSHDB" IS THROWS AWAY ALL EXISTING CONTENT !!!
 
-# DELETE ALL THE DATA IN THE REDIS STORE
+# TO DELETE ALL THE DATA IN THE REDIS STORE
 redis-cli flushdb
 
 # now run soup as usual
