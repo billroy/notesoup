@@ -22,19 +22,34 @@ Once you are logged into Heroku and the credential formalities are complete, con
 
 ### Deploying Note Soup to Heroku
 
-Copy/paste these lines into a terminal shell:
+Copy and paste this block of three lines into a terminal shell:
 
 	git clone git://github.com/billroy/notesoup.git
 	cd notesoup
 	./scripts/heroku-start.sh 
 
-Examine the server output about three lines from the bottom and you will find your (randomly generated) application server url, something like this:
+Examine the server output a few lines up from the bottom and you will find your (randomly generated) application server url, something like this:
 
 	http://falling-night-9439.herokuapp.com deployed to Heroku
 
-In this case the application can be found at http://falling-night-9439.herokuapp.com
+...telling us the application can be found at http://falling-night-9439.herokuapp.com
 
 Paste that url in your browser and you should see the system/welcome page.
+
+### Application Error at Startup
+
+If you get an Application Error, check the console output to see if it has any advice.  A common problem is to skip the account verification step.  You'll get a complaint like this if you skipped verification:
+
+	-----> Adding redistogo to sparkle-jasmine-5917... failed
+	 !    Please verify your account to install this add-on
+	 !    For more information, see http://devcenter.heroku.com/categories/billing
+	 !    Confirm now at https://heroku.com/confirm
+
+Verify the account, then:
+
+	git pull
+	git push heroku master
+
 
 ### Change the 'System' user password!!!
 
