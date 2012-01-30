@@ -13,9 +13,12 @@ Notesoup/Node/Redis TODO list
 ===
 RACE CONDITION FIX
 
-- (req, res...)
-- sweep for 'console'
-
+- reply already sent
+	geturl
+	next(null)
+	
+	
+===
 
 - postEvent was dropped...
 	- send plumbing seems inactive?
