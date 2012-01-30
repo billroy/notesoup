@@ -5,17 +5,18 @@ _____       _         _____
                                        |_|  
                                        
 Notesoup/Node/Redis TODO list
-1/29/12 -br
+1/30/12 -br
 
 ===
-- bug: heroku install crashed?
-	watching
 ===
-RACE CONDITION FIX
+RACE CONDITION TEST
 
 - reply already sent
 	geturl
 	next(null)
+- need full logs from a rush to find out what's crashing
+- increase the timeout in the rush
+- try rushing multiple web workers
 
 ===
 scoreboard

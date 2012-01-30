@@ -16,17 +16,17 @@ Once you have received the signup email and configured a password, [verify your 
 
 Install the heroku command line tools.  See the [Heroku NodeJS Cookbook](http://devcenter.heroku.com/articles/node-js) and perform the section "Local Workstation Setup".  After installing the appropriate tools package for your system, log in to Heroku:
 
-	$ heroku login
+	heroku login
 
 Once you are logged into Heroku and the credential formalities are complete, continue with the deployment procedure here.
 
 ### Deploying Note Soup to Heroku
 
-Three line install:
+Copy/paste these lines into a terminal shell:
 
-	$ git clone http://bitlash.net/git/notesoup.git
-	$ cd notesoup
-	$ ./scripts/heroku-start.sh 
+	git clone http://bitlash.net/git/notesoup.git
+	cd notesoup
+	./scripts/heroku-start.sh 
 
 The console output will contain the name of your new server.  Open a browser on that url and you should see the system/welcome page.
 
@@ -54,24 +54,21 @@ Manage your app from the [Heroku app console](https://api.heroku.com/myapps) or 
 
 You must be in the notesoup directory for the heroku command line tools to know which application to control:
 
-	$ cd notesoup
+	cd notesoup
 	
 Update the Note Soup code and restart the server:
 
-	$ git pull
-	$ git push heroku master
+	git pull
+	git push heroku master
 
 Nuke your app and database, gone in an instant:
 
-	$ heroku destroy
+	heroku destroy
 	
-Your site is popular.  Add additional web workers, for a fee:
-
-	$ heroku ps:scale web=2
-
 Is the site up?
 
-	$ heroku ps
+	heroku ps
+	
 	soup:notesoup bill$ heroku ps
 	Process  State       Command                   
 	-------  ----------  ------------------------  
@@ -79,7 +76,11 @@ Is the site up?
 
 What do the logs say?
 
-	$ heroku logs
+	heroku logs
+
+Your site is popular.  Add additional web workers, for a fee:
+
+	heroku ps:scale web=2
 
 ***
 
