@@ -28,29 +28,27 @@ Copy and paste this block of three lines into a terminal shell:
 	cd notesoup
 	./scripts/heroku-start.sh 
 
+When the installation is complete the installer will open a browser window on the system/welcome page of your new Note Soup server.  Note the url for future reference.
 
-### How to Find the URL for your new Note Soup Server
+If you forget the url, you can open your application from the command line:
 
-Examine the server deployment console output a few lines up from the bottom and you will find your (randomly generated) application server url, something like this:
+	heroku open
 
-	http://falling-night-9439.herokuapp.com deployed to Heroku
-
-...telling us the application can be found at http://falling-night-9439.herokuapp.com
-
-Paste that url in your browser and you should see the Note Soup system/welcome page.  Now change the admin password, per the instructions below.
+Now go change your system password per the instructions below.
 
 ### Application Error at Startup
 
-If you get an Application Error, check the console output to see if it has any advice.  A common problem is to skip the account verification step.  You'll get a complaint like this if you skipped verification:
+If you see an Application Error in the browser, check the console output to see if it has any advice.  A common problem is to skip the account verification step.  You'll get a complaint like this if you skipped verification:
 
 	-----> Adding redistogo to sparkle-jasmine-5917... failed
 	 !    Please verify your account to install this add-on
 	 !    For more information, see http://devcenter.heroku.com/categories/billing
 	 !    Confirm now at https://heroku.com/confirm
 
-[Verify your account here.](http://www.heroku.com/verify), then:
+[Verify your account here.](http://www.heroku.com/verify), then nuke the defective app and try again:
 
-	./scripts/heroku-update.sh
+	heroku destroy
+	./scripts/heroku-start.sh
 
 
 ### Change the 'System' user password!!!
@@ -87,7 +85,16 @@ Update the Note Soup code and restart the server:
 Nuke your app and database, gone in an instant:
 
 	heroku destroy
-	
+
+Where the heck is my server, again?
+
+	heroku info
+	heroku open
+
+Open your site in the browser:
+
+	heroku open
+
 Is the site up?
 
 	heroku ps

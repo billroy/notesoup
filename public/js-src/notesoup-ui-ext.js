@@ -471,7 +471,6 @@ notesoup.ui = {
 		};
 		Ext.get(document.body).on('contextmenu', notesoup.ui.showNoteMenu);
 
-
 		this.tbColorMenu = new Ext.menu.ColorMenu({
 			handler : function(cm, color) {
 				if (typeof(color) == 'object') return; // handle spurious callback BUG
@@ -481,6 +480,21 @@ notesoup.ui = {
 				notesoup.ui.commandbar.focus();
 			}
 		});
+
+/****
+		this.tbColorPicker = new Ext.ux.ColorMenu({
+			value: notesoup.ui.defaultNoteColor,
+			width: 300
+		});
+
+		this.tbColorPicker.on('select', function(field, color) {
+			notesoup.say('color: ' + notesoup.dump(color));
+			notesoup.ui.defaultNoteColor = '#' + color.toString();
+			notesoup.say('Default color set to: ' + notesoup.ui.defaultNoteColor);
+			notesoup.ui.commandbar.getEl().dom.style.background = notesoup.ui.defaultNoteColor;
+			notesoup.ui.commandbar.focus();
+		});
+*****/
 
 		this.commandbar = new Ext.form.TextField({
 		//this.commandbar = new Ext.form.TextArea({
@@ -541,6 +555,15 @@ notesoup.ui = {
 				tooltip: {text:'click to select a color for new notes', title:'New Note Color'},
 				menu: this.tbColorMenu
 			},
+/***
+			new Ext.Toolbar.Separator(),
+			{
+				text: '&nbsp;&nbsp;&nbsp;&nbsp;',
+				icon: notesoup.imageHost + 'images/famfamfam.com/color_wheel.png',
+				tooltip: {text:'click to select a color for new notes', title:'New Note Color'},
+				menu: this.tbColorPicker
+			},
+***/
 			new Ext.Toolbar.Separator(),
 			new Ext.Toolbar.Spacer(),		// iPhone
 			new Ext.Toolbar.Button({

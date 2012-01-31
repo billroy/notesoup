@@ -1066,7 +1066,7 @@ ensureuserexists: function(req, res, next) {
 
 setpassword: function(req, res, next) {
 	var self = NoteSoup;
-	self.save_password_hash(req.body.params.username, req.body.params.password, 
+	self.savepasswordhash(req.body.params.username, req.body.params.password, 
 		function(err, reply) {
 			if (err) next(err);
 			else {
@@ -1084,7 +1084,7 @@ setpassword: function(req, res, next) {
 
 inboxfolder: 'inbox',
 
-save_password_hash: function(user, passwordhash, next) {
+savepasswordhash: function(user, passwordhash, next) {
 	var self = this;
 	self.redis.hset(self.key_usermeta(user), 
 		self.passwordattr, 
@@ -1420,9 +1420,22 @@ loaduser: function(user, next) {
 getsystempassword: function(next) {
 	var self = NoteSoup;
 	
+	// if the system password was passed in, set it
+	if (process.env.soup_password !== undefined) {
+		self.log('Setting system password.');
+		self.savepasswordhash(
+			self.systemuser,
+			crypto.createHash('sha1').update(process.env.soup_password).digest('hex'),
+			next);
+		return;
+	}
+
 	// Don't try to get the system password if we have no console (Heroku, for example)
-	if (self.argv.noconsole) next(null);
-	
+	if (self.argv.noconsole) {
+		next(null);
+		return;
+	}
+
 	var i = rl.createInterface(process.stdin, process.stdout, null);
 	i.question('Enter a password for the "system" user:', function(password) {
 		i.question('Enter it again:', function(password2) {
