@@ -5,6 +5,19 @@ Note Soup
 
 Note Soup is a live, multi-user sticky note organizer and dashboard factory based on node.js and Redis.
 
+### Instant Soup
+
+If you know what you're doing and have git, node, npm, and a local redis:
+
+	git clone git://github.com/billroy/notesoup.git
+	cd notesoup
+	npm install
+	node soup.js
+
+Your soup will be at http://localhost:3000
+
+Change the system password (see below).
+
 ### Requirements
 
 - Git

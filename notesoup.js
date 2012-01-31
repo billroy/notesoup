@@ -103,7 +103,7 @@ connect: function(redis_url) {
 	}
 	
 	self.redis.on("error", function (err) {
-		self.log("Redis Error: " + err);
+		console.log("Redis Error: " + err);
 	});
 
 	self.initdatabase();
@@ -151,18 +151,26 @@ connect: function(redis_url) {
 	return self;
 },
 
-workspace_template: null,
+templatecache: {},
 
-load_workspace_template: function() {
+fetchtemplate: function(templatename) {
 	var self = this;
-	self.workspace_template = fs.readFileSync(__dirname + '/templates/index.html', 'utf-8');
+	if (!self.templatecache.hasOwnProperty(templatename)) {
+		self.templatecache[templatename] = fs.readFileSync(__dirname + '/templates/' + templatename, 'utf-8');
+	}
+	return self.templatecache[templatename];
 },
 
-renderworkspace: function(req, res) {
+renderfolder: function(req, res, template) {
 	var self = NoteSoup;
-	self.log('Render folder ' + req.params.user + ' ' + req.params.folder);
+	req.starttime = new Date().getTime();
+	req.template = template;
 
-	if (self.locked) {
+	self.log('*********************************************************************');
+	self.log('Render folder ' + req.params.user + ' ' + req.params.folder);
+	self.log('*********************************************************************');
+
+	if (self.locked && !self.isroot(req, res)) {
 		res.redirect('Service unavailable.  Please try again later.', 503);
 		return;
 	}
@@ -177,7 +185,7 @@ renderworkspace: function(req, res) {
 		function(next) {self.loadfromacl(req, res, next);}, 
 		function(next) {self.validateaccess(req, res, next);},
 		function(next) {self.preloadnotes(req, res, next);},
-		function(next) {self.sendworkspace(req, res, next);},
+		function(next) {self.sendpage(req, res, next);},
 	],
 	function(err, reply) {
 		if (err) res.redirect('/folder/system/accesserror');
@@ -192,7 +200,6 @@ preloadnotes: function(req, res, next) {
 			next(err);
 			return;
 		}
-		self.log('preload:');
 		res.initnotes = [];
 		for (var id in notes) {
 			var thenote = JSON.parse(notes[id]);
@@ -202,23 +209,23 @@ preloadnotes: function(req, res, next) {
 			res.initnotes.push(thenote);
 		}
 		if (res.initnotes.length) res.lastupdate = updatetime;
+		//self.log('preload:');
 		//self.dir(res.initnotes);
 
 		next(null);
 	});
 },
 
-sendworkspace: function(req, res, next) {
+sendpage: function(req, res, next) {
 	var self = NoteSoup;
-	req.starttime = new Date().getTime();
 
 	// provision the client options	
 	// TODO: hook up real ACL
 	var opts = {
 		loggedin:	req.session.loggedin || false,
 		username:	req.session.username || 'guest',
-		foldername:	req.params.user + '/' + req.params.folder,
-		isowner:	req.session.loggedin && (req.session.username == req.params.user)
+		foldername:	req.params.user + '/' + req.params.folder
+		//isowner:	req.session.loggedin && (req.session.username == req.params.user)
 	};
 	opts.ispublic = self.hasaccess(req, res, '*', opts.foldername, self.readers);
 	opts.iseditor = self.hasaccess(req, res, self.effectiveuser(req, res), opts.foldername, self.editors);
@@ -229,13 +236,13 @@ sendworkspace: function(req, res, next) {
 	}
 
 	// render index.html as a template with these options
-	if (!self.workspace_template) self.load_workspace_template();
-	var this_page = self.workspace_template;
+	var page = self.fetchtemplate(req.template);
+	var string_opts = util.inspect(opts);
 
-	var string_opts = JSON.stringify(opts);
-	self.log('Rendering options:');
-	self.log(string_opts);
-	res.send(this_page.replace('\'{0}\'', string_opts));
+	//self.log('Rendering options:');
+	//self.log(string_opts);
+
+	res.send(page.replace('\'{0}\'', string_opts));
 	self.logdt(req, res);
 	next(null);
 },

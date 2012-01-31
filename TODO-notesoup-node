@@ -8,34 +8,33 @@ Notesoup/Node/Redis TODO list
 1/30/12 -br
 
 ===
+/backup
+	isroot	
+	redis-dump
+
 ===
 RACE CONDITION TEST
 
-- reply already sent
-	geturl
-	next(null)
-- need full logs from a rush to find out what's crashing
-- increase the timeout in the rush
 - try rushing multiple web workers
+===
+blitz.io sync test
+
+-X POST -H 'Content-Type: application/json' -d '{"method":"sync","params":{"fromfolder":"system/welcome","count":"0","lastupdate":"0"},"id":0}' http://alpha.notesoup.net:3000/api
+
+sync:
+{"method":"sync","params":{"fromfolder":"system/welcome","count":"0","lastupdate":"0"},"id":0}
 
 ===
 scoreboard
 	response times hash
-	
+	HINCR /stats/apitimes/openfolder[time-in-ms
+	hincrby stats/api/openfolder 13 1
 ===
-
 - postEvent was dropped...
 	- send plumbing seems inactive?
 	- nothing shows up on push bus
 ===
 - bug: deletions don't sync
-
-- bug: geturl race/headers bug
-	- interleaved with getfolderlist
-	- + 4 widgets
-
-- preloadnotes
-
 ===
 Folder existence bugs
 - bug: disallow navigation to nonexistent folder

@@ -59,7 +59,11 @@ app.get('/status', function(req, res) {
 });
 
 app.get('/folder/:user/:folder', function(req, res) {
-	soup.renderworkspace(req, res);
+	soup.renderfolder(req, res, 'folder.html');
+});
+
+app.get('/notes/:user/:folder', function(req, res) {
+	soup.renderfolder(req, res, 'notes.html');
 });
 
 app.post('/api', function(req, res) {

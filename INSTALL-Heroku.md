@@ -45,7 +45,7 @@ If you get an Application Error, check the console output to see if it has any a
 	 !    For more information, see http://devcenter.heroku.com/categories/billing
 	 !    Confirm now at https://heroku.com/confirm
 
-Verify the account, then:
+[Verify your account here.](http://www.heroku.com/verify), then:
 
 	git pull
 	git push heroku master
