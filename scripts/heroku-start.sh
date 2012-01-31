@@ -6,7 +6,7 @@ echo Enter an admin password for the new server:
 read pass1
 echo Enter it again:
 read pass2
-if [ $pass1 -ne $pass2 ]
+if [ $pass1 != $pass2 ]
 then
 	echo Passwords do not match.
 	exit 1
@@ -18,7 +18,7 @@ heroku addons:add redistogo
 heroku addons | grep 'redistogo'
 if [ $? -ne 0 ] 
 then
-	echo :( :( :( :( :( :( :( :( :( :( :( :( :( :( :( :( :( :( :( :( 
+	echo ":( :( :( :( :( :( :( :( :( :( :( :( :( :( :( :( :( :( :( :( "
 	echo
 	echo "Sorry, there is a problem: The Redis addon could not be added."
 	echo
@@ -27,7 +27,7 @@ then
 	echo
 	echo "http://www.heroku.com/verify"
 	echo
-	echo :( :( :( :( :( :( :( :( :( :( :( :( :( :( :( :( :( :( :( :( 
+	echo ":( :( :( :( :( :( :( :( :( :( :( :( :( :( :( :( :( :( :( :( "
 	echo
 	exit 1
 fi
