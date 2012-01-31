@@ -7,6 +7,7 @@ read pass1
 echo Enter it again:
 read pass2
 if [ $pass1 -ne $pass2 ]
+then
 	echo Passwords do not match.
 	exit 1
 fi
