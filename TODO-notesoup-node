@@ -23,7 +23,10 @@ blitz.io sync test
 
 sync:
 {"method":"sync","params":{"fromfolder":"system/welcome","count":"0","lastupdate":"0"},"id":0}
-
+===
+heroku
+	- config var pull-thru
+	
 ===
 scoreboard
 	response times hash

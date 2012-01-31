@@ -28,13 +28,16 @@ Copy and paste this block of three lines into a terminal shell:
 	cd notesoup
 	./scripts/heroku-start.sh 
 
-Examine the server output a few lines up from the bottom and you will find your (randomly generated) application server url, something like this:
+
+### How to Find the URL for your new Note Soup Server
+
+Examine the server deployment console output a few lines up from the bottom and you will find your (randomly generated) application server url, something like this:
 
 	http://falling-night-9439.herokuapp.com deployed to Heroku
 
 ...telling us the application can be found at http://falling-night-9439.herokuapp.com
 
-Paste that url in your browser and you should see the system/welcome page.
+Paste that url in your browser and you should see the Note Soup system/welcome page.  Now change the admin password, per the instructions below.
 
 ### Application Error at Startup
 
@@ -47,15 +50,15 @@ If you get an Application Error, check the console output to see if it has any a
 
 [Verify your account here.](http://www.heroku.com/verify), then:
 
-	git pull
-	git push heroku master
+	./scripts/heroku-update.sh
 
 
 ### Change the 'System' user password!!!
 
+Congratulations, the application is running and you're looking at the Note Soup system/welcome page, with a "Log in Here" widget.
+
 Please log in at once as user 'system' with the default password 'frobozz88', 
-and change the password to something else using the Change Password menu item, 
-or the Change Password widget.
+and then change the password to something else using the Change Password menu item (Folder Icon -> Change Password), or the Change Password widget that you will see when you log in.
 
 Now go read README.md and see all the work you saved.
 
@@ -79,8 +82,7 @@ You must be in the notesoup directory for the heroku command line tools to know 
 	
 Update the Note Soup code and restart the server:
 
-	git pull
-	git push heroku master
+	./scripts/heroku-update.sh
 
 Nuke your app and database, gone in an instant:
 
@@ -109,7 +111,7 @@ Your site is popular.  Add additional web workers, for a fee:
 
 	soup:heroku bill$ date
 	Fri Jan 27 19:20:20 MST 2012
-	soup:heroku bill$ git clone http://bitlash.net/git/notesoup.git
+	soup:heroku bill$ git clone git://github.com/billroy/notesoup.git
 	Cloning into notesoup...
 	soup:heroku bill$ cd notesoup
 	soup:notesoup bill$ heroku create --stack cedar
