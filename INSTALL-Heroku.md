@@ -28,13 +28,15 @@ Copy and paste this block of three lines into a terminal shell:
 	cd notesoup
 	./scripts/heroku-start.sh 
 
-When the installation is complete the installer will open a browser window on the system/welcome page of your new Note Soup server.  Note the url for future reference.
+The script will ask for an administrative password; you will use this only to log in as the 'system' user to edit the welcome page and administer other users.
+
+Enter a secure administration password, and enter it again when prompted.
+
+When the installation is complete the installer will open a browser window on the system/welcome page of your new Note Soup server. 
 
 If you forget the url, you can open your application from the command line:
 
 	heroku open
-
-Now go change your system password per the instructions below.
 
 ### Application Error at Startup
 
@@ -50,17 +52,6 @@ If you see an Application Error in the browser, check the console output to see 
 	heroku destroy
 	./scripts/heroku-start.sh
 
-
-### Change the 'System' user password!!!
-
-Congratulations, the application is running and you're looking at the Note Soup system/welcome page, with a "Log in Here" widget.
-
-Please log in at once as user 'system' with the default password 'frobozz88', 
-and then change the password to something else using the Change Password menu item (Folder Icon -> Change Password), or the Change Password widget that you will see when you log in.
-
-Now go read README.md and see all the work you saved.
-
-And read about locking down the guest user, too.
 
 ### Where the notes go: RedisToGo nano.
 
@@ -116,23 +107,35 @@ Your site is popular.  Add additional web workers, for a fee:
 
 ### Install Transcript
 
-	soup:heroku bill$ date
-	Fri Jan 27 19:20:20 MST 2012
-	soup:heroku bill$ git clone git://github.com/billroy/notesoup.git
-	Cloning into notesoup...
-	soup:heroku bill$ cd notesoup
-	soup:notesoup bill$ heroku create --stack cedar
-	Creating growing-stone-3517... done, stack is cedar
-	http://growing-stone-3517.herokuapp.com/ | git@heroku.com:growing-stone-3517.git
+	think:notesoup bill$ ./scripts/heroku-start.sh 
+	Tue Jan 31 10:41:36 MST 2012
+	Note Soup Deploy-to-Heroku here!
+	
+	Enter an admin password for the new server:
+	photon
+	Enter it again:
+	photonff
+	Passwords do not match.
+	aeolus:notesoup bill$ ./scripts/heroku-start.sh 
+	Tue Jan 31 10:41:44 MST 2012
+	Note Soup Deploy-to-Heroku here!
+	
+	Enter an admin password for the new server:
+	photon
+	Enter it again:
+	photon
+	Creating stark-robot-4635... done, stack is cedar
+	http://stark-robot-4635.herokuapp.com/ | git@heroku.com:stark-robot-4635.git
 	Git remote heroku added
-	soup:notesoup bill$ heroku addons:add redistogo
-	-----> Adding redistogo to growing-stone-3517... done, v3 (free)
-	soup:notesoup bill$ git push heroku master
-	Counting objects: 4112, done.
+	Adding config vars and restarting app... done, v2
+	  soup_password => photon
+	-----> Adding redistogo to stark-robot-4635... done, v3 (free)
+	redistogo:nano
+	Counting objects: 4335, done.
 	Delta compression using up to 4 threads.
-	Compressing objects: 100% (2681/2681), done.
-	Writing objects: 100% (4112/4112), 6.41 MiB | 627 KiB/s, done.
-	Total 4112 (delta 1329), reused 4034 (delta 1282)
+	Compressing objects: 100% (2708/2708), done.
+	Writing objects: 100% (4335/4335), 6.44 MiB | 724 KiB/s, done.
+	Total 4335 (delta 1479), reused 4325 (delta 1475)
 	
 	-----> Heroku receiving push
 	-----> Node.js app detected
@@ -140,7 +143,7 @@ Your site is popular.  Add additional web workers, for a fee:
 	-----> Vendoring node 0.4.7
 	-----> Installing dependencies with npm 1.0.94
 		   
-		   > notesoup@0.0.2 postinstall /tmp/build_j66bgsr8j75p
+		   > notesoup@0.0.2 postinstall /tmp/build_1h23qzj5ogu56
 		   > echo NoteSoup installed.  Next: npm install and npm start
 		   
 		   NoteSoup installed. Next: npm install and npm start
@@ -150,49 +153,57 @@ Your site is popular.  Add additional web workers, for a fee:
 		   optimist@0.3.1 ./node_modules/optimist 
 		   └── wordwrap@0.0.2
 		   jade@0.20.0 ./node_modules/jade 
-		   ├── commander@0.2.1
-		   └── mkdirp@0.3.0
+		   ├── mkdirp@0.3.0
+		   └── commander@0.2.1
 		   socket.io@0.8.7 ./node_modules/socket.io 
 		   ├── policyfile@0.0.4
 		   ├── redis@0.6.7
 		   └── socket.io-client@0.8.7
 		   express@2.5.2 ./node_modules/express 
-		   ├── mkdirp@0.0.7
-		   ├── mime@1.2.4
 		   ├── qs@0.4.1
+		   ├── mime@1.2.4
+		   ├── mkdirp@0.0.7
 		   └── connect@1.8.5
-		   async@0.1.15 /tmp/build_j66bgsr8j75p/node_modules/async
-		   express@2.5.2 /tmp/build_j66bgsr8j75p/node_modules/express
-		   connect@1.8.5 /tmp/build_j66bgsr8j75p/node_modules/express/node_modules/connect
-		   qs@0.4.1 /tmp/build_j66bgsr8j75p/node_modules/express/node_modules/qs
-		   mime@1.2.4 /tmp/build_j66bgsr8j75p/node_modules/express/node_modules/mime
-		   formidable@1.0.8 /tmp/build_j66bgsr8j75p/node_modules/express/node_modules/connect/node_modules/formidable
-		   mkdirp@0.0.7 /tmp/build_j66bgsr8j75p/node_modules/express/node_modules/mkdirp
-		   jade@0.20.0 /tmp/build_j66bgsr8j75p/node_modules/jade
-		   commander@0.2.1 /tmp/build_j66bgsr8j75p/node_modules/jade/node_modules/commander
-		   mkdirp@0.3.0 /tmp/build_j66bgsr8j75p/node_modules/jade/node_modules/mkdirp
-		   redis@0.7.1 /tmp/build_j66bgsr8j75p/node_modules/redis
-		   redis-url@0.1.0 /tmp/build_j66bgsr8j75p/node_modules/redis-url
-		   socket.io@0.8.7 /tmp/build_j66bgsr8j75p/node_modules/socket.io
-		   socket.io-client@0.8.7 /tmp/build_j66bgsr8j75p/node_modules/socket.io/node_modules/socket.io-client
-		   uglify-js@1.0.6 /tmp/build_j66bgsr8j75p/node_modules/socket.io/node_modules/socket.io-client/node_modules/uglify-js
-		   websocket-client@1.0.0 /tmp/build_j66bgsr8j75p/node_modules/socket.io/node_modules/socket.io-client/node_modules/websocket-client
-		   xmlhttprequest@1.2.2 /tmp/build_j66bgsr8j75p/node_modules/socket.io/node_modules/socket.io-client/node_modules/xmlhttprequest
-		   policyfile@0.0.4 /tmp/build_j66bgsr8j75p/node_modules/socket.io/node_modules/policyfile
-		   redis@0.6.7 /tmp/build_j66bgsr8j75p/node_modules/socket.io/node_modules/redis
-		   optimist@0.3.1 /tmp/build_j66bgsr8j75p/node_modules/optimist
-		   wordwrap@0.0.2 /tmp/build_j66bgsr8j75p/node_modules/optimist/node_modules/wordwrap
+		   async@0.1.15 /tmp/build_1h23qzj5ogu56/node_modules/async
+		   express@2.5.2 /tmp/build_1h23qzj5ogu56/node_modules/express
+		   connect@1.8.5 /tmp/build_1h23qzj5ogu56/node_modules/express/node_modules/connect
+		   qs@0.4.1 /tmp/build_1h23qzj5ogu56/node_modules/express/node_modules/qs
+		   mime@1.2.4 /tmp/build_1h23qzj5ogu56/node_modules/express/node_modules/mime
+		   formidable@1.0.8 /tmp/build_1h23qzj5ogu56/node_modules/express/node_modules/connect/node_modules/formidable
+		   mkdirp@0.0.7 /tmp/build_1h23qzj5ogu56/node_modules/express/node_modules/mkdirp
+		   jade@0.20.0 /tmp/build_1h23qzj5ogu56/node_modules/jade
+		   commander@0.2.1 /tmp/build_1h23qzj5ogu56/node_modules/jade/node_modules/commander
+		   mkdirp@0.3.0 /tmp/build_1h23qzj5ogu56/node_modules/jade/node_modules/mkdirp
+		   redis@0.7.1 /tmp/build_1h23qzj5ogu56/node_modules/redis
+		   redis-url@0.1.0 /tmp/build_1h23qzj5ogu56/node_modules/redis-url
+		   socket.io@0.8.7 /tmp/build_1h23qzj5ogu56/node_modules/socket.io
+		   socket.io-client@0.8.7 /tmp/build_1h23qzj5ogu56/node_modules/socket.io/node_modules/socket.io-client
+		   uglify-js@1.0.6 /tmp/build_1h23qzj5ogu56/node_modules/socket.io/node_modules/socket.io-client/node_modules/uglify-js
+		   websocket-client@1.0.0 /tmp/build_1h23qzj5ogu56/node_modules/socket.io/node_modules/socket.io-client/node_modules/websocket-client
+		   xmlhttprequest@1.2.2 /tmp/build_1h23qzj5ogu56/node_modules/socket.io/node_modules/socket.io-client/node_modules/xmlhttprequest
+		   policyfile@0.0.4 /tmp/build_1h23qzj5ogu56/node_modules/socket.io/node_modules/policyfile
+		   redis@0.6.7 /tmp/build_1h23qzj5ogu56/node_modules/socket.io/node_modules/redis
+		   optimist@0.3.1 /tmp/build_1h23qzj5ogu56/node_modules/optimist
+		   wordwrap@0.0.2 /tmp/build_1h23qzj5ogu56/node_modules/optimist/node_modules/wordwrap
 		   Dependencies installed
 	-----> Discovering process types
 		   Procfile declares types -> web
 	-----> Compiled slug size is 11.0MB
 	-----> Launching... done, v5
-		   http://growing-stone-3517.herokuapp.com deployed to Heroku
+		   http://stark-robot-4635.herokuapp.com deployed to Heroku
 	
-	To git@heroku.com:growing-stone-3517.git
+	To git@heroku.com:stark-robot-4635.git
 	 * [new branch]      master -> master
-	soup:notesoup bill$ heroku ps:scale web=1
 	Scaling web processes... done, now running 1
-	soup:notesoup bill$ date
-	Fri Jan 27 19:21:56 MST 2012
-
+	Removing soup_password and restarting app... done, v6.
+	=== stark-robot-4635
+	Addons:        Redis To Go Nano, Basic Release Management
+	Git URL:       git@heroku.com:stark-robot-4635.git
+	Owner:         
+	Repo Size:     16M
+	Slug Size:     11M
+	Stack:         cedar
+	Web URL:       http://stark-robot-4635.herokuapp.com/
+	Opening http://stark-robot-4635.herokuapp.com/
+	Heroku install script complete.
+	Tue Jan 31 10:42:43 MST 2012
