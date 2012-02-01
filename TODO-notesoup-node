@@ -27,8 +27,7 @@ RACE CONDITION TEST
 - try rushing multiple web workers
 - compare with a comparable PHP server task on apache
 
-===
-blitz.io sync test
+- blitz.io sync test
 
 -X POST -H 'Content-Type: application/json' -d '{"method":"sync","params":{"fromfolder":"system/welcome","count":"0","lastupdate":"0"},"id":0}' http://alpha.notesoup.net:3000/api
 

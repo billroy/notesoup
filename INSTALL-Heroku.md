@@ -8,9 +8,13 @@ Download and install [git.](http://git-scm.com)
 
 #### &#9744; Verified Heroku Account
 
-Create a verified account at [Heroku](http://www.heroku.com/).  This means you will have to provide a credit card and email address.  There should be no charges to the card, unless you specifically configure more resources.  [Sign up for an account here.](https://api.heroku.com/signup)
+Create a verified account at [Heroku](http://www.heroku.com/).  This is a two-step process:
 
-Once you have received the signup email and configured a password, [verify your account here.](http://www.heroku.com/verify)  (If you skip this step, the install will fail because you need a verified account to use the Redis add-on.)
+1. [Sign up for an account here.](https://api.heroku.com/signup)  All you need is an email address for this step.  You'll get mail from Heroku confirming your account is set up.  Now you must 'verify' the account before Note Soup will run.
+
+2. [Verify the account here.](http://www.heroku.com/verify)  For this step you must provide a credit card.  There should be no charges to the card, unless you specifically configure additional resources.  
+
+** Note: Do not skip verification else the install will fail because a verified account is required to use the Redis database add-on. **
 
 #### &#9744; Heroku Command Line Tools
 
@@ -18,7 +22,7 @@ Install the heroku command line tools.  See the [Heroku NodeJS Cookbook](http://
 
 	heroku login
 
-Once you are logged into Heroku and the credential formalities are complete, continue with the deployment procedure here.
+Once you are logged into Heroku and the credential formalities are complete, continue below.
 
 ### The Recipe: Deploying Note Soup to Heroku
 

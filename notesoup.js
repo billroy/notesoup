@@ -103,7 +103,9 @@ connect: function(redis_url) {
 	}
 	
 	self.redis.on("error", function (err) {
-		console.log("Redis Error: " + err);
+		console.error("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+		console.error("Redis Error: " + err);
+		console.error("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 	});
 
 	self.initdatabase();
