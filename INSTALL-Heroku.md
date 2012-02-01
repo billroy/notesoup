@@ -2,17 +2,17 @@
 
 ### Installing the Requirements
 
-#### Git
+#### &#9744; Git
 
 Download and install [git.](http://git-scm.com)
 
-#### Verified Heroku Account
+#### &#9744; Verified Heroku Account
 
 Create a verified account at [Heroku](http://www.heroku.com/).  This means you will have to provide a credit card and email address.  There should be no charges to the card, unless you specifically configure more resources.  [Sign up for an account here.](https://api.heroku.com/signup)
 
 Once you have received the signup email and configured a password, [verify your account here.](http://www.heroku.com/verify)  (If you skip this step, the install will fail because you need a verified account to use the Redis add-on.)
 
-#### Heroku Command Line Tools
+#### &#9744; Heroku Command Line Tools
 
 Install the heroku command line tools.  See the [Heroku NodeJS Cookbook](http://devcenter.heroku.com/articles/node-js) and perform the section "Local Workstation Setup".  After installing the appropriate tools package for your system, log in to Heroku:
 
@@ -20,7 +20,7 @@ Install the heroku command line tools.  See the [Heroku NodeJS Cookbook](http://
 
 Once you are logged into Heroku and the credential formalities are complete, continue with the deployment procedure here.
 
-### Deploying Note Soup to Heroku
+### The Recipe: Deploying Note Soup to Heroku
 
 Copy and paste this block of three lines into a terminal shell:
 
@@ -30,7 +30,7 @@ Copy and paste this block of three lines into a terminal shell:
 
 The script will ask for an administrative password; you will use this only to log in as the 'system' user to edit the welcome page and administer other users.
 
-Enter a secure administration password, and enter it again when prompted.
+Enter a secure system password, and enter it again when prompted.
 
 When the installation is complete the installer will open a browser window on the system/welcome page of your new Note Soup server. 
 
@@ -40,7 +40,7 @@ If you forget the url, you can open your application from the command line:
 
 ### Application Error at Startup
 
-If you see an Application Error in the browser, check the console output to see if it has any advice.  A common problem is to skip the account verification step.  You'll get a complaint like this if you skipped verification:
+If you see an Application Error in the browser, check the terminal output to see if it has any advice.  A common problem is to skip the account verification step.  You'll get a complaint like this if you skipped verification:
 
 	-----> Adding redistogo to sparkle-jasmine-5917... failed
 	 !    Please verify your account to install this add-on
@@ -63,7 +63,7 @@ The scripts/heroku-start.sh script configures the nano tier of service; edit it 
 
 ### Administration
 
-Manage your app from the [Heroku app console](https://api.heroku.com/myapps) or using the heroku command line tool.
+Manage your app from the [Heroku app dashboard](https://api.heroku.com/myapps) or using the heroku command line tool.
 
 You must be in the notesoup directory for the heroku command line tools to know which application to control:
 

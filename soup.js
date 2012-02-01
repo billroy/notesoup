@@ -54,10 +54,6 @@ app.get('/', function(req, res) {
 	else res.redirect('/folder/system/welcome');
 });
 
-app.get('/status', function(req, res) {
-	res.send("OK");
-});
-
 app.get('/folder/:user/:folder', function(req, res) {
 	soup.renderfolder(req, res, 'folder.html');
 });
@@ -69,6 +65,11 @@ app.get('/notes/:user/:folder', function(req, res) {
 app.post('/api', function(req, res) {
 	soup.dispatch(req, res);	
 });
+
+app.get('/status', function(req, res) {
+	soup.status(req, res);
+});
+
 
 app.listen(process.env.PORT || argv.port || 3000);
 console.log("NoteSoup listening on port %d in %s mode", app.address().port, app.settings.env);

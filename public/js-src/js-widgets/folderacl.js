@@ -21,7 +21,7 @@ note.set({
 	},
 
 	onrender: function() {
-	
+/*
 		if (!notesoup.isowner) {
 			this.setContentDiv([
 				'<center><br/>',
@@ -31,7 +31,7 @@ note.set({
 			].join(''));
 			return;
 		}
-	
+*/	
 		var folderACLForm = new Ext.FormPanel({
 			labelWidth: 70,
 			minButtonWidth: 50 ,

@@ -8,33 +8,19 @@ Notesoup/Node/Redis TODO list
 1/31/12 -br
 
 ===
-heroku-start.sh
-	- use read to get a system password
-	- set it as a config var
-	- check the config var in initdb
-
-echo Enter an admin password for the new server:
-read pass1
-echo Enter it again:
-read pass2
-if [ $pass1 -ne $pass2 ]
-	echo Passwords do not match.
-	exit 1
-fi
-heroku config:add password=$pass1
-
-===
 - bug: client: can't set the same note color twice
-===
+- feat: color wheel would be much better than palette
 
+===
 /backup
 	isroot	
 	redis-dump
-
 ===
 RACE CONDITION TEST
 
 - try rushing multiple web workers
+- compare with a comparable PHP server task on apache
+
 ===
 blitz.io sync test
 
@@ -86,7 +72,6 @@ Install-nodejitsu
 DOC
 	- doubleclick to edit a note
 	- shift-doubleclick -> edit source
-
 ===
 API completeness
 

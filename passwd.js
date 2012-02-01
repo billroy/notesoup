@@ -26,6 +26,6 @@ var passwordhash = crypto.createHash('sha1').update(argv.p).digest('hex');
 var soup = require('./notesoup.js');
 soup.argv = argv;
 soup.connect(process.env.REDISTOGO_URL);
-soup.save_password_hash(argv.u, passwordhash, function(err, reply) {
+soup.savepasswordhash(argv.u, passwordhash, function(err, reply) {
 	process.exit();
 });

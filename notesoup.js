@@ -90,6 +90,9 @@ connect: function(redis_url) {
 	if (self.argv.nopush) self.enablepush = false;
 	if (self.argv.nosignup) self.opensignup = false;
 
+	if (process.env.nopush) self.enablepush = false;
+	if (process.env.nosignup) self.opensignup = false;
+
 	// socket storm on openfolder...
 	//http.Agent.defaultMaxSockets = 10;
 
@@ -149,6 +152,27 @@ connect: function(redis_url) {
 	}
 
 	return self;
+},
+
+status: function(req, res) {
+	var self = this;
+	if (!self.isroot(req, res)) res.send("OK");
+	else {
+		self.redis.info(function(err, reply) {
+			self.log('Status:' );
+			self.dir(reply);
+			var lines = reply.split('\r\n');
+			self.dir(lines);
+			var dict = {};
+			for (var i=0; i < lines.length; i++) {
+				var parts = lines[i].split(':');
+				if (parts[0]) dict[parts[0]] = parts[1];
+			}
+			//res.contentType("text/plain");
+			//res.send(util.inspect(dict));
+			res.send(JSON.stringify(dict));
+		});
+	}
 },
 
 templatecache: {},

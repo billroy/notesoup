@@ -2,7 +2,7 @@
 date
 echo Note Soup Deploy-to-Heroku here!
 echo
-echo Enter an admin password for the new server:
+echo Enter a password for the \'system\' (admin) user for the new server:
 read pass1
 echo Enter it again:
 read pass2
