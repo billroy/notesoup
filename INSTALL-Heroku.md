@@ -28,7 +28,7 @@ Copy and paste this block of three lines into a terminal shell:
 	cd notesoup
 	./scripts/heroku-start.sh 
 
-The script will ask for an administrative password; you will use this only to log in as the 'system' user to edit the welcome page and administer other users.
+The script will ask for an administrative password; you will use this only to log in as the 'system	' user to edit the welcome page and administer other users.
 
 Enter a secure system password, and enter it again when prompted.
 
@@ -60,6 +60,16 @@ RedisToGo provides a free "nano" tier of service that is suitable for experiment
 Be aware this free level of service does not include backup, and provides only 5MB storage.  If you use more than a couple hundred folders, you'll exceed the capacity of the nano tier.  [Consider a paid plan](http://addons.heroku.com/redistogo), or a local soup.
 
 The scripts/heroku-start.sh script configures the nano tier of service; edit it if required.
+
+### Disable Open Signup
+
+By default, anyone can create a new account on your soup.  You can restrict account creation to only the system user with this command:
+
+	heroku config:add nosignup=true
+	
+To re-enable:
+
+	heroku config:delete nosignup
 
 ### Administration
 
