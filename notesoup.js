@@ -91,10 +91,7 @@ connect: function(redis_url) {
 	if (self.argv.nosignup) self.opensignup = false;
 
 	if (process.env.nopush) self.enablepush = false;
-	if (process.env.nosignup) self.opensignup = false;
-
-	// socket storm on openfolder...
-	//http.Agent.defaultMaxSockets = 10;
+	if (process.env.nosignup == 'true') self.opensignup = false;
 
 	if (redis_url) {
 		self.log("Connecting to Redis at " + redis_url);
