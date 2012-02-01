@@ -251,7 +251,7 @@ sendpage: function(req, res, next) {
 	opts.ispublic = self.hasaccess(req, res, '*', opts.foldername, self.readers);
 	opts.iseditor = self.hasaccess(req, res, self.effectiveuser(req, res), opts.foldername, self.editors);
 	
-	if (res.initnotes) {
+	if (res.initnotes.length > 0) {
 		opts.initnotes = res.initnotes;
 		opts.lastupdate = res.lastupdate;
 	}

@@ -921,7 +921,7 @@ var notesoup = {
 
 		if ((fromfolder != null) && (fromfolder != '')) {
 
-			notesoup.removeAvatar();
+			if (notesoup.removeavatar) notesoup.removeAvatar();
 
 			// the old way:
 			//document.location.href = '/folder/' + this.username + '/' + foldername;
