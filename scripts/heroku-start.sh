@@ -34,6 +34,10 @@ fi
 git push heroku master
 heroku ps:scale web=1
 heroku config:remove soup_password
+if [ $1 != "" ]
+then
+heroku app rename $1
+fi
 heroku info
 heroku open
 echo 'Heroku install script complete.'
