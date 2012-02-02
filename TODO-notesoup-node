@@ -28,6 +28,9 @@ color wheel
 ===
 soupkitchen.js
 
+curl http://localhost:3000/makesoup.sh | bash
+ 
+
 curl -X POST -d "email=fred@example.com;password=foobar;nosignup=true" http://localhost:3001
 
 - clone into unique directory

@@ -32,7 +32,7 @@ Copy and paste this block of three lines into a terminal shell:
 	cd notesoup
 	./scripts/heroku-start.sh 
 
-The script will ask for an administrative password; you will use this only to log in as the 'system	' user to edit the welcome page and administer other users.
+The script will ask for an administrative password; you will use this only to log in as the 'system' user to edit the welcome page and administer other users.
 
 Enter a secure system password, and enter it again when prompted.
 
