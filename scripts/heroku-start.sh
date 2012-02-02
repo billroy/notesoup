@@ -36,7 +36,8 @@ heroku ps:scale web=1
 heroku config:remove soup_password
 if [ $1 != "" ]
 then
-heroku app rename $1
+	echo "Renaming app to " $1
+	heroku rename $1
 fi
 heroku info
 heroku open
