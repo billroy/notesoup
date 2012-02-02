@@ -118,8 +118,6 @@ soupnote.prototype.toString = function() {
 */
 soupnote.prototype.getContentDiv = function() {
 	return $(this.id + notesoup.ui.contentSuffix);
-	//var win = Windows.getWindow(this.id + '_win');
-	//return win.getContent();
 };
 
 

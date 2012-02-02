@@ -480,7 +480,7 @@ notesoup.ui = {
 				notesoup.ui.commandbar.focus();
 			}
 		});
-
+/***
 		this.tbColorPicker = function() {
 			Ext.get('colorpicker').show();
 			notesoup.say('Pick a color...');
@@ -500,7 +500,6 @@ notesoup.ui = {
 				});
 		};
 
-/***	
 		this.tbColorPicker.on('select', function(field, color) {
 			notesoup.say('color: ' + notesoup.dump(color));
 			notesoup.ui.defaultNoteColor = '#' + color.toString();
@@ -573,7 +572,9 @@ notesoup.ui = {
 				text: '&nbsp;&nbsp;&nbsp;&nbsp;',
 				icon: notesoup.imageHost + 'images/famfamfam.com/color_wheel.png',
 				tooltip: {text:'click to select a color for new notes', title:'New Note Color'},
-				handler: this.tbColorPicker
+				handler: function() {
+					notesoup.doCommand("{imports: '/js-src/js-widgets/newnotecolor.js'}");
+				}
 			},
 			new Ext.Toolbar.Separator(),
 			new Ext.Toolbar.Spacer(),		// iPhone

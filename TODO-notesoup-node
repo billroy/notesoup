@@ -22,8 +22,18 @@ color wheel
 FlexiColor integration
 	- https://github.com/DavidDurman/FlexiColorPicker
 
-- bug: color picker buildup
+- display won't respect the width
 
+
+- newnotecolor: make the toolbar button a toggle
+	- Ext.get('picker')
+
+- div name collisions ('picker')
+
+
+===
+count server restarts
+	stats.server_startups
 ===
 Notification plumbing issues
 - bug: postEvent is a stub
