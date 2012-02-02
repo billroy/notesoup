@@ -5,23 +5,38 @@ _____       _         _____
                                        |_|  
                                        
 Notesoup/Node/Redis TODO list
-1/31/12 -br
+2/1/12 -br
 
 ===
 - bug: apigetfolderlist tries too long
 - bug: apigetfolderlist doesn't handle empty (no notes) well
-
+	give it an empty folder list
 ===
-
+color wheel
 
 - bug: client: can't set the same note color twice
 - feat: color wheel would be much better than palette
 
 ===
+- feat: backup folder
+	download a json file named yyyy-mm-dd-user-folder.json with:
+	[{},{},...]
+
 /backup
 	isroot	
 	redis-dump
 ===
+soupkitchen.js
+
+curl -X POST -d "email=fred@example.com;password=foobar;nosignup=true" http://localhost:3001
+
+- clone into unique directory
+- start it up
+- return admin page
+- email it to them
+
+===
+
 RACE CONDITION TEST
 
 - try rushing multiple web workers
@@ -36,14 +51,21 @@ sync:
 ===
 scoreboard
 	response times hash
-	HINCR /stats/apitimes/openfolder[time-in-ms
+	HINCR /stats/apitimes/openfolder[time-in-ms]
 	hincrby stats/api/openfolder 13 1
 ===
+Notification plumbing issues
+- bug: postEvent is a stub
+
+- bug: note color change doesn't go on notify bus, waits for sync instead
+	- notify plumbing (tofolder...)
+
 - postEvent was dropped...
 	- send plumbing seems inactive?
 	- nothing shows up on push bus
-===
+
 - bug: deletions don't sync
+
 ===
 Folder existence bugs
 - bug: disallow navigation to nonexistent folder
@@ -100,12 +122,6 @@ ACL support
 	- deleteuser
 
 ===
-Notification plumbing issues
-- bug: postEvent is a stub
-
-- bug: note color change doesn't go on notify bus, waits for sync instead
-	- notify plumbing (tofolder...)
-
 
 ===
 - review client mtime handling
