@@ -481,12 +481,26 @@ notesoup.ui = {
 			}
 		});
 
-/****
-		this.tbColorPicker = new Ext.ux.ColorMenu({
-			value: notesoup.ui.defaultNoteColor,
-			width: 300
-		});
+		this.tbColorPicker = function() {
+			Ext.get('colorpicker').show();
+			notesoup.say('Pick a color...');
+			ColorPicker(
+				document.getElementById('slide'),
+				document.getElementById('picker'),
+				function(hex, hsv, rgb) {
+					console.log(hsv.h, hsv.s, hsv.v);
+					console.log(rgb.r, rgb.g, rgb.b);
+					//document.body.style.backgroundColor = hex;
+					notesoup.ui.defaultNoteColor = hex;
+					notesoup.say('Default color set to: ' + notesoup.ui.defaultNoteColor);
+					notesoup.ui.commandbar.getEl().dom.style.background = notesoup.ui.defaultNoteColor;
+					notesoup.ui.commandbar.focus();
 
+					//Ext.get('colorpicker').hide();
+				});
+		};
+
+/***	
 		this.tbColorPicker.on('select', function(field, color) {
 			notesoup.say('color: ' + notesoup.dump(color));
 			notesoup.ui.defaultNoteColor = '#' + color.toString();
@@ -494,8 +508,7 @@ notesoup.ui = {
 			notesoup.ui.commandbar.getEl().dom.style.background = notesoup.ui.defaultNoteColor;
 			notesoup.ui.commandbar.focus();
 		});
-*****/
-
+*/
 		this.commandbar = new Ext.form.TextField({
 		//this.commandbar = new Ext.form.TextArea({
 			//height: 20,
@@ -555,15 +568,13 @@ notesoup.ui = {
 				tooltip: {text:'click to select a color for new notes', title:'New Note Color'},
 				menu: this.tbColorMenu
 			},
-/***
 			new Ext.Toolbar.Separator(),
 			{
 				text: '&nbsp;&nbsp;&nbsp;&nbsp;',
 				icon: notesoup.imageHost + 'images/famfamfam.com/color_wheel.png',
 				tooltip: {text:'click to select a color for new notes', title:'New Note Color'},
-				menu: this.tbColorPicker
+				handler: this.tbColorPicker
 			},
-***/
 			new Ext.Toolbar.Separator(),
 			new Ext.Toolbar.Spacer(),		// iPhone
 			new Ext.Toolbar.Button({
@@ -954,7 +965,7 @@ notesoup.ui = {
 					outerDiv.moveTo(thenote.xPos, thenote.yPos, {duration: notesoup.ui.defaultEffectsDuration});
 				}
 				thenote.save();
-				notesoup.summonAvatar(thenote);
+				if (notesoup.summonAvatar) notesoup.summonAvatar(thenote);
 				//notesoup.ui.commandbar.focus();
 			};
 	
@@ -981,7 +992,7 @@ notesoup.ui = {
 					outerDiv.moveTo(thenote.xPos, thenote.yPos, notesoup.ui.defaultEffectsDuration);
 				}
 				thenote.save();
-				notesoup.summonAvatar(thenote);
+				if (notesoup.summonAvatar) notesoup.summonAvatar(thenote);
 				//notesoup.ui.commandbar.focus();
 				return true;
 			};

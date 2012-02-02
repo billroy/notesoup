@@ -18,6 +18,12 @@ color wheel
 
 - bug: client: can't set the same note color twice
 - feat: color wheel would be much better than palette
+
+FlexiColor integration
+	- https://github.com/DavidDurman/FlexiColorPicker
+
+- bug: color picker buildup
+
 ===
 Notification plumbing issues
 - bug: postEvent is a stub

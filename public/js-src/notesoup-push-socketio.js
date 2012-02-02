@@ -12,9 +12,11 @@ notesoup.push = {
 	connected: false,
 
 	init: function() {
-		this.socket = io.connect();
-		this.socket.on('connect', this.onconnect);
-		//this.socket.on('disconnect', ...);
+		if (typeof(io) !== 'undefined') {
+			this.socket = io.connect();
+			this.socket.on('connect', this.onconnect);
+			//this.socket.on('disconnect', ...);
+		}
 	},
 
 	// callback on connection
