@@ -7,7 +7,6 @@
 # Example:	makesoup.sh chowder
 # => app is served at http://chowder.herokuapp.com
 #
-set -x
 date
 if [ $# -eq 0 ]
 then

@@ -5,7 +5,9 @@ _____       _         _____
                                        |_|  
                                        
 Notesoup/Node/Redis TODO list
-2/1/12 -br
+2/2/12 -br
+
+Groundhog day.
 
 ===
 - bug: apigetfolderlist tries too long
@@ -16,46 +18,6 @@ color wheel
 
 - bug: client: can't set the same note color twice
 - feat: color wheel would be much better than palette
-
-===
-- feat: backup folder
-	download a json file named yyyy-mm-dd-user-folder.json with:
-	[{},{},...]
-
-/backup
-	isroot	
-	redis-dump
-===
-soupkitchen.js
-
-curl http://localhost:3000/makesoup.sh | bash
- 
-
-curl -X POST -d "email=fred@example.com;password=foobar;nosignup=true" http://localhost:3001
-
-- clone into unique directory
-- start it up
-- return admin page
-- email it to them
-
-===
-
-RACE CONDITION TEST
-
-- try rushing multiple web workers
-- compare with a comparable PHP server task on apache
-
-- blitz.io sync test
-
--X POST -H 'Content-Type: application/json' -d '{"method":"sync","params":{"fromfolder":"system/welcome","count":"0","lastupdate":"0"},"id":0}' http://alpha.notesoup.net:3000/api
-
-sync:
-{"method":"sync","params":{"fromfolder":"system/welcome","count":"0","lastupdate":"0"},"id":0}
-===
-scoreboard
-	response times hash
-	HINCR /stats/apitimes/openfolder[time-in-ms]
-	hincrby stats/api/openfolder 13 1
 ===
 Notification plumbing issues
 - bug: postEvent is a stub
@@ -84,6 +46,33 @@ Folder existence bugs
 - solution: use fldr/ key as definitive for existence of folder
 - fix: createFolder sets fldr/u/f key
 - fix: getaccess disallow invalid folder (?)	
+
+===
+- feat: backup folder
+	download a json file named yyyy-mm-dd-user-folder.json with:
+	[{},{},...]
+
+/backup
+	isroot	
+	redis-dump
+===
+
+RACE CONDITION TEST
+
+- try rushing multiple web workers
+- compare with a comparable PHP server task on apache
+
+- blitz.io sync test
+
+-X POST -H 'Content-Type: application/json' -d '{"method":"sync","params":{"fromfolder":"system/welcome","count":"0","lastupdate":"0"},"id":0}' http://alpha.notesoup.net:3000/api
+
+sync:
+{"method":"sync","params":{"fromfolder":"system/welcome","count":"0","lastupdate":"0"},"id":0}
+===
+scoreboard
+	response times hash
+	HINCR /stats/apitimes/openfolder[time-in-ms]
+	hincrby stats/api/openfolder 13 1
 
 ===
 factor the server into
@@ -199,6 +188,11 @@ Feature candidates
 	- url, user, password, tofolder
 	- push contents vs. replace?
 	- destination public or private?
+
+- avatar caucus
+
+- widget repository
+
 ===
 Production 
 

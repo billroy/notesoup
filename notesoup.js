@@ -271,6 +271,8 @@ sendpage: function(req, res, next) {
 },
 
 
+NEXT_NOREPLY: -1,	// in api_ functions, next(NEXT_NOREPLY) prevents senderror/send/reply
+
 dispatch: function(req, res) {
 	var self = this;
 	res.updatelist = [];
@@ -289,7 +291,7 @@ dispatch: function(req, res) {
 		function(next) {self.execute(req, res, next);}
 	],
 	function(err, reply) {
-		if (err) self.senderror(req, res, err);
+		if (err && (err != self.NEXT_NOREPLY)) self.senderror(req, res, err);
 		else self.sendreply(req, res);
 	});
 },
@@ -1269,7 +1271,7 @@ api_geturl: function(req, res, next) {
 			res.end();
 			self.log('Geturl done.');
 			self.logdt(req, res);
-			next(null);
+			next(self.NEXT_NOREPLY);
 		});
 	}).on('error', function(e) {
 		self.log('Geturl error: ' + e.message);
