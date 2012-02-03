@@ -20,13 +20,11 @@ color wheel
 
 picker work
 
-- set note color: 
-	- position to the right of the note
-	- put title of target note in title of note color picker
-
 - feat: set desktop background
 	- feat: save setting
 
+- feat: lazy load the script
+- feat: sendself
 - bug: clean up folder.html
 
 - feat: coordinate with palette picker
