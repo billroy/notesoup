@@ -591,7 +591,6 @@ sendreply: function(req, res) {
 	}
 },
 
-
 api_savenote: function(req, res, next) {
 	var self = this;
 

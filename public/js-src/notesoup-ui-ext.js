@@ -313,6 +313,18 @@ notesoup.ui = {
 				{text: 'Arrange Folder',  menu: this.arrangeMenu, icon:notesoup.imageHost + 'images/famfamfam.com/application_view_tile.png'},
 				'-',
 				{text: 'Set Background Color', menu: this.backgroundColorMenu, icon: notesoup.imageHost + 'images/famfamfam.com/color_swatch.png'},
+				{
+					text: 'Set Background Color', 
+					icon: notesoup.imageHost + 'images/famfamfam.com/color_wheel.png',
+					handler: function() {
+						notesoup.saveNote({
+							notename: 'Set Background Color',
+							bgcolor: 'white',
+							target: 'background',
+							imports: '/js-src/js-widgets/colorpicker.js'
+						});
+					}
+				},
 				'-',
 				{text: 'Sharing', menu: this.sharingMenu, icon: notesoup.imageHost + 'images/famfamfam.com/group.png'},
 				'-',
@@ -427,6 +439,26 @@ notesoup.ui = {
 					icon: notesoup.imageHost + 'images/famfamfam.com/table_edit.png'},
 				'-',
 				{text: 'Set Note Color', menu: this.colorMenu, icon: notesoup.imageHost + 'images/famfamfam.com/color_swatch.png'},
+				{
+					text: 'Set Note Color', 
+					icon: notesoup.imageHost + 'images/famfamfam.com/color_wheel.png',
+					handler: function() {
+						var targetid = notesoup.ui.getTargetNote().id;
+						var newnote = {
+							notename: 'Set Note Color',
+							bgcolor: 'white',
+							target: 'note',
+							targetnoteid: targetid,
+							xPos: notesoup.notes[targetid].xPos + notesoup.notes[targetid].width,
+							yPos: notesoup.notes[targetid].yPos,
+							imports: '/js-src/js-widgets/colorpicker.js'
+						};
+						if (notesoup.notes[targetid].hasOwnProperty('notename')) {
+							newnote.notename += ' for ' + notesoup.notes[targetid].notename;
+						}
+						notesoup.saveNote(newnote);
+					}
+				},
 				'-',
 				{text: 'Duplicate Note', handler: function() {
 					notesoup.sendNote(notesoup.targetNote, notesoup.foldername, notesoup.foldername, false);
@@ -480,12 +512,25 @@ notesoup.ui = {
 				notesoup.ui.commandbar.focus();
 			}
 		});
+/***
+		this.tbColorPicker = function() {
+			Ext.get('colorpicker').show();
+			notesoup.say('Pick a color...');
+			ColorPicker(
+				document.getElementById('slide'),
+				document.getElementById('picker'),
+				function(hex, hsv, rgb) {
+					console.log(hsv.h, hsv.s, hsv.v);
+					console.log(rgb.r, rgb.g, rgb.b);
+					//document.body.style.backgroundColor = hex;
+					notesoup.ui.defaultNoteColor = hex;
+					notesoup.say('Default color set to: ' + notesoup.ui.defaultNoteColor);
+					notesoup.ui.commandbar.getEl().dom.style.background = notesoup.ui.defaultNoteColor;
+					notesoup.ui.commandbar.focus();
 
-/****
-		this.tbColorPicker = new Ext.ux.ColorMenu({
-			value: notesoup.ui.defaultNoteColor,
-			width: 300
-		});
+					//Ext.get('colorpicker').hide();
+				});
+		};
 
 		this.tbColorPicker.on('select', function(field, color) {
 			notesoup.say('color: ' + notesoup.dump(color));
@@ -494,8 +539,7 @@ notesoup.ui = {
 			notesoup.ui.commandbar.getEl().dom.style.background = notesoup.ui.defaultNoteColor;
 			notesoup.ui.commandbar.focus();
 		});
-*****/
-
+*/
 		this.commandbar = new Ext.form.TextField({
 		//this.commandbar = new Ext.form.TextArea({
 			//height: 20,
@@ -555,15 +599,20 @@ notesoup.ui = {
 				tooltip: {text:'click to select a color for new notes', title:'New Note Color'},
 				menu: this.tbColorMenu
 			},
-/***
 			new Ext.Toolbar.Separator(),
 			{
 				text: '&nbsp;&nbsp;&nbsp;&nbsp;',
 				icon: notesoup.imageHost + 'images/famfamfam.com/color_wheel.png',
 				tooltip: {text:'click to select a color for new notes', title:'New Note Color'},
-				menu: this.tbColorPicker
+				handler: function() {
+					notesoup.saveNote({
+						notename: 'New Note Color',
+						bgcolor: 'white',
+						target: 'newnotes',
+						imports: '/js-src/js-widgets/colorpicker.js'
+					});
+				}
 			},
-***/
 			new Ext.Toolbar.Separator(),
 			new Ext.Toolbar.Spacer(),		// iPhone
 			new Ext.Toolbar.Button({
@@ -844,7 +893,7 @@ notesoup.ui = {
 		//	notesoup.say('click! ' + thenote.id);
 		//	return true;
 		//});
-
+	
 		custom.on('resize', function(theElt, newWidth, newHeight, event) {
 			//alert('resize: ' + id + ' ' + newWidth + ' ' + newHeight);
 			var thenote = notesoup.notes[notesoup.ui.getNoteIDFromWindowID(this.getEl().id)];
