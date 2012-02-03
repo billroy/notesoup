@@ -20,13 +20,13 @@ color wheel
 
 picker work
 
-- feat: set desktop background
+- feat: set folder background
 	- feat: save setting
-
-- feat: lazy load the script
+	- feat: save default note color
+	
 - feat: sendself
+- feat: lazy load the script
 - bug: clean up folder.html
-
 - feat: coordinate with palette picker
 
 - feat: feedback indicators

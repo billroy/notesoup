@@ -268,7 +268,7 @@ sendpage: function(req, res, next) {
 },
 
 
-NEXT_NOREPLY: -1,	// in api_ functions, next(NEXT_NOREPLY) prevents senderror/send/reply
+NEXT_NOREPLY: "NEXT_NOREPLY",	// in api_ functions, next(NEXT_NOREPLY) prevents senderror/send/reply
 
 dispatch: function(req, res) {
 	var self = this;
@@ -553,28 +553,37 @@ senderror: function(req, res, errormessage) {
 		id: req.body.id,
 		command: []		
 	};
+	res.send(reply);
 
 	this.log('Error:', reply);
 	console.error('Error:', reply);
 	this.logdt(req, res);
-
-	res.send(reply);
 },
 
 sendreply: function(req, res) {
-
+	var self = this;
 	var reply = {
 		result: '',
 		error: null,
 		id: req.body.id,
 		command: res.updatelist
 	};
-
-	this.log('Reply:', reply);
-	this.logdt(req, res);
-
 	res.send(reply);
+
+	self.log('Reply:', reply);
+	self.logdt(req, res);
+
+	if (req.body.params.notifyfolder) {
+		for (var i=0; i < res.updatelist.length; i++) {
+			var cmd = res.updatelist[i][0];
+			if ((cmd == 'updatenote') || (cmd == 'deletenote')) {
+				var notifyfolder = req.body.params.notifyfolder;
+				self.notifychange(req, res, notifyfolder, res.updatelist[i]);
+			}
+		}
+	}
 },
+
 
 api_savenote: function(req, res, next) {
 	var self = this;
@@ -657,8 +666,16 @@ savenote: function(req, res, next) {
 
 notifychange: function(req, res, tofolder, update) {
 	var self = this;
-	self.log('Notify:', update);
-	if (self.io) self.io.sockets.emit(tofolder, update);
+	self.log('Notify:', tofolder, update);
+	var channel = '/folder/' + tofolder;
+	var msg = {
+		method: 'notify',
+		sender: self.effectiveuser(req, res),
+		channel: channel,
+		op: update[0],
+		data: update[1]
+	};
+	self.io.sockets.emit(channel, msg);
 },
 
 api_appendtonote: function(req, res, next) {
