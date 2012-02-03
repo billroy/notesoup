@@ -198,8 +198,6 @@
      */
     function ColorPicker(slideElement, pickerElement, callback) {
         if (!(this instanceof ColorPicker)) return new ColorPicker(slideElement, pickerElement, callback);
-        
-        notesoup.say("Color picker here!");
         this.callback = callback;
         this.h = 0;
         this.s = 1;

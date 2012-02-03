@@ -5,35 +5,47 @@ _____       _         _____
                                        |_|  
                                        
 Notesoup/Node/Redis TODO list
-2/2/12 -br
+2/3/12 -br
 
-Groundhog day.
+Blizzard.
 
-===
-- bug: apigetfolderlist tries too long
-- bug: apigetfolderlist doesn't handle empty (no notes) well
-	give it an empty folder list
 ===
 color wheel
 
 - bug: client: can't set the same note color twice
 - feat: color wheel would be much better than palette
-
-FlexiColor integration
+===
+- feat: FlexiColor integration
 	- https://github.com/DavidDurman/FlexiColorPicker
 
-- display won't respect the width
+- bug: on initial creation of colorpicker note
+	- note has default background color (should be white)
+	- notename is blank as though not rendered (?!)
 
+	- and:
+		- works fine after you drag it
+		- does not work after refresh
 
-- newnotecolor: make the toolbar button a toggle
-	- Ext.get('picker')
+- needs a show() after the initial note load to fix the problem
 
-- div name collisions ('picker')
+===
+picker work
 
+- feat: set desktop background
+- feat: set note color
+
+- feat: coordinate with palette picker
+
+- feat: feedback indicators
+	- div name collisions ('picker')
 
 ===
 count server restarts
 	stats.server_startups
+===
+- bug: apigetfolderlist tries too long
+- bug: apigetfolderlist doesn't handle empty (no notes) well
+	give it an empty folder list
 ===
 Notification plumbing issues
 - bug: postEvent is a stub

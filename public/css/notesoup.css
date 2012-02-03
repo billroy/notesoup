@@ -84,12 +84,13 @@ div.frontstage {
 div.backdropcontainer {
 }
 div.picker { 
-	width: 200px; height: 200px; 
+/*	width: 180px; height: 180px; */
 	float:left;
 	cursor: crosshair
 }
 div.slide { 
-	width: 30px; height: 200px; 
+/*	width: 30px; 
+	height: 180px; */
 	overflow:hidden;
 	cursor: crosshair
 }

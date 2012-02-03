@@ -313,6 +313,18 @@ notesoup.ui = {
 				{text: 'Arrange Folder',  menu: this.arrangeMenu, icon:notesoup.imageHost + 'images/famfamfam.com/application_view_tile.png'},
 				'-',
 				{text: 'Set Background Color', menu: this.backgroundColorMenu, icon: notesoup.imageHost + 'images/famfamfam.com/color_swatch.png'},
+				{
+					text: 'Set Background Color', 
+					icon: notesoup.imageHost + 'images/famfamfam.com/color_wheel.png',
+					handler: function() {
+						notesoup.saveNote({
+							notename: 'Set Background Color',
+							bgcolor: 'white',
+							target: 'background',
+							imports: '/js-src/js-widgets/colorpicker.js'
+						});
+					}
+				},
 				'-',
 				{text: 'Sharing', menu: this.sharingMenu, icon: notesoup.imageHost + 'images/famfamfam.com/group.png'},
 				'-',
@@ -427,6 +439,19 @@ notesoup.ui = {
 					icon: notesoup.imageHost + 'images/famfamfam.com/table_edit.png'},
 				'-',
 				{text: 'Set Note Color', menu: this.colorMenu, icon: notesoup.imageHost + 'images/famfamfam.com/color_swatch.png'},
+				{
+					text: 'Set Note Color', 
+					icon: notesoup.imageHost + 'images/famfamfam.com/color_wheel.png',
+					handler: function() {
+						notesoup.saveNote({
+							notename: 'Set Note Color',
+							bgcolor: 'white',
+							target: 'note',
+							targetnoteid: notesoup.ui.getTargetNote().id,
+							imports: '/js-src/js-widgets/colorpicker.js'
+						});
+					}
+				},
 				'-',
 				{text: 'Duplicate Note', handler: function() {
 					notesoup.sendNote(notesoup.targetNote, notesoup.foldername, notesoup.foldername, false);
@@ -573,7 +598,12 @@ notesoup.ui = {
 				icon: notesoup.imageHost + 'images/famfamfam.com/color_wheel.png',
 				tooltip: {text:'click to select a color for new notes', title:'New Note Color'},
 				handler: function() {
-					notesoup.doCommand("{imports: '/js-src/js-widgets/newnotecolor.js'}");
+					notesoup.saveNote({
+						notename: 'New Note Color',
+						bgcolor: 'white',
+						target: 'newnote',
+						imports: '/js-src/js-widgets/colorpicker.js'
+					});
 				}
 			},
 			new Ext.Toolbar.Separator(),
@@ -863,6 +893,7 @@ notesoup.ui = {
 			thenote.width = newWidth;
 			thenote.height = newHeight;
 			if (!thenote.editing) thenote.save();
+			//thenote.think('' + newWidth + ',' + newHeight);
 			//thenote.show();
 		});
 	
@@ -966,6 +997,7 @@ notesoup.ui = {
 					outerDiv.moveTo(thenote.xPos, thenote.yPos, {duration: notesoup.ui.defaultEffectsDuration});
 				}
 				thenote.save();
+				//thenote.think('' + thenote.xPos + ',' + thenote.yPos);
 				if (notesoup.summonAvatar) notesoup.summonAvatar(thenote);
 				//notesoup.ui.commandbar.focus();
 			};
