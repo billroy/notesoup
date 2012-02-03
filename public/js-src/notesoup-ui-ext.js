@@ -601,7 +601,7 @@ notesoup.ui = {
 					notesoup.saveNote({
 						notename: 'New Note Color',
 						bgcolor: 'white',
-						target: 'newnote',
+						target: 'newnotes',
 						imports: '/js-src/js-widgets/colorpicker.js'
 					});
 				}

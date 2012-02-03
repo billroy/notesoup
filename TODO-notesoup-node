@@ -31,7 +31,10 @@ color wheel
 ===
 picker work
 
+- put title of target note in title of note color picker
+- bug: loses name when you drag ->> New Note Color
 - feat: set desktop background
+	- feat: save setting
 - feat: set note color
 
 - feat: coordinate with palette picker

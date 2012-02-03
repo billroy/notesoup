@@ -52,24 +52,51 @@ note.set({
 				"<input type='submit' value='done' onclick='notesoup.ui.getEnclosingNote(this).done();'/>",
 			"</center>"
 		].join('');
-		console.log(pickertemplate);
 		this.setContentDiv(pickertemplate);
 
 		notesoup.say('Pick a color...');
+		var self = this;
 		var picker = ColorPicker(
 			document.getElementById('slide-' + this.id),
 			document.getElementById('picker-' + this.id),
 			function(hex, hsv, rgb) {
-				console.log(hsv.h, hsv.s, hsv.v);
-				console.log(rgb.r, rgb.g, rgb.b);
-				//document.body.style.backgroundColor = hex;
-				notesoup.ui.defaultNoteColor = hex;
-				notesoup.say('Default color set to: ' + notesoup.ui.defaultNoteColor);
-				notesoup.ui.commandbar.getEl().dom.style.background = notesoup.ui.defaultNoteColor;
-				notesoup.ui.commandbar.focus();
-				//document.body.style.background = hex;
+				//console.log(hsv.h, hsv.s, hsv.v);
+				//console.log(rgb.r, rgb.g, rgb.b);
+				if (self.target == 'background') {
+					document.body.style.background = hex;
+				}
+				else if (self.target == 'newnotes') {
+					notesoup.ui.defaultNoteColor = hex;
+					notesoup.say('Default color set to: ' + notesoup.ui.defaultNoteColor);
+					notesoup.ui.commandbar.getEl().dom.style.background = notesoup.ui.defaultNoteColor;
+					notesoup.ui.commandbar.focus();
+				}
+				else if (self.target == 'note') {
+					if (notesoup.notes.hasOwnProperty(self.targetnoteid)) {
+						notesoup.notes[self.targetnoteid].setColor(hex);
+					}
+					else say('You selected: ' + hex);
+				}
+				else notesoup.say('You chose: ' + hex);
 			});
-		picker.setHex(notesoup.ui.defaultNoteColor);
+
+		if (self.target == 'background') {
+		}
+		else if (self.target == 'newnotes') {
+			picker.setHex(notesoup.ui.defaultNoteColor);
+		}
+		else if (self.target == 'note') {
+			if (notesoup.notes[this.targetnoteid]) {
+				var thenote = notesoup.notes[this.targetnoteid];
+				if (thenote.hasOwnProperty('bgcolor')) {
+					picker.setHex(thenote.bgcolor);
+				}
+			}
+		}
+		else {
+		}
+
+
 	},
 
 	done: function() { 
