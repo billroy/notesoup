@@ -18,24 +18,16 @@ color wheel
 - feat: FlexiColor integration
 	- https://github.com/DavidDurman/FlexiColorPicker
 
-- bug: on initial creation of colorpicker note
-	- note has default background color (should be white)
-	- notename is blank as though not rendered (?!)
-
-	- and:
-		- works fine after you drag it
-		- does not work after refresh
-
-- needs a show() after the initial note load to fix the problem
-
-===
 picker work
 
-- put title of target note in title of note color picker
-- bug: loses name when you drag ->> New Note Color
+- set note color: 
+	- position to the right of the note
+	- put title of target note in title of note color picker
+
 - feat: set desktop background
 	- feat: save setting
-- feat: set note color
+
+- bug: clean up folder.html
 
 - feat: coordinate with palette picker
 

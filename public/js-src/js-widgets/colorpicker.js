@@ -13,8 +13,7 @@
 
 */
 note.set({
-	notename: 'New Note Color',
-	bgcolor: '#FFFFFF',
+
 	dirty: true,
 
 	ontick: function() {
@@ -26,17 +25,10 @@ note.set({
 
 	afterrender: function() {
 		this.dirty = 1;
-		//this.renderpicker();
 	},
 
 	renderpicker: function() {
 		var container = this.getContentDiv();
-		//notesoup.say('Rendering into container: ' + typeof(container), 'tell');
-		if (container == undefined) {
-			notesoup.say('Waiting for container...');
-			this.renderpicker.defer(20, this);
-			return;
-		}
 		var sliderwidth = 30;
 		var pickersize = this.width - sliderwidth - 28;
 		var pickertemplate = [
@@ -54,7 +46,6 @@ note.set({
 		].join('');
 		this.setContentDiv(pickertemplate);
 
-		notesoup.say('Pick a color...');
 		var self = this;
 		var picker = ColorPicker(
 			document.getElementById('slide-' + this.id),
@@ -75,7 +66,7 @@ note.set({
 					if (notesoup.notes.hasOwnProperty(self.targetnoteid)) {
 						notesoup.notes[self.targetnoteid].setColor(hex);
 					}
-					else say('You selected: ' + hex);
+					else notesoup.say('You selected: ' + hex);
 				}
 				else notesoup.say('You chose: ' + hex);
 			});

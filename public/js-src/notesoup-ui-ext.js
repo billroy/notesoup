@@ -443,13 +443,20 @@ notesoup.ui = {
 					text: 'Set Note Color', 
 					icon: notesoup.imageHost + 'images/famfamfam.com/color_wheel.png',
 					handler: function() {
-						notesoup.saveNote({
+						var targetid = notesoup.ui.getTargetNote().id;
+						var newnote = {
 							notename: 'Set Note Color',
 							bgcolor: 'white',
 							target: 'note',
-							targetnoteid: notesoup.ui.getTargetNote().id,
+							targetnoteid: targetid,
+							xPos: notesoup.notes[targetid].xPos + notesoup.notes[targetid].width,
+							yPos: notesoup.notes[targetid].yPos,
 							imports: '/js-src/js-widgets/colorpicker.js'
-						});
+						};
+						if (notesoup.notes[targetid].hasOwnProperty('notename')) {
+							newnote.notename += ' for ' + notesoup.notes[targetid].notename;
+						}
+						notesoup.saveNote(newnote);
 					}
 				},
 				'-',
