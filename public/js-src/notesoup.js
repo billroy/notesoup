@@ -376,6 +376,7 @@ var notesoup = {
 		var eventHandler = 'onupdate';
 		var refreshUI = true;
 		var changeCount = 0;
+		var forceresize = false;
 		if (noteid in this.notes) {		// note exists - this is an update
 
 /***** TODO: fix mtime handling
@@ -395,7 +396,7 @@ var notesoup = {
 
 			// Check for case where an update arrives on a note being edited
 			// TODO: this is the place where better conflict handling should go
-			if (this.notes[noteid].editing) {
+			if (this.notes[noteid].hasOwnProperty('editing')) {
 				delete this.notes[noteid].syncme;	// else it will complain endlessly
 				return;		// silently ignore for now
 			}
@@ -409,6 +410,9 @@ var notesoup = {
 			//	}
 			//}
 			//if (changeCount == 0) refreshUI = false;
+
+			// flag if we need to force a resize
+			if (theupdate.width != this.notes[noteid].width) forceresize = true;
 
 			// Play in the updates and set the updated flag
 			this.notes[noteid].set(theupdate);
@@ -437,9 +441,8 @@ var notesoup = {
 		if (!(thenote.width > 0)) thenote.width = this.defaultNoteWidth;
 		//if (!('bgcolor' in thenote)) thenote.bgcolor = notesoup.ui.defaultNoteColor || '#fff8b6';
 
-		// more resize bug
-		//if (('width' in theupdate) || ('height' in theupdate)) 
-		//	thenote.resizeTo(thenote.width, thenote.height);
+		// resize if the width changed
+		if (forceresize) thenote.resizeTo(thenote.width, thenote.height);
 
 		// Clear the syncme bit if it's set
 		if (thenote.syncme) {

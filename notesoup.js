@@ -532,11 +532,10 @@ key_mtime: function(folder) 	{ return 'mtime/' + folder; },
 key_nextid:  function(folder)	{ return 'stats/notes_created'; },
 
 log: function() {
-	//console.log.apply(this, arguments);
 	var output = [];
 	for (var i=0; i < arguments.length; i++) {
 		if (typeof(arguments[i]) == 'object') {
-			output.push(util.inspect(arguments, false, 6));
+			output.push(util.inspect(arguments[i], false, 6));
 		}
 		else output.push('' + arguments[i]);
 	}
