@@ -30,6 +30,7 @@ picker work
 - feat: lazy load the script
 - bug: clean up folder.html
 - feat: coordinate with palette picker
+- feat: clean up colorpicker folder: .html, css/,...
 
 - feat: feedback indicators
 	- div name collisions ('picker')
