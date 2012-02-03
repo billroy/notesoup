@@ -10,6 +10,8 @@ Notesoup/Node/Redis TODO list
 Blizzard.
 
 ===
+- bug: new log doesn't dig deep enough for reply.
+===
 color wheel
 
 - bug: client: can't set the same note color twice
@@ -23,7 +25,7 @@ picker work
 - feat: set folder background
 	- feat: save setting
 	- feat: save default note color
-	
+
 - feat: sendself
 - feat: lazy load the script
 - bug: clean up folder.html
@@ -41,17 +43,14 @@ count server restarts
 	give it an empty folder list
 ===
 Notification plumbing issues
-- bug: postEvent is a stub
+- bug: drag width -> doesn't propagate
 
-- bug: note color change doesn't go on notify bus, waits for sync instead
-	- notify plumbing (tofolder...)
+
+- bug: postEvent is a stub
 
 - postEvent was dropped...
 	- send plumbing seems inactive?
 	- nothing shows up on push bus
-
-- bug: deletions don't sync
-
 ===
 Folder existence bugs
 - bug: disallow navigation to nonexistent folder
