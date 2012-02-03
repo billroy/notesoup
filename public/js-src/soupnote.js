@@ -354,6 +354,9 @@ soupnote.prototype.show = function() {
 	}
 	delete this.showme;
 
+	// call the afterrender hook, if present
+	if (typeof(this.afterrender) == 'function') this.afterrender();
+
 	// some final thoughts
 	if ((navigator.userAgent.search('iPhone') >= 0) || (navigator.userAgent.search('pera') >= 0)) {
 		Ext.get(this.id + '_menu').on('click', notesoup.ui.showNoteMenu);

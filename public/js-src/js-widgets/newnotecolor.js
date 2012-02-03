@@ -15,40 +15,37 @@
 note.set({
 	notename: 'New Note Color',
 	bgcolor: '#FFFFFF',
-	width: 300,
+	width: 260,
+	dirty: true,
 
 	ontick: function() {
 		if (this.dirty) {
-			this.show.defer(20, this);
-			this.makepicker.defer(200, this);
+			this.renderpicker.defer(20, this);
 			delete this.dirty;
 		}
 	},
 
-	init: function() {
-		if (this.initialized) return;
+	afterrender: function() {
 		this.dirty = true;
-		//this.show.defer(20, this);
-		//this.makepicker.defer(200, this);
-		this.initialized = true;
 	},
 
-	makepicker: function() {
-		var container = this.getContentDiv;
+	renderpicker: function() {
+		var container = this.getContentDiv();
 		if (container == undefined) {
 			notesoup.say('Waiting for container...');
-			this.makepicker.defer(20, this);
+			this.renderpicker.defer(20, this);
 			return;
 		}
-		Ext.DomHelper.insertHtml('afterbegin', container, [
-			"<div class='picker' id='picker",
-			"-" + this.id,
-			"'></div>",
-			"<div class='silde' id='slide",
-			"-" + this.id,
-			"'></div>"
-		].join(''));
-
+		var pickertemplate = [
+			"<div class='colorpicker' id='cpick", "-" + this.id, "'>",
+				"<div class='picker' id='picker", "-" + this.id, "'></div>",
+				"<div class='slide' id='slide", "-" + this.id, "'></div>",
+			"</div>",
+			"<center>",
+				"<input type='submit' value='done' onclick='notesoup.ui.getEnclosingNote(this).done();'/>",
+			"</center>"
+		].join('');
+		this.setContentDiv(pickertemplate);
 
 		notesoup.say('Pick a color...');
 		var picker = ColorPicker(
@@ -66,28 +63,9 @@ note.set({
 		picker.setHex(notesoup.ui.defaultNoteColor);
 	},
 
-	click: function() { 
-		notesoup.say('Bye!.');
+	done: function() { 
+		notesoup.say('Bye!');
 		this.destroy(); 
 	}
-	
 });
-note.init();
 </script>
-
-<style type="text/css">
-	.picker { 
-		width: 190px; height: 190px; 
-		float:left;
-		cursor: crosshair
-	}
-	.slide { 
-		width: 30px; height: 190px; 
-		overflow:hidden;
-		cursor: crosshair
-	}
-</style>
-
-<center>
-	<input type='submit' value='done' onclick='notesoup.ui.getEnclosingNote(this).click();'/>
-</center>

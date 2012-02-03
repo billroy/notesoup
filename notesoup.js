@@ -117,8 +117,7 @@ connect: function(redis_url) {
 			self.log('Socket connection accepted.');
 			//self.log(util.inspect(socket, 3));
 			socket.on('subscribe', function(request) {
-				self.log('Subscription request:');
-				self.dir(request);
+				self.log('Subscription request:', request);
 				socket.on(request.channel, function(msg) {
 					self.io.sockets.emit(request.channel, msg);
 				});
@@ -158,8 +157,7 @@ status: function(req, res) {
 	if (!self.isroot(req, res)) res.send("OK");
 	else {
 		self.redis.info(function(err, reply) {
-			self.log('Status:' );
-			self.dir(reply);
+			self.log('Status:', reply);
 			var lines = reply.split('\r\n');
 			self.dir(lines);
 			var dict = {};
@@ -189,9 +187,9 @@ renderfolder: function(req, res, template) {
 	req.starttime = new Date().getTime();
 	req.template = template;
 
-	self.log('*********************************************************************');
-	self.log('Render folder ' + req.params.user + ' ' + req.params.folder);
-	self.log('*********************************************************************');
+	self.log('***********************************');
+	self.log('rendering folder ' + req.params.user + ' ' + req.params.folder);
+	self.log('***********************************');
 
 	if (self.locked && !self.isroot(req, res)) {
 		res.redirect('Service unavailable.  Please try again later.', 503);
@@ -232,8 +230,7 @@ preloadnotes: function(req, res, next) {
 			res.initnotes.push(thenote);
 		}
 		if (res.initnotes.length) res.lastupdate = updatetime;
-		//self.log('preload:');
-		//self.dir(res.initnotes);
+		//self.log('preload:', res.initnotes);
 
 		next(null);
 	});
@@ -278,10 +275,10 @@ dispatch: function(req, res) {
 	res.updatelist = [];
 	req.starttime = new Date().getTime();
 	
-	self.log('*********************************************************************');
-	self.log('dispatching api req: ' + req.body.method);
-	self.log('*********************************************************************');
-	self.dir(req.body.params);
+	self.log('***********************************');
+	self.log('api request: ', req.body.method);
+	self.log('***********************************');
+	self.log('params: ', req.body.params);
 
 	async.series([
 		function(next) {self.validatemethod(req, res, next);}, 
@@ -299,8 +296,7 @@ dispatch: function(req, res) {
 validatemethod: function(req, res, next) {
 	var self = NoteSoup;
 	if (typeof(self['api_' + req.body.method]) != 'function') {
-		self.log('No method for request: ');
-		self.dir(req.body);
+		self.log('No method for request:', req.body);
 		next('The server does not know how to ' + req.body.method);
 	}
 	else if (!req.body.method in self.acl_checklist) {
@@ -324,8 +320,7 @@ loadfolderacl: function(req, res, fieldname, next) {
 	var self = NoteSoup;
 	if (!req.acl) req.acl = {};
 
-	//self.log('loadfolderacl: ' + fieldname + ' ' + req.body.params[fieldname]);
-	//self.dir(req.body.params);
+	//self.log('loadfolderacl: ' + fieldname + ' ' + req.body.params[fieldname], req.body.params);
 
 	if (typeof(req.body.params[fieldname]) == 'undefined') {
 		//self.log('no arg ' + fieldname);
@@ -349,8 +344,7 @@ loadfolderacl: function(req, res, fieldname, next) {
 				return;
 			}
 			req.acl[folder] = folderdata;
-			self.log('loadfolderacl: ');
-			self.dir(req.acl);
+			//self.log('loadfolderacl:', req.acl);
 			next(null);
 		});
 	}
@@ -391,8 +385,8 @@ validateaccess: function(req, res, next) {
 		else if (aclcheck[0] == 'f') folder = req.body.params.fromfolder;
 		else next('bad acl spec');
 
-		self.log('validateaccess: folder ' + folder + ' ' + accessmode);
-		//self.dir(req.body.params);
+		//self.log('validateaccess: folder ' + folder + ' ' + accessmode);
+
 		aclcheck = aclcheck.substring(2);	// prune off what we handled
 
 		if (!self.hasaccess(req, res, self.effectiveuser(req, res), folder, accessmode)) {
@@ -495,7 +489,7 @@ getaccess: function(req, res, requestor, tofolder, accessmode) {
 	var accessstring = req.acl[tofolder][accessmode];	// get access string from acl{}
 	if (!accessstring) accessstring = '';	// act like -*, deny below
 	accessstring = accessstring.trim();
-	self.log('getaccess: ' + accessmode + ' [' + accessstring + ']');
+	//self.log('getaccess: ' + accessmode + ' [' + accessstring + ']');
 
 	// TODO: regexp matching for domain-based group permissions like *.example.com
 	// For now, *, -* and username, -username, separated by commas
@@ -537,8 +531,8 @@ key_mtime: function(folder) 	{ return 'mtime/' + folder; },
 //key_nextid:  function(folder)	{ return 'next/'  + folder; },
 key_nextid:  function(folder)	{ return 'stats/notes_created'; },
 
-log: function(text) {
-	console.log(text);
+log: function() {
+	console.log.apply(this, arguments);
 },
 
 dir: function(thing) {
@@ -560,8 +554,8 @@ senderror: function(req, res, errormessage) {
 		command: []		
 	};
 
-	this.log('Error:');
-	this.dir(reply);
+	this.log('Error:', reply);
+	console.error('Error:', reply);
 	this.logdt(req, res);
 
 	res.send(reply);
@@ -576,8 +570,7 @@ sendreply: function(req, res) {
 		command: res.updatelist
 	};
 
-	this.log('Reply:');
-	this.dir(reply);
+	this.log('Reply:', reply);
 	this.logdt(req, res);
 
 	res.send(reply);
@@ -609,11 +602,9 @@ api_savenote: function(req, res, next) {
 checkid: function(req, res, next) {
 	var self = NoteSoup;
 
-	//self.log('Checkid: this');
-	//self.dir(this);
+	//self.log('Checkid: this', this);
 	
-	self.log('Checkid: params');
-	self.dir(req.body.params);	
+	self.log('Checkid: params', req.body.params);	
 
 	if (!req.body.params.thenote.id) {
 		self.redis.incr(self.key_nextid(req.body.params.tofolder), function(err, id) {
@@ -628,8 +619,7 @@ checkid: function(req, res, next) {
 
 addupdate: function(req, res, update) {
 	var self = this;
-	self.log("addupdate:");
-	self.dir(update);
+	self.log('addupdate:', update);
 	res.updatelist.push(update);
 	//self.notifychange(req.body.params.tofolder, update);
 },
@@ -639,8 +629,7 @@ savenote: function(req, res, next) {
 	var now = new Date().getTime();
 	var jsonnote = JSON.stringify(req.body.params.thenote);
 
-	self.log('Savenote: params');
-	self.dir(req.body.params);	
+	self.log('Savenote: params', req.body.params);
 
 	if (!req.body.params.thenote.id) {
 		self.log('savenote without id');
@@ -668,8 +657,7 @@ savenote: function(req, res, next) {
 
 notifychange: function(req, res, tofolder, update) {
 	var self = this;
-	self.log("Notify: ");
-	self.dir(update);
+	self.log('Notify:', update);
 	if (self.io) self.io.sockets.emit(tofolder, update);
 },
 
@@ -682,8 +670,7 @@ api_appendtonote: function(req, res, next) {
 		else if (!notetext) next('Note?');
 		else {
 			var note = JSON.parse(notetext);
-			self.log('Append: note ' + typeof(note));
-			self.dir(note);
+			self.log('Append: note ', typeof(note), note);
 
 			if (note.text) note.text = note.text + req.body.params.text;
 			else note.text = req.body.params.text;
@@ -697,8 +684,8 @@ api_appendtonote: function(req, res, next) {
 api_sync: function(req, res, next) {
 	var self = this;
 	newlastupdate = new Date().getTime().toString();
-	self.log('Last sync: ' + req.body.params.lastupdate);
-	self.log('Sync mark: ' + newlastupdate);
+	//self.log('Last sync: ' + req.body.params.lastupdate);
+	//self.log('Sync mark: ' + newlastupdate);
 
 	if (req.body.params.lastupdate == 0) {
 		self.redis.hgetall(self.key_note(req.body.params.fromfolder), function(err, notes) {
@@ -706,8 +693,7 @@ api_sync: function(req, res, next) {
 				next(err);
 				return;
 			}
-			self.log('First sync:');
-			self.dir(notes);
+			self.log('First sync:', notes);
 			self.addupdate(req, res, ['beginupdate','']);
 			for (var id in notes) {
 				var note = JSON.parse(notes[id]);
@@ -735,8 +721,7 @@ api_sync: function(req, res, next) {
 						next(err);
 						return;
 					}
-					self.log('Syncing updated notes:');
-					self.dir(notes);
+					self.log('Syncing updated notes:', notes);
 					if (notes) {
 						self.addupdate(req, res, ['beginupdate','']);
 						for (var i=0; i<notes.length; i++) {
@@ -754,9 +739,6 @@ api_sync: function(req, res, next) {
 
 api_sendnote: function(req, res, next) {
 	var self = this;
-
-	self.log("apisendnote:");
-	self.dir(req.body.params);
 
 	// if a single id was passed in, coerce it to a list
 	if (typeof(req.body.params.noteid) == 'string')
@@ -786,8 +768,7 @@ sendnote: function(req, res, noteid, next) {
 			}
 
 			var note = JSON.parse(reply[0]);
-			self.log('Fetched note: ' + typeof(note));
-			self.dir(note);
+			self.log('Fetched note: ' + typeof(note), note);
 			note.id = reply[1].toString();
 			self.log('New note id: ' + note.id);
 			var now = new Date().getTime();
@@ -828,7 +809,6 @@ sendnote: function(req, res, noteid, next) {
 api_postevent: function(req, res, next) {
 	var self = this;
 	self.log('PostEvent via api: (DROPPED)');
-	self.dir(req.body.params);
 	//io.socket.send(res.body.params.
 	//self.addupdate(req, res, ['say', 'PostEvent was dropped.']);
 	next(null);
@@ -891,8 +871,7 @@ api_getnotes: function(req, res, next) {
 			return;
 		}
 		else if (jsonnotes) {
-			//self.log("Got notes from " + req.body.params.fromfolder);
-			//self.dir(json_notes);
+			//self.log("Got notes from", req.body.params.fromfolder, json_notes);
 			var parsed_notes = {};
 			for (var n in jsonnotes) {
 				var note = JSON.parse(jsonnotes[n]);
@@ -1117,8 +1096,7 @@ savepasswordhash: function(user, passwordhash, next) {
 		function(err, reply) {
 			if (err) next(err);
 			else {
-				self.log('Password updated for ' + user);
-				self.dir(reply);
+				self.log('Password updated for ', user, reply);
 				next(null);
 			}
 		}
@@ -1135,8 +1113,7 @@ api_getfolderacl: function(req, res, next) {
 	self.redis.hgetall(self.key_foldermeta(req.body.params.tofolder), function(err, acl) {
 		if (err) {
 			// why doesn't this next(err); ?
-			self.log('getfolderacl: error');
-			self.dir(err);
+			self.log('getfolderacl: error', err);
 			next(err);
 			return;
 		}
@@ -1155,8 +1132,7 @@ api_setfolderacl: function(req, res, next) {
 			acl[fields[i]] = req.body.params[fields[i]];
 		}
 	}
-	self.log("SetACL " + req.body.params.tofolder);
-	self.dir(acl);
+	self.log("SetACL ", req.body.params.tofolder, acl);
 
 	self.redis.hmset(self.key_foldermeta(req.body.params.tofolder), acl, function(err, reply) {
 		if (err) next(err);
@@ -1241,12 +1217,12 @@ api_logout: function(req, res, next) {
 
 api_geturl: function(req, res, next) {
 	var self = this;
-	self.log('Geturl: ' + req.body.params.url);
+	//self.log('geturl: ' + req.body.params.url);
 	var options = url.parse(req.body.params.url);
 
 	// handle local '/path' fetches as static
 	if (!options.host) {
-		self.log('Geturl: static ' + options.pathname);
+		self.log('geturl: serving static ' + options.pathname);
 		res.sendfile(__dirname + '/public' + options.pathname);
 		self.logdt(req, res);
 		return;
@@ -1402,9 +1378,8 @@ loadfolder: function(foldername, nextfolder) {
 		function(err, reply) { 
 			if (err) self.log('Loadfolder: ' + err); 
 			else {
-				self.log('Loadfolder complete.');
-				self.dir(reply);
-				nextfolder(null, foldername);
+				self.log('Loadfolder complete.', reply);
+				nextfolder(null);
 			}
 		}
 	);
@@ -1431,8 +1406,7 @@ loaduser: function(user, next) {
 		function(err, reply) {
 			if (err) next(err);
 			else {
-				self.log('Loaduser complete.');
-				self.dir(reply);
+				self.log('Loaduser complete.', reply);
 				next(null);
 			}
 		}
