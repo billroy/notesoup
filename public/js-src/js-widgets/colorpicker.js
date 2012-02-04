@@ -64,7 +64,9 @@ note.set({
 				}
 				else if (self.target == 'note') {
 					if (notesoup.notes.hasOwnProperty(self.targetnoteid)) {
-						notesoup.notes[self.targetnoteid].setColor(hex);
+						var thenote = notesoup.notes[self.targetnoteid];
+						thenote.think(hex);
+						thenote.setColor(hex);
 					}
 					else notesoup.say('You selected: ' + hex);
 				}

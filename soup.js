@@ -70,6 +70,12 @@ app.get('/status', function(req, res) {
 	soup.status(req, res);
 });
 
+var port;
+if (process && process.env && process.env.PORT) port = process.env.PORT;
+else port = argv.port || 3000;
 
-app.listen(process.env.PORT || argv.port || 3000);
+app.listen(port);
+
+console.log('***********************************');
 console.log("NoteSoup listening on port %d in %s mode", app.address().port, app.settings.env);
+console.log('***********************************');

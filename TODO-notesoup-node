@@ -10,28 +10,24 @@ Notesoup/Node/Redis TODO list
 Blizzard.
 
 ===
-- bug: new log doesn't dig deep enough for reply.
-===
 color wheel
 
 - bug: client: can't set the same note color twice
 - feat: color wheel would be much better than palette
 ===
+picker work
+
 - feat: FlexiColor integration
 	- https://github.com/DavidDurman/FlexiColorPicker
 
-picker work
 
 - feat: set folder background
 	- feat: save setting
 	- feat: save default note color
 
-- feat: sendself
 - feat: lazy load the script
-- bug: clean up folder.html
+- bug: clean up notesoup.css: put attrs into the widget
 - feat: coordinate with palette picker
-- feat: clean up colorpicker folder: .html, css/,...
-
 - feat: feedback indicators
 	- div name collisions ('picker')
 
@@ -44,14 +40,9 @@ count server restarts
 	give it an empty folder list
 ===
 Notification plumbing issues
-- bug: drag width -> doesn't propagate
-
 
 - bug: postEvent is a stub
-
-- postEvent was dropped...
-	- send plumbing seems inactive?
-	- nothing shows up on push bus
+	- required for out-of-band talk widget
 ===
 Folder existence bugs
 - bug: disallow navigation to nonexistent folder
@@ -135,8 +126,6 @@ ACL support
 	- deleteuser
 
 ===
-
-===
 - review client mtime handling
 	- widgets use it
 	- dragdrop uses it
@@ -178,7 +167,9 @@ Feature candidates
 	- system 'download all'
 		- but could use redis replication
 
-- messages stack
+- localStore?
+	- messages stack
+	- commands stack
 
 - feat: createuser from skeleton
 	- set up folders with permissions:
