@@ -179,10 +179,11 @@ notesoup.ui = {
 					});
 				}, icon: notesoup.imageHost + 'images/famfamfam.com/script_code_red.png'},
 				'-',
-				{text: 'Add Background Image...', handler: function() {
-					var link = notesoup.prompt('Add Background Image: Enter image URL:', 'http://notesoup.net/images/notesoup-color.gif');
-					if (!link) return;
-
+				{text: 'Set Background Image...', handler: function() {
+					var background = notesoup.prompt('Add Background Image: Enter image URL:', notesoup.background);
+					if (!background) return;
+					notesoup.setFolderBackground(background);
+/***		
 					notesoup.saveNote({
 						notename: 'set desktop background image',
 						zIndex: 0,
@@ -193,6 +194,7 @@ notesoup.ui = {
 							"</script>This note sets the desktop background image."
 						].join('')
 					});
+***/
 				}, icon: notesoup.imageHost + 'images/famfamfam.com/photo_add.png'},
 
 				'-',

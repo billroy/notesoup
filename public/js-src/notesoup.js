@@ -1051,6 +1051,7 @@ var notesoup = {
 	},
 
 	renderFolderBackground: function(background) {
+		notesoup.background = background;
 		if (notesoup.ui.isImageFile(background))
 			document.body.style.background = [
 				"black url(",
