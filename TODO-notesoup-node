@@ -8,17 +8,12 @@ Notesoup/Node/Redis TODO list
 2/4/12 -br
 
 ===
+- bug: Set Background Image should be in the Folder Menu
 ===
 picker work
 
 - feat: FlexiColor integration
 	- https://github.com/DavidDurman/FlexiColorPicker
-
-- feat: set folder background
-	- broadcast changes with sendself
-	- refigure broadcast wiring
-	- should be in the api callbacks and notification pickoff
-		setbackground
 
 - feat: lazy load the script
 - bug: clean up notesoup.css: put attrs into the widget
@@ -27,9 +22,6 @@ picker work
 - feat: push selected colors onto color palette
 	- feat: save color palette
 
-- feat: set background folder image
-	- bug: doesn't show up until refresh
-	
 color palette work
 
 - bug: client: can't set the same note color twice

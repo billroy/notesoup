@@ -179,25 +179,6 @@ notesoup.ui = {
 					});
 				}, icon: notesoup.imageHost + 'images/famfamfam.com/script_code_red.png'},
 				'-',
-				{text: 'Set Background Image...', handler: function() {
-					var background = notesoup.prompt('Add Background Image: Enter image URL:', notesoup.background);
-					if (!background) return;
-					notesoup.setFolderBackground(background);
-/***		
-					notesoup.saveNote({
-						notename: 'set desktop background image',
-						zIndex: 0,
-						//opacity: 0.5,
-						text: [
-							'<script type="text/javascript">',
-								'document.body.style.background="white url(', link, ') no-repeat scroll center center";',
-							"</script>This note sets the desktop background image."
-						].join('')
-					});
-***/
-				}, icon: notesoup.imageHost + 'images/famfamfam.com/photo_add.png'},
-
-				'-',
 				//{text: 'Add From System Template...', handler: function() {
 				//	notesoup.ui.getTemplateList(); 
 				//}, icon: notesoup.imageHost + 'images/famfamfam.com/page_white_star.png'},
@@ -327,6 +308,25 @@ notesoup.ui = {
 						});
 					}
 				},
+				'-',
+				{text: 'Set Background Image...', handler: function() {
+					var background = notesoup.prompt('Add Background Image: Enter image URL:', notesoup.background);
+					if (!background) return;
+					notesoup.setFolderBackground(background);
+/***		
+					notesoup.saveNote({
+						notename: 'set desktop background image',
+						zIndex: 0,
+						//opacity: 0.5,
+						text: [
+							'<script type="text/javascript">',
+								'document.body.style.background="white url(', link, ') no-repeat scroll center center";',
+							"</script>This note sets the desktop background image."
+						].join('')
+					});
+***/
+				}, icon: notesoup.imageHost + 'images/famfamfam.com/photo_add.png'},
+
 				'-',
 				{text: 'Sharing', menu: this.sharingMenu, icon: notesoup.imageHost + 'images/famfamfam.com/group.png'},
 				'-',
