@@ -14,7 +14,7 @@
 */
 note.set({
 
-	dirty: true,
+	dirty: 1,
 
 	ontick: function() {
 		if (!this.dirty) return;
@@ -24,7 +24,7 @@ note.set({
 	},
 
 	afterrender: function() {
-		this.dirty = 1;
+		this.dirty = 1;		// defer re-rendering for race condition
 	},
 
 	renderpicker: function() {

@@ -28,6 +28,18 @@ picker work
 - feat: feedback indicators
 
 ===
+- bug: crash with malformed parameter list (missing folder argument):
+
+***********************************
+api request:  setfolderbackground
+***********************************
+params:  { background: 'http://icons-ak.wxug.com/data/640x480/2xus_snow.gif',
+  lastupdate: '1328361835313' }
+TypeError: Cannot call method 'split' of undefined
+    at Object.isvalidfoldername (/Users/bill/stuff/notesoup-node/notesoup.js:440:25)
+    at Object.getaccess (/Users/bill/stuff/notesoup-node/notesoup.js:474:12)
+  
+===
 count server restarts
 	stats.server_startups
 ===
