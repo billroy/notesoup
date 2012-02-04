@@ -5,31 +5,27 @@ _____       _         _____
                                        |_|  
                                        
 Notesoup/Node/Redis TODO list
-2/3/12 -br
-
-Blizzard.
+2/4/12 -br
 
 ===
 color wheel
 
 - bug: client: can't set the same note color twice
 - feat: color wheel would be much better than palette
+- feat: coordinate palette picker and color wheel
 ===
 picker work
 
 - feat: FlexiColor integration
 	- https://github.com/DavidDurman/FlexiColorPicker
 
-
 - feat: set folder background
-	- feat: save setting
-	- feat: save default note color
+	- broadcast changes with sendself
+	- bug: not working
 
 - feat: lazy load the script
 - bug: clean up notesoup.css: put attrs into the widget
-- feat: coordinate with palette picker
 - feat: feedback indicators
-	- div name collisions ('picker')
 
 ===
 count server restarts
@@ -161,6 +157,8 @@ API buildout
 	- ...
 ====
 Feature candidates
+
+- feat: save default note color
 
 - backup
 	- per folder 'download this folder'

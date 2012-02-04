@@ -84,10 +84,12 @@ var notesoup = {
 ****/
 
 		document.title = 'Note Soup :: ' + this.foldername;
+		if (opts.hasOwnProperty('background'))
+			document.body.style.background = opts.background;
 		this.ui.initialize();
 		if (navigator.userAgent.search('iPhone') >= 0)
 			this.say('Welcome iPhone user!');
-			
+
 		if (this.username) this.say('Hello, ' + this.username + '.');
 		this.say('Opening ' + notesoup.foldername + '...');
 
@@ -1022,6 +1024,27 @@ var notesoup = {
 		});
 	},
 
+	/**
+	*	set the background color on a folder
+	*	=this.setFolderBackground(notesoup.foldername, 'white')
+	*	@param {string} folder the folder whose password you wish to set
+	*	@param {string} background the new background for the folder
+	*/
+	setFolderBackground: function(folder, background) {
+
+		// Send off a request
+		this.postRequest({
+			method:'setfolderbackground',
+			params:{
+				tofolder: folder,
+				background: background
+			}
+		},{
+			requestMessage: 'Setting background for ' + folder + ' to ' + background + '...',
+			successMessage: 'Background set.',
+			failureMessage: 'Could not set background.'
+		});
+	},
 
 	/**
 	*	send duplicates of all the notes in one folder into another

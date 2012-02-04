@@ -249,7 +249,10 @@ sendpage: function(req, res, next) {
 	};
 	opts.ispublic = self.hasaccess(req, res, '*', opts.foldername, self.readers);
 	opts.iseditor = self.hasaccess(req, res, self.effectiveuser(req, res), opts.foldername, self.editors);
-	
+	if (req.acl[opts.foldername].hasOwnProperty(self.key_folderbackground())) {
+		opts[self.key_folderbackground()] = req.acl[opts.foldername][self.key_folderbackground()]
+	}
+
 	if (res.initnotes.length > 0) {
 		opts.initnotes = res.initnotes;
 		opts.lastupdate = res.lastupdate;
@@ -344,7 +347,7 @@ loadfolderacl: function(req, res, fieldname, next) {
 				return;
 			}
 			req.acl[folder] = folderdata;
-			//self.log('loadfolderacl:', req.acl);
+			self.log('loadfolderacl:', req.acl);
 			next(null);
 		});
 	}
@@ -424,7 +427,8 @@ acl_checklist: {
 	'deletefolder': 	'fo',
 	'copyfolder': 		'frts',		// +destination folder create is required ? to : ts
 	'getfolderacl': 	'to',
-	'setfolderacl': 	'to'
+	'setfolderacl': 	'to',
+	'setfolderbackground': 'to'
 },
 
 
@@ -1164,6 +1168,28 @@ api_setfolderacl: function(req, res, next) {
 			next(null);
 		}
 	});
+},
+
+key_folderbackground: function() {
+	return 'background';
+},
+
+api_setfolderbackground: function(req, res, next) {
+	var self = this;
+	var background = req.body.params.background || '';
+	self.log('background:', req.body.params.tofolder, req.body.params.background, background);
+
+	self.redis.hset(
+		self.key_foldermeta(req.body.params.tofolder), 
+		self.key_folderbackground(),
+		background, 
+		function(err, reply) {
+			if (err) next(err);
+			else {
+				self.addupdate(req, res, ['say','Folder background saved.']);
+				next(null);
+			}
+		});
 },
 
 api_knockknock: function(req, res, next) {

@@ -55,6 +55,8 @@ note.set({
 				//console.log(rgb.r, rgb.g, rgb.b);
 				if (self.target == 'background') {
 					document.body.style.background = hex;
+					notesoup.setFolderBackground(notesoup.foldername, hex);
+					//self.sendself.defer(20, self, ['set', hex]);
 				}
 				else if (self.target == 'newnotes') {
 					notesoup.ui.defaultNoteColor = hex;
@@ -73,6 +75,8 @@ note.set({
 				else notesoup.say('You chose: ' + hex);
 			});
 
+		self.setEphemeral('picker', picker);
+
 		if (self.target == 'background') {
 		}
 		else if (self.target == 'newnotes') {
@@ -88,8 +92,11 @@ note.set({
 		}
 		else {
 		}
+	},
 
-
+	set: function(hex) {
+		var picker = this.getEphemeral('picker');
+		if (picker) picker.setHex(hex);
 	},
 
 	done: function() { 
