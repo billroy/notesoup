@@ -584,11 +584,11 @@ sendreply: function(req, res) {
 	self.log('Reply:', reply);
 	self.logdt(req, res);
 
-	if (req.body.params.notifyfolder) {
+	var notifyfolder = req.body.params.notifyfolder || req.body.params.tofolder || req.body.params.fromfolder;
+	if (notifyfolder) {
 		for (var i=0; i < res.updatelist.length; i++) {
 			var cmd = res.updatelist[i][0];
-			if ((cmd == 'updatenote') || (cmd == 'deletenote')) {
-				var notifyfolder = req.body.params.notifyfolder;
+			if ((cmd == 'updatenote') || (cmd == 'deletenote') || (cmd == 'setbackground')) {
 				self.notifychange(req, res, notifyfolder, res.updatelist[i]);
 			}
 		}
@@ -1164,7 +1164,7 @@ api_setfolderacl: function(req, res, next) {
 	self.redis.hmset(self.key_foldermeta(req.body.params.tofolder), acl, function(err, reply) {
 		if (err) next(err);
 		else {
-			self.addupdate(req, res, ['say','Folder permissions updated.']);
+			self.addupdate(req, res, ['say', 'Folder permissions updated.']);
 			next(null);
 		}
 	});
@@ -1186,7 +1186,8 @@ api_setfolderbackground: function(req, res, next) {
 		function(err, reply) {
 			if (err) next(err);
 			else {
-				self.addupdate(req, res, ['say','Folder background saved.']);
+				self.addupdate(req, res, ['setbackground', background]);
+				self.addupdate(req, res, ['say', 'Folder background saved.']);
 				next(null);
 			}
 		});

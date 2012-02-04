@@ -16,8 +16,9 @@ picker work
 
 - feat: set folder background
 	- broadcast changes with sendself
-	- bug: can't call sethex without recursing through the cick handler
-
+	- refigure broadcast wiring
+	- should be in the api callbacks and notification pickoff
+		setbackground
 
 - feat: lazy load the script
 - bug: clean up notesoup.css: put attrs into the widget

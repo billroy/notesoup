@@ -91,6 +91,7 @@ notesoup.push = {
 				if (arg && arg.length) notesoup.frontstage.say(arg);
 				else notesoup.frontstage.hide();
 			}
+			else if (cmd == 'setbackground') notesoup.renderFolderBackground(arg);
 			else if (cmd == 'flash') notesoup.frontstage.flash(arg.text, arg.color || notesoup.frontstage.color);
 			else if (cmd == 'join') notesoup.push.onjoin(request);
 			else if (cmd == 'leave') notesoup.push.onleave(request);

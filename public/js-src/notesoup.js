@@ -85,7 +85,7 @@ var notesoup = {
 
 		document.title = 'Note Soup :: ' + this.foldername;
 		if (opts.hasOwnProperty('background')) {
-			this.showFolderBackground(opts.background);
+			this.renderFolderBackground(opts.background);
 		}
 		this.ui.initialize();
 		if (navigator.userAgent.search('iPhone') >= 0)
@@ -1035,7 +1035,6 @@ var notesoup = {
 
 		tofolder = tofolder || notesoup.foldername;
 		if (background == undefined) return;
-		this.showFolderBackground(background);
 
 		// Send off a request
 		this.postRequest({
@@ -1051,7 +1050,7 @@ var notesoup = {
 		});
 	},
 
-	showFolderBackground: function(background) {
+	renderFolderBackground: function(background) {
 		if (notesoup.ui.isImageFile(background))
 			document.body.style.background = [
 				"black url(",
@@ -1675,6 +1674,11 @@ var notesoup = {
 						case 'deletenote':
 							logarg = arg;
 							this.destroyNote(arg);
+							break;
+
+						case 'setbackground':
+							logarg = arg;
+							this.renderFolderBackground(arg);
 							break;
 		
 						case 'setupdatetime': 
