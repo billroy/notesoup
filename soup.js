@@ -77,5 +77,5 @@ else port = argv.port || 3000;
 app.listen(port);
 
 console.log('***********************************');
-console.log("NoteSoup listening on port %d in %s mode", app.address().port, app.settings.env);
+console.log("NoteSoup listening on port %d in %s mode", port, app.settings.env);
 console.log('***********************************');
