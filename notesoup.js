@@ -291,7 +291,8 @@ dispatch: function(req, res) {
 		function(next) {self.execute(req, res, next);}
 	],
 	function(err, reply) {
-		if (err && (err != self.NEXT_NOREPLY)) self.senderror(req, res, err);
+		if (err == self.NEXT_NOREPLY) {;}
+		else if (err) self.senderror(req, res, err);
 		else self.sendreply(req, res);
 	});
 },
@@ -437,6 +438,7 @@ invalidchars: /[^A-z0-9\-._]/g,
 
 isvalidfoldername: function(foldername) {
 	var self = NoteSoup;
+	if (typeof(foldername) != 'string') return false;
 	var parts = foldername.split('/');
 	if (parts.length != 2) return false;
 	if (self.invalidchars.test(parts[0])) return false;

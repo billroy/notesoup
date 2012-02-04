@@ -957,7 +957,17 @@ var notesoup = {
 		return name;
 	},
 
-
+	/**
+	*	return a string of random hex characters of a specified length
+	*	@param {int} namelen the length of the string
+	*/
+	randomHex: function(namelen) {
+		var charset = '0123456789abcdef';
+		var name = '';
+		while (name.length < namelen) 
+			name += charset.charAt(Math.floor(Math.random() * charset.length));
+		return name;
+	},
 
 	/**
 	*	createFolder: Make a new folder
@@ -1041,6 +1051,7 @@ var notesoup = {
 			method:'setfolderbackground',
 			params:{
 				tofolder: tofolder,
+				notifyfolder: tofolder,
 				background: background
 			}
 		},{

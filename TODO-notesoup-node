@@ -8,8 +8,6 @@ Notesoup/Node/Redis TODO list
 2/4/12 -br
 
 ===
-- bug: Set Background Image should be in the Folder Menu
-===
 picker work
 
 - feat: FlexiColor integration
@@ -27,6 +25,8 @@ color palette work
 - bug: client: can't set the same note color twice
 - feat: coordinate palette picker and color wheel
 
+===
+document.body.style.cssText += ';font:italic bold 12px/30px Georgia, serif; color:#9cf;';
 ===
 - bug: crash with malformed parameter list (missing folder argument):
 
