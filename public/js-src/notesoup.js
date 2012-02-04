@@ -86,8 +86,14 @@ var notesoup = {
 		document.title = 'Note Soup :: ' + this.foldername;
 		if (opts.hasOwnProperty('background')) {
 			if (notesoup.ui.isImageFile(opts.background))
-				document.body.style.backgroundImage = opts.background;
-			else document.body.style.background = opts.background;
+				//document.body.style.backgroundImage = opts.background;
+				document.body.style.background = [
+					"black url(",
+					opts.background,
+					") no-repeat scroll center center"
+				].join('');
+			else 
+				document.body.style.background = opts.background;
 		}
 		this.ui.initialize();
 		if (navigator.userAgent.search('iPhone') >= 0)
