@@ -8,11 +8,6 @@ Notesoup/Node/Redis TODO list
 2/4/12 -br
 
 ===
-color wheel
-
-- bug: client: can't set the same note color twice
-- feat: color wheel would be much better than palette
-- feat: coordinate palette picker and color wheel
 ===
 picker work
 
@@ -21,11 +16,23 @@ picker work
 
 - feat: set folder background
 	- broadcast changes with sendself
-	- bug: not working
+	- bug: can't call sethex without recursing through the cick handler
+
 
 - feat: lazy load the script
 - bug: clean up notesoup.css: put attrs into the widget
 - feat: feedback indicators
+
+- feat: push selected colors onto color palette
+	- feat: save color palette
+
+- feat: set background folder image
+	- bug: doesn't show up until refresh
+	
+color palette work
+
+- bug: client: can't set the same note color twice
+- feat: coordinate palette picker and color wheel
 
 ===
 - bug: crash with malformed parameter list (missing folder argument):

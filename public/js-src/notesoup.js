@@ -85,15 +85,7 @@ var notesoup = {
 
 		document.title = 'Note Soup :: ' + this.foldername;
 		if (opts.hasOwnProperty('background')) {
-			if (notesoup.ui.isImageFile(opts.background))
-				//document.body.style.backgroundImage = opts.background;
-				document.body.style.background = [
-					"black url(",
-					opts.background,
-					") no-repeat scroll center center"
-				].join('');
-			else 
-				document.body.style.background = opts.background;
+			this.showFolderBackground(opts.background);
 		}
 		this.ui.initialize();
 		if (navigator.userAgent.search('iPhone') >= 0)
@@ -1035,24 +1027,39 @@ var notesoup = {
 
 	/**
 	*	set the background color on a folder
-	*	=this.setFolderBackground(notesoup.foldername, 'white')
+	*	=this.setFolderBackground('white', notesoup.foldername)
 	*	@param {string} folder the folder whose password you wish to set
 	*	@param {string} background the new background for the folder
 	*/
-	setFolderBackground: function(folder, background) {
+	setFolderBackground: function(background, tofolder) {
+
+		tofolder = tofolder || notesoup.foldername;
+		if (background == undefined) return;
+		this.showFolderBackground(background);
 
 		// Send off a request
 		this.postRequest({
 			method:'setfolderbackground',
 			params:{
-				tofolder: folder,
+				tofolder: tofolder,
 				background: background
 			}
 		},{
-			requestMessage: 'Setting background for ' + folder + ' to ' + background + '...',
-			successMessage: 'Background set.',
-			failureMessage: 'Could not set background.'
+			requestMessage: 'Setting background for ' + tofolder + ' to ' + background + '...',
+//			successMessage: 'Background set.',
+//			failureMessage: 'Could not set background.'
 		});
+	},
+
+	showFolderBackground: function(background) {
+		if (notesoup.ui.isImageFile(background))
+			document.body.style.background = [
+				"black url(",
+				background,
+				") no-repeat scroll center center"
+			].join('');
+		else 
+			document.body.style.background = background;
 	},
 
 	/**
