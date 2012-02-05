@@ -74,8 +74,10 @@ note.set({
 				else notesoup.say('You chose: ' + hex);
 			});
 
-/***
 		if (self.target == 'background') {
+			if (notesoup.background && !notesoup.ui.isImageFile(notesoup.background)) {
+				picker.setHex(notesoup.background);
+			}
 		}
 		else if (self.target == 'newnotes') {
 			picker.setHex(notesoup.ui.defaultNoteColor);
@@ -88,10 +90,6 @@ note.set({
 				}
 			}
 		}
-		else {
-		}
-***/
-
 	},
 
 	done: function() { 

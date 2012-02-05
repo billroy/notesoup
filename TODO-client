@@ -1,0 +1,42 @@
+Note Soup client rewrite
+
+Candidates
+- Bootstrap/jQueryUI/jQuery
+- Kendo
+	http://demos.kendoui.com/
+- UIIkit
+	http://visionmedia.github.com/uikit/
+
+===
+Requirements
+
+- ajax
+- websockets
+
+- menus
+- toolbar
+- dragdrop
+- buttons
+
+- Ext.template injection
+
+- widget code injection
+	Ext.get(this.id).update(this.getMarkup(), true);	// true to load scripts
+
+- forms
+- widget forms rewrite
+
+- color picker
+- alert / message box
+- tool tips
+
+var bsize = Ext.getBody().getSize();
+Ext.get().hide()
+
+
+====
+Cleanups
+- Ext.get
+- json hooks
+			var jsonrequest = Ext.util.JSON.encode(request);
+		notesoup.saveNote(Ext.util.JSON.decode(cmd));
